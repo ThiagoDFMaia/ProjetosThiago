@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Título Padrão{% endblock %}</title>
+    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sistema de Cadastro</h1>
+            <h2>Sistema de Agendamentos de Consultas e Exames</h2>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="{{ url_for('cadastro_paciente') }}">Cadastro de Pacientes</a></li>
+                <li><a href="{{ url_for('cadastro_convenio') }}">Cadastro de Convênios</a></li>
+                <li><a href="/consultas">Agendar Consultas</a></li>
+                <li><a href="/exames">Agendar Exames</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            {% block content %}
+            <!-- O conteúdo específico da página irá aqui -->
+            {% endblock %}
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Meu Sistema de Agendamentos. Todos os direitos reservados.</p>
+            <p>Contato: suporte@meusistema.com | Telefone: (11) 1234-5678</p>
+        </footer>
+    </div>
+</body>
+</html>

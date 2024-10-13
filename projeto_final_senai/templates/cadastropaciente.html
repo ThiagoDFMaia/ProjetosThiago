@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro de Pacientes{% endblock %}
+
+{% block content %}
+<h1>Cadastro de Pacientes</h1>
+<form action="/salvar_paciente" method="POST">
+
+    <!-- Seção Dados Pessoais e Documentos -->
+    <div class="section">
+        <h2>Dados Pessoais e Documentos</h2>
+        <label for="Nome">Nome:</label>
+        <input type="text" id="Nome" name="Nome" required>
+
+        <label for="RG">RG:</label>
+        <input type="text" id="RG" name="RG" required>
+
+        <label for="CPF">CPF:</label>
+        <input type="text" id="CPF" name="CPF" required>
+    </div>
+
+    <!-- Seção Dados de Endereço -->
+    <div class="section">
+        <h2>Endereço</h2>
+        <label for="Endereco">Endereço:</label>
+        <input type="text" id="Endereco" name="Endereco" required>
+
+        <label for="numero">Número:</label>
+        <input type="text" id="numero" name="numero">
+
+        <label for="Complemento">Complemento:</label>
+        <input type="text" id="Complemento" name="Complemento">
+
+        <label for="Cidade">Cidade:</label>
+        <input type="text" id="Cidade" name="Cidade" required>
+
+        <label for="UF">UF:</label>
+        <input type="text" id="UF" name="UF" maxlength="2" required>
+
+        <label for="CEP">CEP:</label>
+        <input type="text" id="CEP" name="CEP" required>
+    </div>
+
+    <!-- Seção Contato -->
+    <div class="section">
+        <h2>Contato</h2>
+        <label for="Telefone_01">Telefone 01:</label>
+        <input type="text" id="Telefone_01" name="Telefone_01" required>
+
+        <label for="Telefone_02">Telefone 02:</label>
+        <input type="text" id="Telefone_02" name="Telefone_02">
+
+        <label for="Telefone_03">Telefone 03:</label>
+        <input type="text" id="Telefone_03" name="Telefone_03">
+    </div>
+
+    <!-- Seção Convênio -->
+    <div class="section">
+        <h2>Convênio</h2>
+        <label for="possui_convenio">Possui convênio?</label>
+        <select id="possui_convenio" name="possui_convenio" required onchange="toggleConvenio(this.value)">
+            <option value="" disabled selected>-- Selecione --</option>
+            <option value="sim">Sim</option>
+            <option value="nao">Não</option>
+        </select>
+
+        <div id="convenio_section" style="display:none;">
+            <label for="convenio">Selecione o Convênio:</label>
+            <select id="convenio" name="convenio">
+                <option value="" disabled selected>-- Selecione um convênio --</option>
+                {% for convenio in lista_convenios %}
+                    <option value="{{ convenio.id }}">{{ convenio.descricao }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Botão Salvar -->
+    <button type="submit">Salvar</button>
+</form>
+{% if mensagem %}
+    <h4 class="text-danger text-center">{{ mensagem }}</h4>
+{% endif %}
+
+<script>
+    function toggleConvenio(value) {
+        const convenioSection = document.getElementById('convenio_section');
+        convenioSection.style.display = value === 'sim' ? 'block' : 'none';
+    }
+</script>
+{% endblock %}
