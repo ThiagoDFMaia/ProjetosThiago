@@ -46,6 +46,7 @@ create table if not exists `clinica`.`pessoa` (
   `telefone_03` varchar(12) null default null,
   `rg` varchar(12) not null,
   `cpf` varchar(11) not null,
+  `data_nas` date not null,
   primary key (`id`))
 engine = innodb
 default character set = utf8mb4

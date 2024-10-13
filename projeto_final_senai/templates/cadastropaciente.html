@@ -9,64 +9,68 @@
     <!-- Seção Dados Pessoais e Documentos -->
     <div class="section">
         <h2>Dados Pessoais e Documentos</h2>
-        <label for="Nome">Nome:</label>
-        <input type="text" id="Nome" name="Nome" required>
+        <label for="Nome">Nome:</label><br>
+        <input type="text" id="Nome" name="Nome" required style="width: 100%;"><br>
 
-        <label for="RG">RG:</label>
-        <input type="text" id="RG" name="RG" required>
+        <label for="CPF">CPF:</label><br>
+        <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"><br>
 
-        <label for="CPF">CPF:</label>
-        <input type="text" id="CPF" name="CPF" required>
+        <label for="RG">RG:</label><br>
+        <input type="text" id="RG" name="RG" required><br>
+
+        <label for="Data_Nascimento">Data de Nascimento:</label><br>
+        <input type="date" id="Data_Nascimento" name="Data_Nascimento" required style="width: 100%;"><br>
     </div>
 
     <!-- Seção Dados de Endereço -->
     <div class="section">
         <h2>Endereço</h2>
-        <label for="Endereco">Endereço:</label>
-        <input type="text" id="Endereco" name="Endereco" required>
 
-        <label for="numero">Número:</label>
-        <input type="text" id="numero" name="numero">
+        <label for="CEP">CEP:</label><br>
+        <input type="text" id="CEP" name="CEP" required placeholder="00.000-000" pattern="\d{2}\.\d{3}-\d{3}" style="width: 20%;"><br>
 
-        <label for="Complemento">Complemento:</label>
-        <input type="text" id="Complemento" name="Complemento">
+        <label for="UF">UF:</label><br>
+        <input type="text" id="UF" name="UF" maxlength="2" required style="width: 50%;"><br>
 
-        <label for="Cidade">Cidade:</label>
-        <input type="text" id="Cidade" name="Cidade" required>
+        <label for="Cidade">Cidade:</label><br>
+        <input type="text" id="Cidade" name="Cidade" required style="width: 50%;"><br>
 
-        <label for="UF">UF:</label>
-        <input type="text" id="UF" name="UF" maxlength="2" required>
+        <label for="Endereco">Endereço:</label><br>
+        <input type="text" id="Endereco" name="Endereco" required style="width: 100%;"><br>
 
-        <label for="CEP">CEP:</label>
-        <input type="text" id="CEP" name="CEP" required>
+        <label for="Complemento">Complemento:</label><br>
+        <input type="text" id="Complemento" name="Complemento" style="width: 100%;"><br>
+
+        <label for="numero">Número:</label><br>
+        <input type="text" id="numero" name="numero" style="width: 50%;"><br>
     </div>
 
     <!-- Seção Contato -->
     <div class="section">
         <h2>Contato</h2>
-        <label for="Telefone_01">Telefone 01:</label>
-        <input type="text" id="Telefone_01" name="Telefone_01" required>
+        <label for="Telefone_01">Telefone 01:</label><br>
+        <input type="text" id="Telefone_01" name="Telefone_01" required style="width: 20%;"><br>
 
-        <label for="Telefone_02">Telefone 02:</label>
-        <input type="text" id="Telefone_02" name="Telefone_02">
+        <label for="Telefone_02">Telefone 02:</label><br>
+        <input type="text" id="Telefone_02" name="Telefone_02" style="width: 20%;"><br>
 
-        <label for="Telefone_03">Telefone 03:</label>
-        <input type="text" id="Telefone_03" name="Telefone_03">
+        <label for="Telefone_03">Telefone 03:</label><br>
+        <input type="text" id="Telefone_03" name="Telefone_03" style="width: 20%;"><br>
     </div>
 
     <!-- Seção Convênio -->
     <div class="section">
         <h2>Convênio</h2>
-        <label for="possui_convenio">Possui convênio?</label>
-        <select id="possui_convenio" name="possui_convenio" required onchange="toggleConvenio(this.value)">
+        <label for="possui_convenio">Possui convênio?</label><br>
+        <select id="possui_convenio" name="possui_convenio" required onchange="toggleConvenio(this.value)" style="width: 100%;">
             <option value="" disabled selected>-- Selecione --</option>
             <option value="sim">Sim</option>
             <option value="nao">Não</option>
-        </select>
+        </select><br>
 
         <div id="convenio_section" style="display:none;">
-            <label for="convenio">Selecione o Convênio:</label>
-            <select id="convenio" name="convenio">
+            <label for="convenio">Selecione o Convênio:</label><br>
+            <select id="convenio" name="convenio" style="width: 100%;">
                 <option value="" disabled selected>-- Selecione um convênio --</option>
                 {% for convenio in lista_convenios %}
                     <option value="{{ convenio.id }}">{{ convenio.descricao }}</option>
@@ -76,7 +80,7 @@
     </div>
 
     <!-- Botão Salvar -->
-    <button type="submit">Salvar</button>
+    <button type="submit" style="width: 100%;">Salvar</button>
 </form>
 {% if mensagem %}
     <h4 class="text-danger text-center">{{ mensagem }}</h4>

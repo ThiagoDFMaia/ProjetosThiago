@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro de Pacientes{% endblock %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento de Consultas</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FullCalendar CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" rel="stylesheet">
+
+    <!-- FullCalendar Locale -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/lang/pt-br.js"></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleagenda.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <!-- Coluna 1: Filtros e Calendário -->
+        <div class="col-md-4 filtro">
+            <h2>Filtrar Agendamento</h2>
+            <label for="tipo">Tipo:</label>
+            <select class="form-control" id="tipo">
+                <option>Consulta</option>
+                <option>Exame</option>
+            </select>
+
+            <label for="especialidade" class="mt-3">Especialidade:</label>
+            <select class="form-control" id="especialidade">
+                <option>Cardiologia</option>
+                <option>Ginecologia</option>
+            </select>
+            
+            <label for="medico" class="mt-3">Médico:</label>
+            <select class="form-control" id="medico">
+                <option>Dr. João</option>
+                <option>Dra. Maria</option>
+            </select>
+            <br>
+            <button type="button" id="btnPesquisarescala" class="btn btn-primary">Pesquisar</button>  
+            <div id="calendar" class="mt-4"></div>
+           
+        </div>
+       
+        <!-- Coluna 2: Exibição de Horários -->
+        <div class="col-md-4 horarios">
+            <h2>Horários Disponíveis</h2>
+            <div id="horarios">
+                <!-- Os horários serão preenchidos aqui -->
+                <ul class="list-group">
+                    <li class="list-group-item">08:00 - 08:30: Livre</li>
+                    <li class="list-group-item">09:00 - 09:30: Livre</li>
+                    <li class="list-group-item">10:00 - 10:30: Livre</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Coluna 3: Dados do Paciente -->
+        <div class="col-md-4 paciente">
+        <h3>Cadastro de Pacientes</h3>
+        <form id="cadastroPaciente">
+            <div class="form-group">
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf" class="form-control" placeholder="Digite o CPF" required>
+            </div>
+            <button type="button" id="btnPesquisarpaciente" class="btn btn-primary">Pesquisar</button>
+            <!-- Outros campos desativados -->
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome" disabled>
+            </div>
+            
+            <div class="form-group">
+                <label for="data_nascimento">Data de Nascimento:</label>
+                <input type="date" id="data_nascimento" name="data_nascimento" class="form-control"  disabled>
+
+            </div>
+
+            <div class="form-group">
+                <label for="telefone">Telefone 1:</label>
+                <input type="text" id="telefone1" name="telefone" class="form-control" placeholder="Telefone" disabled>
+            </div>
+            <div class="form-group">
+                <label for="telefone">Telefone 2:</label>
+                <input type="text" id="telefone2" name="telefone" class="form-control" placeholder="Telefone" disabled>
+            </div>
+            <div class="form-group">
+                <label for="telefone">Telefone 3:</label>
+                <input type="text" id="telefone3" name="telefone" class="form-control" placeholder="Telefone" disabled>
+            </div>
+            
+        </form>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<!-- FullCalendar JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/lang/pt-br.js"></script>
+
+<!-- Custom Script -->
+<script>
+    $(document).ready(function() {
+        // Inicializa o calendário
+        $('#calendar').fullCalendar({
+            locale: 'pt-br',
+            header: {
+                left: 'prev,next',
+                center: 'title',
+                right: 'month today' // Mantendo apenas 'Mês' e 'Hoje'
+            },
+            buttonText: {
+                month: 'Mês', // Alterando o texto de 'month' para 'Mês'
+                today: 'Hoje' // Botão "Hoje" em português
+            },
+            monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+            dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+            selectable: true,
+            selectHelper: true,
+            dayClick: function(date, jsEvent, view) {
+                // Remove a seleção anterior
+                $('.fc-day').removeClass('fc-selected');
+                // Adiciona a classe 'fc-selected' ao dia clicado
+                $(this).addClass('fc-selected');
+                alert('Data selecionada: ' + date.format('DD/MM/YYYY')); // Formato da data em português
+                // Carregar horários disponíveis para essa data
+                $('#horarios ul').html(`
+                    <li class="list-group-item">08:00 - 08:30: Livre</li>
+                    <li class="list-group-item">09:00 - 09:30: Livre</li>
+                    <li class="list-group-item">10:00 - 10:30: Livre</li>
+                `);
+            }
+        });
+
+        // Lógica para pesquisar o paciente ao clicar no botão
+        $('#btnPesquisarpaciente').click(function() {
+            const cpf = $('#cpf').val();
+            if (cpf) {
+                $.get('/pesquisar_paciente', { cpf: cpf }, function(data) {
+                    // Preencher os campos com os dados retornados
+                    $('#nome').val(data.nome).prop('disabled', true);
+
+                    //alert('Data selecionada: ' + new Date(data.data_nas).toISOString().split('T')[0]);
+
+                    $('#data_nascimento').val(new Date(data.data_nas).toISOString().split('T')[0]).prop('disabled', true);
+                    $('#telefone1').val(data.telefone_01).prop('disabled', true);
+                    $('#telefone2').val(data.telefone_02).prop('disabled', true);
+                    $('#telefone3').val(data.telefone_03).prop('disabled', true);
+                    
+                }).fail(function() {
+                    alert('Paciente não encontrado.');
+                    // Limpa os campos se o paciente não for encontrado
+                    $('#nome').val('').prop('disabled', true);
+                    $('#data_nascimento').val('').prop('disabled', true);
+                    $('#telefone1').val('').prop('disabled', true);
+                    $('#telefone2').val('').prop('disabled', true);
+                    $('#telefone3').val('').prop('disabled', true);
+                });
+            } else {
+                alert('Por favor, digite um CPF para pesquisar.');
+            }
+        });
+    });
+</script>
+
+
+
+</body>
+{% if mensagem %}
+    <h4 class="text-danger text-center">{{ mensagem }}</h4>
+{% endif %}
+
+<script>
+    function toggleConvenio(value) {
+        const convenioSection = document.getElementById('convenio_section');
+        convenioSection.style.display = value === 'sim' ? 'block' : 'none';
+    }
+</script>
+{% endblock %}

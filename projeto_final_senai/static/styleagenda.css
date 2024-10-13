@@ -1,0 +1,61 @@
+body {
+    background-color: #f8f9fa; /* Cor de fundo suave */
+}
+.container {
+    margin-top: 30px;
+    background-color: #ffffff; /* Fundo branco para o container */
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra leve */
+    padding: 20px; /* Padding interno */
+}
+.col-md-4 {
+    border-radius: 8px; /* Bordas arredondadas nas colunas */
+    padding: 15px; /* Padding interno */
+    color: #ffffff; /* Texto branco */
+    margin-bottom: 20px; /* Espaçamento entre colunas */
+}
+#horarios {
+    border: 1px solid #007bff; /* Borda azul */
+    padding: 10px;
+    height: 400px;
+    overflow-y: scroll;
+    margin-top: 20px;
+    background-color: #e9ecef; /* Fundo cinza claro */
+}
+h2 {
+    color: #007bff; /* Azul para os títulos */
+}
+.list-group-item {
+    background-color: #e7f1ff; /* Azul claro para os itens de horário */
+    border: none; /* Remover borda */
+}
+.list-group-item:hover {
+    background-color: #cce5ff; /* Azul mais escuro ao passar o mouse */
+}
+.btn-success {
+    background-color: #eeeb51; /* Verde */
+    border: none; /* Remover borda */
+}
+.btn-success:hover {
+    background-color: #218838; /* Verde mais escuro ao passar o mouse */
+}
+/* Cores de fundo para cada coluna */
+.filtro {
+    background-color: #fffb00; /* Azul */
+}
+.horarios {
+    background-color: #91f3a8; /* Verde */
+}
+.paciente {
+    background-color: #35dcc6; /* Vermelho */
+}
+/* Cor da data de hoje no calendário (vermelho suave) */
+.fc-today {
+    background-color: rgba(255, 99, 71, 0.3) !important; /* Vermelho suave com opacidade */
+    border: 1px solid rgba(255, 99, 71, 1) !important; /* Borda vermelha */
+}
+/* Cor do dia selecionado no calendário (verde) */
+.fc-selected {
+    background-color: rgba(76, 175, 80, 0.5) !important; /* Verde suave com opacidade */
+    border: 1px solid rgba(76, 175, 80, 1) !important; /* Borda verde */
+}

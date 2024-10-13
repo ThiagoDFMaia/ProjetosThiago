@@ -1,6 +1,6 @@
 # pip install flask (no terminal)
 # importando modulos
-from flask import Flask,render_template,request,redirect,url_for
+from flask import Flask,render_template,request,redirect,url_for,jsonify
 import urllib.parse
 # realizar o mapeamento objeto relacional -DB First
 from sqlalchemy import create_engine, MetaData
@@ -84,6 +84,10 @@ def cadastro_paciente():
 def cadastro_convenio():
     return render_template('cadastroconvenio.html')
 
+@app.route('/abrir_agenda', methods=['GET'])
+def abrir_agenda():
+    return render_template('agenda.html')
+
 @app.route('/salvar_paciente', methods=['POST'])
 def salvar_paciente():
     session_db = Session()
@@ -91,7 +95,9 @@ def salvar_paciente():
     
     nome = request.form['Nome']
     rg = request.form['RG']
-    cpf = request.form['CPF']
+    cpf = request.form['CPF'].replace('.', '').replace('-', '')
+   
+    data_nas=request.form['Data_Nascimento']
     endereco = request.form['Endereco']
     numero = request.form.get('numero', '')
     complemento = request.form.get('Complemento', '')
@@ -103,7 +109,7 @@ def salvar_paciente():
     telefone_03 = request.form.get('Telefone_03', None)
    
     # Cria um objeto Pessoa com os dados recebidos
-    pessoa = Pessoa(nome=nome, rg=rg, cpf=cpf, endereco=endereco, numero=numero, complemento=complemento, cidade=cidade, uf=uf, cep=cep, telefone_01=telefone_01, telefone_02=telefone_02, telefone_03=telefone_03)
+    pessoa = Pessoa(nome=nome, rg=rg, cpf=cpf, data_nas=data_nas, endereco=endereco, numero=numero, complemento=complemento, cidade=cidade, uf=uf, cep=cep, telefone_01=telefone_01, telefone_02=telefone_02, telefone_03=telefone_03)
 
     
    
@@ -111,7 +117,7 @@ def salvar_paciente():
     try:
         session_db.add(pessoa)
         session_db.commit()
-        codigo_paciente = pessoa.id  # Captura o código do paciente gerado
+       
     except:
         session_db.rollback()
     finally:
@@ -119,7 +125,24 @@ def salvar_paciente():
 
     # Redireciona para uma página de sucesso ou outra rota
    
-    return render_template("cadastropaciente.html", mensagem=f"Cadastro Realizado com sucesso:{codigo_paciente}")
+    return render_template("cadastropaciente.html", mensagem=f"Cadastro Realizado com sucesso:")
+
+@app.route('/pesquisar_paciente', methods=['GET'])
+def pesquisar_paciente():
+    session_db = Session()
+    cpf = request.args.get('cpf')
+    paciente =  session_db.query(Pessoa).filter(Pessoa.cpf == cpf).one_or_none()
+  
+    if paciente:
+        return jsonify({
+           "nome": paciente.nome,
+            "cpf": paciente.cpf,
+            "data_nas":paciente.data_nas,
+            "telefone_01":paciente.telefone_01,
+            "telefone_02":paciente.telefone_02,
+            "telefone_03":paciente.telefone_03
+        })
+    return jsonify({"error": "Paciente não encontrado."}), 404
 
 @app.route('/salvar_convenio',methods=['POST'])
 def salvar_convenio():
