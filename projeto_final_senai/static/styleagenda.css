@@ -3,11 +3,15 @@ body {
 }
 .container {
     margin-top: 30px;
-    background-color: #ffffff; /* Fundo branco para o container */
+    background-color: #78995c; /* Fundo branco para o container */
     border-radius: 8px; /* Bordas arredondadas */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra leve */
     padding: 20px; /* Padding interno */
 }
+
+
+
+
 .col-md-4 {
     border-radius: 8px; /* Bordas arredondadas nas colunas */
     padding: 15px; /* Padding interno */

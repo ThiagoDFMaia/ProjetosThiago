@@ -1,0 +1,11 @@
+INSERT INTO especialidade (descricao) VALUES 
+('Cardiologia'),
+('Dermatologia'),
+('Ginecologia'),
+('Ortopedia'),
+('Pediatria'),
+('Neurologia'),
+('Oftalmologia'),
+('Psiquiatria'),
+('Endocrinologia'),
+('Gastroenterologia');

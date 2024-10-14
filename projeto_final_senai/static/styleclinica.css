@@ -1,0 +1,121 @@
+/* Estilos gerais para a página */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa; /* Cor de fundo clara */
+    padding: 20px;
+    color: #343a40; /* Cor do texto */
+}
+
+h3 {
+    color: #007bff; /* Azul claro para títulos */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    background-color: #fff; /* Fundo branco para os formulários */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra leve */
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #495057;
+}
+
+.form-group input, .form-group select {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    width: 100%;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.form-group input:focus, .form-group select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25); /* Efeito de foco */
+    outline: none;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos responsivos para os formulários */
+@media (min-width: 768px) {
+    .container {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    form {
+        width: 45%; /* Largura de 45% no desktop */
+    }
+}
+
+@media (max-width: 767px) {
+    form {
+        width: 100%; /* Largura completa em telas menores */
+        margin-bottom: 20px;
+    }
+}
+
+/* Estilo para botões adicionais */
+button[type="submit"] {
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para inputs com mensagens de erro */
+.form-group input.is-invalid, .form-group select.is-invalid {
+    border-color: #e3342f;
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.is-invalid + .invalid-feedback {
+    display: block;
+    color: #e3342f;
+    font-size: 14px;
+}
+
+/* Estilos para uma seção mais visual */
+form .form-title {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 6px 6px 0 0;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Layout de inputs mais dinâmico */
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+hr {
+    border: 1px solid #e9ecef;
+    margin: 30px 0;
+}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro de Escala{% endblock %}
+
+{% block content %}
+<h3>Cadastro de Escala</h3>
+<form action="/cadastro_escala" method="POST">
+    <div class="form-group">
+        <label for="data">Data:</label>
+        <input type="date" id="data" name="data" class="form-control" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="quantvagasmanha">Quantidade de Vagas (Manhã):</label>
+        <input type="number" id="quantvagasmanha" name="quantvagasmanha" class="form-control" placeholder="Vagas Manhã" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="quantvagastarde">Quantidade de Vagas (Tarde):</label>
+        <input type="number" id="quantvagastarde" name="quantvagastarde" class="form-control" placeholder="Vagas Tarde" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="quantvagasnoite">Quantidade de Vagas (Noite):</label>
+        <input type="number" id="quantvagasnoite" name="quantvagasnoite" class="form-control" placeholder="Vagas Noite" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="fk_clinica_codclinica">Código da Clínica (fk_clinica_codclinica):</label>
+        <input type="number" id="fk_clinica_codclinica" name="fk_clinica_codclinica" class="form-control" placeholder="Código da Clínica" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="flaativo">Ativo:</label>
+        <select id="flaativo" name="flaativo" class="form-control" required>
+            <option value="1">Sim</option>
+            <option value="0">Não</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Cadastrar Escala</button>
+</form>
+<hr>
+{% endblock %}

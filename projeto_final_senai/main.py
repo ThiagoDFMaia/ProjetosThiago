@@ -5,7 +5,7 @@ import urllib.parse
 # realizar o mapeamento objeto relacional -DB First
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from biblioteca import *
 
 # definindo objeto flask
@@ -47,6 +47,15 @@ Base.prepare() # mapeando
 
 Pessoa =  Base.classes.pessoa
 Convenio= Base.classes.convenio
+Medico=Base.classes.medico
+Especialidade=Base.classes.especialidade
+
+# Relacionamentos entre tabelas
+#Medico.pessoa = relationship("Pessoa", backref="medicos", foreign_keys=[Medico.fk_pessoa_id])
+'''
+Medico.pessoa = relationship("Pessoa", back_populates="medicos", foreign_keys=[Medico.fk_pessoa_id])
+Pessoa.medicos = relationship("Medico", back_populates="pessoa")
+'''
 
 
 Session = sessionmaker(bind=engine)
@@ -69,6 +78,24 @@ def lista_convenios():
 
     return convenios
 
+def gravar_pessoa(pessoa):
+    session_db = Session()
+    try:
+        session_db.add(pessoa)
+        session_db.commit()
+        id=pessoa.id
+       
+    except Exception as e:
+        session_db.rollback()  # Desfaz a sessão em caso de erro
+        app.logger.info(f" {e}")
+       
+        return False,id
+    finally:
+        session_db.close()
+
+    return True,id
+
+
 @app.route("/",methods=['GET'])
 def index():
     return render_template("index.html")
@@ -84,13 +111,105 @@ def cadastro_paciente():
 def cadastro_convenio():
     return render_template('cadastroconvenio.html')
 
+@app.route('/cadastro_medico',methods=['GET'])
+def cadastro_medico():
+    session_db = Session()
+ 
+    especialidades =  session_db.query(Especialidade).all()
+    return render_template('cadastromedicos.html', especialidades=especialidades)
+
+
+@app.route('/cadastro_escala',methods=['GET'])
+def cadastro_escala():
+    return render_template('cadastroescala.html')
+
+@app.route('/cadastro_clinica',methods=['GET'])
+def cadastro_clinica():
+    return render_template('cadastroclinica.html')
+
 @app.route('/abrir_agenda', methods=['GET'])
 def abrir_agenda():
     return render_template('agenda.html')
 
+
+@app.route('/salvar_medico', methods=['POST'])
+def salvar_medico():
+    
+  
+    nome = request.form.get('nome')
+    cpf = request.form.get('cpf')
+    rg = request.form.get('rg')
+    data_nas = request.form.get('data_nas')
+    cep = request.form.get('cep')
+    endereco = request.form.get('endereco')
+    uf = request.form.get('uf')
+    cidade = request.form.get('cidade')
+    complemento = request.form.get('complemento')
+    numero = request.form.get('numero')
+    telefone_01 = request.form.get('telefone_01')
+    telefone_02 = request.form.get('telefone_02')
+    telefone_03 = request.form.get('telefone_03')
+
+   
+    crm = request.form.get('crm')
+    flgativo = request.form.get('flgativo')
+    codespecialidade = request.form.get('especialidade')
+
+ 
+    pessoa = Pessoa(
+        nome=nome,
+        cpf=cpf,
+        rg=rg,
+        data_nas=data_nas,
+        cep=cep,
+        endereco=endereco,
+        uf=uf,
+        cidade=cidade,
+        complemento=complemento,
+        numero=numero,
+        telefone_01=telefone_01,
+        telefone_02=telefone_02,
+        telefone_03=telefone_03
+        ,tipo='medico'
+    )
+    valida,id= gravar_pessoa(pessoa)
+    if  valida==False:
+        return render_template("cadastromedicos.html", mensagem=f"Ocorreu uma falha no cadastro!")
+
+
+    # Obtenha o ID da nova pessoa para o relacionamento com o médico
+    
+
+    # Cria uma nova instância da classe Medico
+    medico = Medico(
+        crm=crm,
+        fk_pessoa_id=id,
+        flgativo=int(flgativo)
+        ,codespecialidade=codespecialidade
+    )
+    session_db = Session()
+    # Adiciona o novo médico à sessão
+    session_db.add(medico)
+
+    # Tenta salvar as alterações no banco de dados
+    try:
+        session_db.add(medico)
+        session_db.commit()
+       
+    except Exception as e:
+        session_db.rollback()  # Desfaz a sessão em caso de erro
+        app.logger.info(f" {e}")
+        return render_template("cadastromedicos.html", mensagem=f"Ocorreu uma falha no cadastro2!")
+
+    finally :
+        session_db.close
+    
+    return render_template("cadastromedicos.html", mensagem=f"Dados gravados com sucesso!")
+    
+
 @app.route('/salvar_paciente', methods=['POST'])
 def salvar_paciente():
-    session_db = Session()
+   
     # Recebe os dados enviados pelo formulário HTML
     
     nome = request.form['Nome']
@@ -109,24 +228,19 @@ def salvar_paciente():
     telefone_03 = request.form.get('Telefone_03', None)
    
     # Cria um objeto Pessoa com os dados recebidos
-    pessoa = Pessoa(nome=nome, rg=rg, cpf=cpf, data_nas=data_nas, endereco=endereco, numero=numero, complemento=complemento, cidade=cidade, uf=uf, cep=cep, telefone_01=telefone_01, telefone_02=telefone_02, telefone_03=telefone_03)
+    pessoa = Pessoa(nome=nome, rg=rg, cpf=cpf, data_nas=data_nas, endereco=endereco, numero=numero, complemento=complemento, cidade=cidade, uf=uf, cep=cep, telefone_01=telefone_01, telefone_02=telefone_02, telefone_03=telefone_03,tipo='paciente')
 
+    valida,id=gravar_pessoa(pessoa)
+    if valida:
+        return render_template("cadastropaciente.html", mensagem=f"Cadastro Realizado com sucesso!")
+    else :
+        return render_template("cadastropaciente.html", mensagem=f"Ocorreu uma falha no cadastro!")
+
+
+   
+
+   
     
-   
-
-    try:
-        session_db.add(pessoa)
-        session_db.commit()
-       
-    except:
-        session_db.rollback()
-    finally:
-        session_db.close()
-
-    # Redireciona para uma página de sucesso ou outra rota
-   
-    return render_template("cadastropaciente.html", mensagem=f"Cadastro Realizado com sucesso:")
-
 @app.route('/pesquisar_paciente', methods=['GET'])
 def pesquisar_paciente():
     session_db = Session()
