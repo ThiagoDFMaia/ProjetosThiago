@@ -35,10 +35,10 @@ CREATE TABLE IF NOT EXISTS `clinica`.`pessoa` (
   `rg` VARCHAR(12) NOT NULL,
   `cpf` VARCHAR(11) NOT NULL,
   `data_nas` DATE NOT NULL,
-  `tipo` ENUM('medico', 'paciente', 'usuario') NOT NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `cpf_UNIQUE` (`cpf` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 21
+AUTO_INCREMENT = 22
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -62,12 +62,14 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `clinica`.`paciente` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `tipoconvenio` CHAR(2) NOT NULL,
+  `tipoconvenio` ENUM('individual', 'coletivo', 'publico') NULL,
   `fk_pessoa_id` INT NOT NULL,
   `fk_convenio_id` INT NULL DEFAULT NULL,
+  `flgconvenio` BIT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_paciente_2` (`fk_pessoa_id` ASC) VISIBLE,
   INDEX `fk_paciente_3` (`fk_convenio_id` ASC) VISIBLE,
+  UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
   CONSTRAINT `fk_paciente_2`
     FOREIGN KEY (`fk_pessoa_id`)
     REFERENCES `clinica`.`pessoa` (`id`)
@@ -88,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`especialidade` (
   `descricao` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`codespecialidade`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 11
+AUTO_INCREMENT = 21
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -105,15 +107,14 @@ CREATE TABLE IF NOT EXISTS `clinica`.`medico` (
   PRIMARY KEY (`codmedico`),
   INDEX `fk_medico_2` (`fk_pessoa_id` ASC) VISIBLE,
   INDEX `fk_medico_especialidade1_idx` (`codespecialidade` ASC) VISIBLE,
+  UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
   CONSTRAINT `fk_medico_2`
     FOREIGN KEY (`fk_pessoa_id`)
     REFERENCES `clinica`.`pessoa` (`id`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_medico_especialidade1`
     FOREIGN KEY (`codespecialidade`)
-    REFERENCES `clinica`.`especialidade` (`codespecialidade`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    REFERENCES `clinica`.`especialidade` (`codespecialidade`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 7
 DEFAULT CHARACTER SET = utf8mb4
@@ -135,9 +136,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`escala` (
   INDEX `fk_escala_medico1_idx` (`codmedico` ASC) VISIBLE,
   CONSTRAINT `fk_escala_medico1`
     FOREIGN KEY (`codmedico`)
-    REFERENCES `clinica`.`medico` (`codmedico`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    REFERENCES `clinica`.`medico` (`codmedico`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -150,7 +149,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`agendamento` (
   `codigo` INT NOT NULL AUTO_INCREMENT,
   `dataagenda` DATE NOT NULL,
   `datacadastro` DATE NOT NULL,
-  `flgsituacao` CHAR(2) NOT NULL COMMENT '01- agendado\\\\n02- cancelado\\\\n03- presenca\\\\n04- falta',
+  `flgsituacao` CHAR(2) NOT NULL COMMENT '01- agendado\\\\\\\\n02- cancelado\\\\\\\\n03- presenca\\\\\\\\n04- falta',
   `fk_paciente_id` INT NULL DEFAULT NULL,
   `escala_id` INT NOT NULL,
   PRIMARY KEY (`codigo`),
@@ -162,9 +161,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`agendamento` (
     ON DELETE CASCADE,
   CONSTRAINT `fk_agendamento_escala1`
     FOREIGN KEY (`escala_id`)
-    REFERENCES `clinica`.`escala` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    REFERENCES `clinica`.`escala` (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -196,6 +193,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`usuario` (
   PRIMARY KEY (`id`),
   INDEX `fk_usuario_2` (`fk_pessoa_id` ASC) VISIBLE,
   INDEX `fk_usuario_3` (`fk_setor_id` ASC) VISIBLE,
+  UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
   CONSTRAINT `fk_usuario_2`
     FOREIGN KEY (`fk_pessoa_id`)
     REFERENCES `clinica`.`pessoa` (`id`)

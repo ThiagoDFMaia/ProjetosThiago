@@ -46,9 +46,11 @@ Base.prepare() # mapeando
 
 
 Pessoa =  Base.classes.pessoa
+Paciente= Base.classes.paciente
 Convenio= Base.classes.convenio
 Medico=Base.classes.medico
 Especialidade=Base.classes.especialidade
+
 
 # Relacionamentos entre tabelas
 #Medico.pessoa = relationship("Pessoa", backref="medicos", foreign_keys=[Medico.fk_pessoa_id])
@@ -80,20 +82,45 @@ def lista_convenios():
 
 def gravar_pessoa(pessoa):
     session_db = Session()
+    
     try:
-        session_db.add(pessoa)
-        session_db.commit()
-        id=pessoa.id
-       
+        # Verifica se já existe uma pessoa com o mesmo CPF
+        pessoa_existente = session_db.query(Pessoa).filter_by(cpf=pessoa.cpf).first()
+
+        if pessoa_existente:
+            # Atualiza os dados da pessoa existente
+            pessoa_existente.nome = pessoa.nome
+            pessoa_existente.endereco = pessoa.endereco
+            pessoa_existente.cep = pessoa.cep
+            pessoa_existente.uf = pessoa.uf
+            pessoa_existente.cidade = pessoa.cidade
+            pessoa_existente.complemento = pessoa.complemento
+            pessoa_existente.numero = pessoa.numero
+            pessoa_existente.telefone_01 = pessoa.telefone_01
+            pessoa_existente.telefone_02 = pessoa.telefone_02
+            pessoa_existente.telefone_03 = pessoa.telefone_03
+            pessoa_existente.rg = pessoa.rg
+            pessoa_existente.data_nas = pessoa.data_nas
+   
+            
+            # Salva as alterações
+            session_db.commit()
+            id = pessoa_existente.id  # Retorna o ID da pessoa existente
+        else:
+            # Se não existir, adiciona uma nova pessoa
+            session_db.add(pessoa)
+            session_db.commit()
+            id = pessoa.id  # Retorna o ID da nova pessoa
+
     except Exception as e:
         session_db.rollback()  # Desfaz a sessão em caso de erro
-        app.logger.info(f" {e}")
-       
-        return False,id
+        app.logger.info(f"Erro ao gravar pessoa: {e}")
+        return False, None
     finally:
         session_db.close()
 
-    return True,id
+    return True, id
+
 
 
 @app.route("/",methods=['GET'])
@@ -104,8 +131,8 @@ def index():
 def cadastro_paciente():
     
     convenios=lista_convenios()
-    app.logger.info(f'abrindo cadastro{len(convenios)}')
-    return render_template('cadastropaciente.html',lista_convenios=convenios,quantidade=convenios)
+    app.logger.info(f"iniciando{len(convenios)}")
+    return render_template('cadastropaciente.html',lista_convenios=convenios)
 
 @app.route('/cadastro_convenio',methods=['GET'])
 def cadastro_convenio():
@@ -170,7 +197,7 @@ def salvar_medico():
         telefone_01=telefone_01,
         telefone_02=telefone_02,
         telefone_03=telefone_03
-        ,tipo='medico'
+      
     )
     valida,id= gravar_pessoa(pessoa)
     if  valida==False:
@@ -210,13 +237,10 @@ def salvar_medico():
 @app.route('/salvar_paciente', methods=['POST'])
 def salvar_paciente():
    
-    # Recebe os dados enviados pelo formulário HTML
-    
     nome = request.form['Nome']
     rg = request.form['RG']
     cpf = request.form['CPF'].replace('.', '').replace('-', '')
-   
-    data_nas=request.form['Data_Nascimento']
+    data_nas = request.form['Data_Nascimento']
     endereco = request.form['Endereco']
     numero = request.form.get('numero', '')
     complemento = request.form.get('Complemento', '')
@@ -226,17 +250,62 @@ def salvar_paciente():
     telefone_01 = request.form['Telefone_01']
     telefone_02 = request.form.get('Telefone_02', None)
     telefone_03 = request.form.get('Telefone_03', None)
-   
-    # Cria um objeto Pessoa com os dados recebidos
-    pessoa = Pessoa(nome=nome, rg=rg, cpf=cpf, data_nas=data_nas, endereco=endereco, numero=numero, complemento=complemento, cidade=cidade, uf=uf, cep=cep, telefone_01=telefone_01, telefone_02=telefone_02, telefone_03=telefone_03,tipo='paciente')
+
+    # Verifica se o paciente possui convênio
+    possui_convenio = request.form.get('possui_convenio')
+    flgconvenio = True if possui_convenio == 'sim' else False
+
+    # Se possuir convênio, captura o tipo e o convênio selecionado
+    if flgconvenio:
+        tipoconvenio = request.form['tipoconvenio']
+        convenio_id = request.form['convenio']
+    else:
+        tipoconvenio = None
+        convenio_id = None
+
+    pessoa = Pessoa(
+        nome=nome,
+        cpf=cpf,
+        rg=rg,
+        data_nas=data_nas,
+        cep=cep,
+        endereco=endereco,
+        uf=uf,
+        cidade=cidade,
+        complemento=complemento,
+        numero=numero,
+        telefone_01=telefone_01,
+        telefone_02=telefone_02,
+        telefone_03=telefone_03
+       
+    )
 
     valida,id=gravar_pessoa(pessoa)
-    if valida:
-        return render_template("cadastropaciente.html", mensagem=f"Cadastro Realizado com sucesso!")
-    else :
+    if valida==False:
+        return render_template("cadastropaciente.html", mensagem=f"Ocorreu uma falha no cadastro!")
+  
+    paciente = Paciente(
+        fk_pessoa_id=id,
+        tipoconvenio=tipoconvenio,
+        fk_convenio_id=convenio_id,
+        flgconvenio=flgconvenio
+       
+    )
+    session_db=Session()
+  
+    try:
+        session_db.add(paciente)
+        session_db.commit()
+       
+    except Exception as e:
+        session_db.rollback()  # Desfaz a sessão em caso de erro
+        app.logger.info(f" {e}")
         return render_template("cadastropaciente.html", mensagem=f"Ocorreu uma falha no cadastro!")
 
-
+    finally :
+        session_db.close
+    
+    return render_template("cadastropaciente.html", mensagem=f"Dados gravados com sucesso!")
    
 
    
@@ -257,6 +326,35 @@ def pesquisar_paciente():
             "telefone_03":paciente.telefone_03
         })
     return jsonify({"error": "Paciente não encontrado."}), 404
+
+@app.route('/buscar_pessoa/<cpf>', methods=['GET'])
+def buscar_pessoa(cpf):
+    session_db = Session()
+    
+    try:
+        pessoa = session_db.query(Pessoa).filter_by(cpf=cpf).first()
+        if pessoa:
+            # Retorna os dados da pessoa como um dicionário
+            return jsonify({
+                'nome': pessoa.nome,
+                'rg': pessoa.rg,
+                'data_nas': pessoa.data_nas.strftime('%Y-%m-%d'),  # Formata a data
+                'cep': pessoa.cep,
+                'uf': pessoa.uf,
+                'cidade': pessoa.cidade,
+                'endereco': pessoa.endereco,
+                'complemento': pessoa.complemento,
+                'numero': pessoa.numero,
+                'telefone_01': pessoa.telefone_01,
+                'telefone_02': pessoa.telefone_02,
+                'telefone_03': pessoa.telefone_03
+            })
+        else:
+            return jsonify(None), 404  # Retorna 404 se a pessoa não for encontrada
+    except Exception as e:
+           app.logger.info(f" {e}")
+    finally:
+        session_db.close()
 
 @app.route('/salvar_convenio',methods=['POST'])
 def salvar_convenio():

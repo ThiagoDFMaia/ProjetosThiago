@@ -9,3 +9,6 @@ INSERT INTO especialidade (descricao) VALUES
 ('Psiquiatria'),
 ('Endocrinologia'),
 ('Gastroenterologia');
+
+INSERT INTO convenio (cnpj, descricao)
+VALUES ('12345678000190', 'Unimed');

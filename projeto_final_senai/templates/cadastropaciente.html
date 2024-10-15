@@ -9,12 +9,23 @@
     <!-- Seção Dados Pessoais e Documentos -->
     <div class="section">
         <h2>Dados Pessoais e Documentos</h2>
+
+        <label for="CPF">CPF:</label><br>
+        <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" oninput="formatarCPF(this)" onblur="buscarPessoaPorCPF(this.value)"><br>
+        
+
+        <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
+            <div style="background: white; margin: 15% auto; padding: 20px; width: 300px; text-align: center; border-radius: 5px;">
+                <p>CPF já cadastrado. Deseja preencher os dados?</p>
+                <button id="btn-sim">Sim</button>
+                <button id="btn-nao">Não</button>
+            </div>
+        </div>
+
         <label for="Nome">Nome:</label><br>
         <input type="text" id="Nome" name="Nome" required style="width: 100%;"><br>
 
-        <label for="CPF">CPF:</label><br>
-        <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"><br>
-
+        
         <label for="RG">RG:</label><br>
         <input type="text" id="RG" name="RG" required><br>
 
@@ -75,7 +86,16 @@
                 {% for convenio in lista_convenios %}
                     <option value="{{ convenio.id }}">{{ convenio.descricao }}</option>
                 {% endfor %}
-            </select>
+            </select><br>
+
+            <!-- Campo Tipo de Convênio -->
+            <label for="tipoconvenio">Tipo de Convênio:</label><br>
+            <select id="tipoconvenio" name="tipoconvenio" style="width: 100%;">
+                <option value="" disabled selected>-- Selecione o tipo de convênio --</option>
+                <option value="individual">Individual</option>
+                <option value="coletivo">Coletivo</option>
+                <option value="publico">Público</option>
+            </select><br>
         </div>
     </div>
 
@@ -89,7 +109,87 @@
 <script>
     function toggleConvenio(value) {
         const convenioSection = document.getElementById('convenio_section');
-        convenioSection.style.display = value === 'sim' ? 'block' : 'none';
+        const convenioSelect = document.getElementById('convenio');
+        const tipoConvenioSelect = document.getElementById('tipoconvenio');
+
+        if (value === 'sim') {
+            convenioSection.style.display = 'block';
+            convenioSelect.setAttribute('required', 'true');
+            tipoConvenioSelect.setAttribute('required', 'true');
+        } else {
+            convenioSection.style.display = 'none';
+            convenioSelect.removeAttribute('required');
+            tipoConvenioSelect.removeAttribute('required');
+        }
     }
+
+    function formatarCPF(cpfField) {
+        // Remove caracteres não numéricos
+        let cpf = cpfField.value.replace(/\D/g, '');
+
+        // Adiciona a formatação
+        if (cpf.length <= 11) {
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o primeiro ponto
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o segundo ponto
+            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Adiciona o traço
+        }
+
+        cpfField.value = cpf; // Atualiza o campo com o CPF formatado
+    }
+
+    function buscarPessoaPorCPF(cpf) {
+    // Remove caracteres especiais do CPF
+    cpf = cpf.replace(/\D/g, '');
+
+    if (cpf.length === 11) {
+        fetch(`/buscar_pessoa/${cpf}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    // Exibe o modal informando que o CPF já está cadastrado
+                    document.getElementById('modal').style.display = 'flex';
+                    
+                        // Configura o botão "Sim"
+                        document.getElementById('btn-sim').onclick = () => {
+                        preencherDadosCallback(); // Preenche os dados
+                        document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                    };
+
+                    // Configura o botão "Não"
+                    document.getElementById('btn-nao').onclick = () => {
+                        limparCPF(); // Limpa o campo CPF
+                        document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                    };
+
+                    // Função para preencher dados
+                    const preencherDadosCallback = () => {
+                        document.getElementById('Nome').value = data.nome;
+                        document.getElementById('RG').value = data.rg;
+                        document.getElementById('Data_Nascimento').value = data.data_nas;
+                        document.getElementById('CEP').value = data.cep;
+                        document.getElementById('UF').value = data.uf;
+                        document.getElementById('Cidade').value = data.cidade;
+                        document.getElementById('Endereco').value = data.endereco;
+                        document.getElementById('Complemento').value = data.complemento;
+                        document.getElementById('numero').value = data.numero;
+                        document.getElementById('Telefone_01').value = data.telefone_01;
+                        document.getElementById('Telefone_02').value = data.telefone_02;
+                        document.getElementById('Telefone_03').value = data.telefone_03;
+                    };
+
+                    
+                } else {
+                    alert("CPF não encontrado.");
+                }
+            })
+            .catch(error => console.error('Erro ao buscar dados:', error));
+    }
+}
+
+function limparCPF() {
+    document.getElementById('CPF').value = ''; // Limpa o campo CPF
+}
+
+
 </script>
 {% endblock %}

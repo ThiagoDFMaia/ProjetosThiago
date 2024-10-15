@@ -1,5 +1,5 @@
 class Pessoa:
-    def __init__(self, nome, rg, cpf,data_nas, endereco, numero, complemento, cidade, uf, cep, telefone_01, telefone_02, telefone_03,tipo):
+    def __init__(self, nome, rg, cpf,data_nas, endereco, numero, complemento, cidade, uf, cep, telefone_01, telefone_02, telefone_03):
         self.nome = nome
         self.rg = rg
         self.cpf = cpf
@@ -13,7 +13,7 @@ class Pessoa:
         self.telefone_01 = telefone_01
         self.telefone_02 = telefone_02
         self.telefone_03 = telefone_03
-        self.tipo=tipo
+ 
 
     def to_dict(self):
         return {
@@ -27,11 +27,35 @@ class Pessoa:
            
         }
 
+class Paciente (Pessoa):
+    def __init__(self,fk_pessoa_id, nome, endereco, cep, uf, cidade, complemento, numero, telefone_01, telefone_02, telefone_03, rg, cpf, data_nas, tipoconvenio, fk_convenio_id, flgconvenio):
+        # Inicializa os atributos herdados da classe Pessoa
+        super().__init__(nome=nome,endereco= endereco,cep= cep,uf= uf,cidade= cidade,complemento= complemento,numero= numero,telefone_01= telefone_01,telefone_02= telefone_02, telefone_03=telefone_03,rg= rg,cpf= cpf,data_nas= data_nas)
+        self.fk_pessoa_id=fk_pessoa_id
+        self.flgconvenio=flgconvenio
+        self.tipoconvenio=tipoconvenio
+        self.fk_convenio_id=fk_convenio_id
+
+    def retornar_dados_pessoais(self):
+        return Pessoa(nome=self.nome,
+                endereco=self.endereco,
+                cep=self.cep,
+                uf=self.uf,
+                cidade=self.cidade,
+                complemento=self.complemento,
+                numero=self.numero,
+                telefone_01=self.telefone_01,
+                telefone_02=self.telefone_02,
+                telefone_03=self.telefone_03,
+                rg=self.rg,
+                cpf=self.cpf,
+                data_nas=self.data_nas,
+                tipo=self.tipo)
 
 class Medico(Pessoa):
-    def __init__(self, id_pessoa, nome, endereco, cep, uf, cidade, complemento, numero, telefone_01, telefone_02, telefone_03, rg, cpf, data_nas, codmedico, crm, flgativo,tipo,codespecialidade):
+    def __init__(self, id_pessoa, nome, endereco, cep, uf, cidade, complemento, numero, telefone_01, telefone_02, telefone_03, rg, cpf, data_nas, codmedico, crm, flgativo,codespecialidade):
         # Inicializa os atributos herdados da classe Pessoa
-        super().__init__(nome=nome,endereco= endereco,cep= cep,uf= uf,cidade= cidade,complemento= complemento,numero= numero,telefone_01= telefone_01,telefone_02= telefone_02, telefone_03=telefone_03,rg= rg,cpf= cpf,data_nas= data_nas,tipo=tipo)
+        super().__init__(nome=nome,endereco= endereco,cep= cep,uf= uf,cidade= cidade,complemento= complemento,numero= numero,telefone_01= telefone_01,telefone_02= telefone_02, telefone_03=telefone_03,rg= rg,cpf= cpf,data_nas= data_nas)
         
         # Atributos específicos de Medico
         self.codmedico = codmedico
