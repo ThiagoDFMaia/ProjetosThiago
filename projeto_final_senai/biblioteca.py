@@ -1,5 +1,5 @@
 class Pessoa:
-    def __init__(self, nome, rg, cpf,data_nas, endereco, numero, complemento, cidade, uf, cep, telefone_01, telefone_02, telefone_03):
+    def __init__(self,nome, rg, cpf,data_nas, endereco, numero, complemento, cidade, uf, cep, telefone_01, telefone_02, telefone_03,id=None):
         self.nome = nome
         self.rg = rg
         self.cpf = cpf
@@ -13,6 +13,7 @@ class Pessoa:
         self.telefone_01 = telefone_01
         self.telefone_02 = telefone_02
         self.telefone_03 = telefone_03
+        self.id=id
  
 
     def to_dict(self):

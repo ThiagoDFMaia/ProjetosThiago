@@ -142,7 +142,7 @@
     cpf = cpf.replace(/\D/g, '');
 
     if (cpf.length === 11) {
-        fetch(`/buscar_pessoa/${cpf}`)
+        fetch(`/pesquisar_paciente/${cpf}`)
             .then(response => response.json())
             .then(data => {
                 if (data) {
@@ -163,6 +163,7 @@
 
                     // Função para preencher dados
                     const preencherDadosCallback = () => {
+                       
                         document.getElementById('Nome').value = data.nome;
                         document.getElementById('RG').value = data.rg;
                         document.getElementById('Data_Nascimento').value = data.data_nas;
@@ -175,12 +176,24 @@
                         document.getElementById('Telefone_01').value = data.telefone_01;
                         document.getElementById('Telefone_02').value = data.telefone_02;
                         document.getElementById('Telefone_03').value = data.telefone_03;
+
+                        
+                       // Ajustar o campo "possui_convenio" para selecionar "Sim" ou "Não" com base no valor de flgconvenio
+                        document.getElementById('possui_convenio').value = data.flgconvenio === 1 ? 'sim' : 'nao';
+
+                        // Exibir a seção de convênio se flgconvenio for 1 (Sim)
+                        toggleConvenio(data.flgconvenio === 1 ? 'sim' : 'nao');
+
+                        // Ajustar o campo "convenio" para selecionar o convênio correspondente
+                        if (data.flgconvenio === 1) {
+                            document.getElementById('tipoconvenio').value = data.tipoconvenio;
+                        }
+
+                        
                     };
 
                     
-                } else {
-                    alert("CPF não encontrado.");
-                }
+                } 
             })
             .catch(error => console.error('Erro ao buscar dados:', error));
     }

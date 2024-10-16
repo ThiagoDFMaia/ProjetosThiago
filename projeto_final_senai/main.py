@@ -164,10 +164,10 @@ def salvar_medico():
     
   
     nome = request.form.get('nome')
-    cpf = request.form.get('cpf')
-    rg = request.form.get('rg')
+    cpf = request.form.get('cpf').replace('.', '').replace('-', '')
+    rg = request.form.get('rg').replace('.', '').replace('-', '')
     data_nas = request.form.get('data_nas')
-    cep = request.form.get('cep')
+    cep = request.form.get('cep').replace('.', '').replace('-', '')
     endereco = request.form.get('endereco')
     uf = request.form.get('uf')
     cidade = request.form.get('cidade')
@@ -226,7 +226,7 @@ def salvar_medico():
     except Exception as e:
         session_db.rollback()  # Desfaz a sessão em caso de erro
         app.logger.info(f" {e}")
-        return render_template("cadastromedicos.html", mensagem=f"Ocorreu uma falha no cadastro2!")
+        return render_template("cadastromedicos.html", mensagem=f"Ocorreu uma falha no cadastro!")
 
     finally :
         session_db.close
@@ -238,7 +238,7 @@ def salvar_medico():
 def salvar_paciente():
    
     nome = request.form['Nome']
-    rg = request.form['RG']
+    rg = request.form['RG'].replace('.', '').replace('-', '')
     cpf = request.form['CPF'].replace('.', '').replace('-', '')
     data_nas = request.form['Data_Nascimento']
     endereco = request.form['Endereco']
@@ -246,7 +246,7 @@ def salvar_paciente():
     complemento = request.form.get('Complemento', '')
     cidade = request.form['Cidade']
     uf = request.form['UF']
-    cep = request.form['CEP']
+    cep = request.form['CEP'].replace('.', '').replace('-', '')
     telefone_01 = request.form['Telefone_01']
     telefone_02 = request.form.get('Telefone_02', None)
     telefone_03 = request.form.get('Telefone_03', None)
@@ -310,21 +310,48 @@ def salvar_paciente():
 
    
     
-@app.route('/pesquisar_paciente', methods=['GET'])
-def pesquisar_paciente():
-    session_db = Session()
-    cpf = request.args.get('cpf')
-    paciente =  session_db.query(Pessoa).filter(Pessoa.cpf == cpf).one_or_none()
+@app.route('/pesquisar_paciente/<cpf>', methods=['GET'])
+def pesquisar_paciente(cpf):
+    session_db=Session()
+    #cpf=request.args.get('cpf')
+    pessoa=session_db.query(Pessoa).filter(Pessoa.cpf == cpf).one_or_none()
   
+    paciente=session_db.query(Paciente).filter(Paciente.fk_pessoa_id == pessoa.id).one_or_none()
+   
     if paciente:
         return jsonify({
-           "nome": paciente.nome,
-            "cpf": paciente.cpf,
-            "data_nas":paciente.data_nas,
-            "telefone_01":paciente.telefone_01,
-            "telefone_02":paciente.telefone_02,
-            "telefone_03":paciente.telefone_03
+            'nome': pessoa.nome,
+            'rg': pessoa.rg,
+            'data_nas': pessoa.data_nas.strftime('%Y-%m-%d'),  # Formata a data
+            'cep': pessoa.cep,
+            'uf': pessoa.uf,
+            'cidade': pessoa.cidade,
+            'endereco': pessoa.endereco,
+            'complemento': pessoa.complemento,
+            'numero': pessoa.numero,
+            'telefone_01': pessoa.telefone_01,
+            'telefone_02': pessoa.telefone_02,
+            'telefone_03': pessoa.telefone_03,
+            "flgconvenio":paciente.flgconvenio,
+            "tipoconvenio":paciente.tipoconvenio
         })
+    elif pessoa:
+        return jsonify({
+           'nome': pessoa.nome,
+            'rg': pessoa.rg,
+            'data_nas': pessoa.data_nas.strftime('%Y-%m-%d'),  # Formata a data
+            'cep': pessoa.cep,
+            'uf': pessoa.uf,
+            'cidade': pessoa.cidade,
+            'endereco': pessoa.endereco,
+            'complemento': pessoa.complemento,
+            'numero': pessoa.numero,
+            'telefone_01': pessoa.telefone_01,
+            'telefone_02': pessoa.telefone_02,
+            'telefone_03': pessoa.telefone_03,
+            "flgconvenio":None,
+            "tipoconvenio":None})
+    
     return jsonify({"error": "Paciente não encontrado."}), 404
 
 @app.route('/buscar_pessoa/<cpf>', methods=['GET'])

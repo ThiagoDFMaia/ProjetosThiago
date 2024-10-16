@@ -7,15 +7,26 @@
 <h3>Cadastro de Médicos</h3>
 <form action="/salvar_medico" method="POST">
     <h4>Dados Pessoais</h4>
+
+
+    <div class="form-group">
+        <label for="cpf">CPF:</label>
+        <input type="text" id="cpf" name="cpf" class="form-control" maxlength="14" placeholder="CPF" required  oninput="formatarCPF(this)" onblur="buscarPessoaPorCPF(this.value)">
+    </div>
+
+    <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
+        <div style="background: white; margin: 15% auto; padding: 20px; width: 300px; text-align: center; border-radius: 5px;">
+            <p>CPF já cadastrado. Deseja preencher os dados?</p>
+            <button id="btn-sim">Sim</button>
+            <button id="btn-nao">Não</button>
+        </div>
+    </div>
     <div class="form-group">
         <label for="nome">Nome Completo:</label>
         <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome Completo" required>
     </div>
 
-    <div class="form-group">
-        <label for="cpf">CPF:</label>
-        <input type="text" id="cpf" name="cpf" class="form-control" maxlength="11" placeholder="CPF" required>
-    </div>
+   
     <div class="form-group">
         <label for="rg">RG:</label>
         <input type="text" id="rg" name="rg" class="form-control" placeholder="RG" required>
@@ -100,4 +111,75 @@
     <h4 class="text-danger text-center">{{ mensagem }}</h4>
 {% endif %}
 <hr>
+
+<script>
+   
+
+    function formatarCPF(cpfField) {
+        // Remove caracteres não numéricos
+        let cpf = cpfField.value.replace(/\D/g, '');
+
+        // Adiciona a formatação
+        if (cpf.length <= 11) {
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o primeiro ponto
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o segundo ponto
+            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Adiciona o traço
+        }
+
+        cpfField.value = cpf; // Atualiza o campo com o CPF formatado
+    }
+
+    function buscarPessoaPorCPF(cpf) {
+    // Remove caracteres especiais do CPF
+    cpf = cpf.replace(/\D/g, '');
+
+    if (cpf.length === 11) {
+        fetch(`/buscar_pessoa/${cpf}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    // Exibe o modal informando que o CPF já está cadastrado
+                    document.getElementById('modal').style.display = 'flex';
+                    
+                        // Configura o botão "Sim"
+                        document.getElementById('btn-sim').onclick = () => {
+                        preencherDadosCallback(); // Preenche os dados
+                        document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                    };
+
+                    // Configura o botão "Não"
+                    document.getElementById('btn-nao').onclick = () => {
+                        limparCPF(); // Limpa o campo CPF
+                        document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                    };
+
+                    // Função para preencher dados
+                    const preencherDadosCallback = () => {
+                        document.getElementById('nome').value = data.nome;
+                        document.getElementById('rg').value = data.rg;
+                        document.getElementById('data_nas').value = data.data_nas;
+                        document.getElementById('cep').value = data.cep;
+                        document.getElementById('uf').value = data.uf;
+                        document.getElementById('cidade').value = data.cidade;
+                        document.getElementById('endereco').value = data.endereco;
+                        document.getElementById('complemento').value = data.complemento;
+                        document.getElementById('numero').value = data.numero;
+                        document.getElementById('telefone_01').value = data.telefone_01;
+                        document.getElementById('telefone_02').value = data.telefone_02;
+                        document.getElementById('telefone_03').value = data.telefone_03;
+                    };
+
+                    
+                } 
+            })
+            .catch(error => console.error('Erro ao buscar dados:', error));
+    }
+}
+
+function limparCPF() {
+    document.getElementById('cpf').value = ''; // Limpa o campo CPF
+}
+
+
+</script>
 {% endblock %}
