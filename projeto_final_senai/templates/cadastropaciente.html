@@ -11,7 +11,7 @@
         <h2>Dados Pessoais e Documentos</h2>
 
         <label for="CPF">CPF:</label><br>
-        <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" oninput="formatarCPF(this)" onblur="buscarPessoaPorCPF(this.value)"><br>
+        <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" maxlength="14" oninput="formatarCPF(this)" onblur="buscarPessoaPorCPF(this.value)"><br>
         
 
         <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
@@ -27,7 +27,7 @@
 
         
         <label for="RG">RG:</label><br>
-        <input type="text" id="RG" name="RG" required><br>
+        <input type="text" id="RG" maxlength="12" name="RG" required><br>
 
         <label for="Data_Nascimento">Data de Nascimento:</label><br>
         <input type="date" id="Data_Nascimento" name="Data_Nascimento" required style="width: 100%;"><br>
@@ -38,7 +38,7 @@
         <h2>Endereço</h2>
 
         <label for="CEP">CEP:</label><br>
-        <input type="text" id="CEP" name="CEP" required placeholder="00.000-000" pattern="\d{2}\.\d{3}-\d{3}" oninput="formatarCEP(this)" style="width: 20%;"><br>
+        <input type="text" id="CEP" name="CEP" required placeholder="00.000-000" maxlength="10" pattern="\d{2}\.\d{3}-\d{3}" oninput="formatarCEP(this)" style="width: 20%;"><br>
 
         <label for="UF">UF:</label><br>
         <input type="text" id="UF" name="UF" maxlength="2" required style="width: 50%;"><br>
@@ -147,7 +147,7 @@
 
     // Atualiza o campo com o CEP formatado
     cepField.value = cep;
-}
+    }
 
     function buscarPessoaPorCPF(cpf) {
     // Remove caracteres especiais do CPF

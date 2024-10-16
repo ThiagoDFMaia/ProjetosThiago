@@ -15,7 +15,7 @@ app.secret_key = "df6e83eb7983f75b2561c875cbebc40ab9900624b22c6040f5831ecd6faaea
 
 
 user = 'root'
-password = urllib.parse.quote_plus('123456')
+password = urllib.parse.quote_plus('senai@123')
 host = 'localhost'
 database = 'clinica'
 # ==========================================
@@ -157,10 +157,11 @@ def gravar_medico(medico):
 
         medico_existente = session_db.query(Medico).filter_by(fk_pessoa_id=medico.fk_pessoa_id).first()
 
-        if medico:
+        if medico_existente:
             medico_existente.crm=medico.crm
             medico_existente.flgativo=medico.flgativo
             medico_existente.codespecialidade=medico.codespecialidade
+            medico_existente.crm=medico.crm
             session_db.commit()
             id = medico_existente.codmedico  # Retorna o ID da pessoa existente
         else:

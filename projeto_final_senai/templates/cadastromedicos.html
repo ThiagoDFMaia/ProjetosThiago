@@ -29,7 +29,7 @@
    
     <div class="form-group">
         <label for="rg">RG:</label>
-        <input type="text" id="rg" name="rg" class="form-control" placeholder="RG" required>
+        <input type="text" id="rg" name="rg" maxlength="12" class="form-control" placeholder="RG" required>
     </div>
     
     <div class="form-group">
@@ -37,8 +37,11 @@
         <input type="date" id="data_nas" name="data_nas" class="form-control" required>
     </div>
     <div class="form-group">
-        <label for="cep">CEP:</label>
-        <input type="text" id="cep" name="cep" class="form-control" placeholder="CEP" required>
+
+        <label for="cep">CEP:</label><br>
+        <input type="text" id="cep" name="cep" required placeholder="00.000-000" maxlength="10" pattern="\d{2}\.\d{3}-\d{3}" oninput="formatarCEP(this)" style="width: 20%;"><br>
+
+
     </div>
     <div class="form-group">
         <label for="endereco">Endereço:</label>
@@ -128,6 +131,18 @@
 
         cpfField.value = cpf; // Atualiza o campo com o CPF formatado
     }
+    function formatarCEP(cepField) {
+        // Remove todos os caracteres não numéricos
+        let cep = cepField.value.replace(/\D/g, '');
+    
+        // Verifica se o CEP tem 8 dígitos antes de aplicar a formatação
+        if (cep.length === 8) {
+            cep = cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3'); // Formata como XX.XXX-XXX
+        }
+    
+        // Atualiza o campo com o CEP formatado
+        cepField.value = cep;
+        }
 
     function buscarPessoaPorCPF(cpf) {
     // Remove caracteres especiais do CPF
@@ -156,7 +171,7 @@
 
                         // Função para preencher dados
                         const preencherDadosCallback = () => {
-                            document.getElementById('nome').value = data.nome+data.flgativo;
+                            document.getElementById('nome').value = data.nome;
                             document.getElementById('rg').value = data.rg;
                             document.getElementById('data_nas').value = data.data_nas;
                             document.getElementById('cep').value = data.cep;
@@ -164,7 +179,7 @@
                             document.getElementById('cidade').value = data.cidade;
                             document.getElementById('endereco').value = data.endereco;
                             document.getElementById('complemento').value = data.complemento;
-                            document.getElementById('numero').value = data.numero + data.flgativo;
+                            document.getElementById('numero').value = data.numero ;
                             document.getElementById('telefone_01').value = data.telefone_01;
                             document.getElementById('telefone_02').value = data.telefone_02;
                             document.getElementById('telefone_03').value = data.telefone_03;
