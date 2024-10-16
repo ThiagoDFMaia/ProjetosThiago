@@ -121,6 +121,156 @@ def gravar_pessoa(pessoa):
 
     return True, id
 
+def gravar_paciente(paciente):
+    session_db = Session()
+    
+    try:
+
+        paciente_existente = session_db.query(Paciente).filter_by(fk_pessoa_id=paciente.fk_pessoa_id).first()
+
+        if paciente_existente:
+
+            paciente_existente.tipoconvenio=paciente.tipoconvenio
+            paciente_existente.flgconvenio=paciente.flgconvenio
+ 
+            session_db.commit()
+            id = paciente_existente.id  # Retorna o ID da pessoa existente
+        else:
+         
+            session_db.add(paciente)
+            session_db.commit()
+            id = paciente.id  
+
+    except Exception as e:
+        session_db.rollback()  # Desfaz a sessão em caso de erro
+        app.logger.info(f"Erro ao gravar o paciente: {e}")
+        return False, None
+    finally:
+        session_db.close()
+
+    return True, id
+
+def gravar_medico(medico):
+    session_db = Session()
+    
+    try:
+
+        medico_existente = session_db.query(Medico).filter_by(fk_pessoa_id=medico.fk_pessoa_id).first()
+
+        if medico:
+            medico_existente.crm=medico.crm
+            medico_existente.flgativo=medico.flgativo
+            medico_existente.codespecialidade=medico.codespecialidade
+            session_db.commit()
+            id = medico_existente.codmedico  # Retorna o ID da pessoa existente
+        else:
+            session_db.add(medico)
+            session_db.commit()
+            id = medico.codmedico  
+
+    except Exception as e:
+        session_db.rollback()  # Desfaz a sessão em caso de erro
+        app.logger.info(f"Erro ao gravar o medico: {e}")
+        return False, None
+    finally:
+        session_db.close()
+
+    return True, id
+
+def pesquisar_dados_paciente(cpf):
+    session_db=Session()
+    
+    pessoa=session_db.query(Pessoa).filter(Pessoa.cpf == cpf).one_or_none()
+    if pessoa:
+        paciente=session_db.query(Paciente).filter(Paciente.fk_pessoa_id == pessoa.id).one_or_none()
+    else:
+        return jsonify({"flgencontrou": False})
+
+    if paciente:
+        return jsonify({
+            'flgencontrou':True,
+            'nome': pessoa.nome,
+            'rg': pessoa.rg,
+            'data_nas': pessoa.data_nas.strftime('%Y-%m-%d'),  # Formata a data
+            'cep': pessoa.cep,
+            'uf': pessoa.uf,
+            'cidade': pessoa.cidade,
+            'endereco': pessoa.endereco,
+            'complemento': pessoa.complemento,
+            'numero': pessoa.numero,
+            'telefone_01': pessoa.telefone_01,
+            'telefone_02': pessoa.telefone_02,
+            'telefone_03': pessoa.telefone_03,
+            "flgconvenio":paciente.flgconvenio,
+            "tipoconvenio":paciente.tipoconvenio,
+            "fk_convenio_id":paciente.fk_convenio_id
+        })
+    elif pessoa:
+        return jsonify({
+           'flgencontrou':True,
+           'nome': pessoa.nome,
+            'rg': pessoa.rg,
+            'data_nas': pessoa.data_nas.strftime('%Y-%m-%d'),  # Formata a data
+            'cep': pessoa.cep,
+            'uf': pessoa.uf,
+            'cidade': pessoa.cidade,
+            'endereco': pessoa.endereco,
+            'complemento': pessoa.complemento,
+            'numero': pessoa.numero,
+            'telefone_01': pessoa.telefone_01,
+            'telefone_02': pessoa.telefone_02,
+            'telefone_03': pessoa.telefone_03,
+            "flgconvenio":None,
+            "tipoconvenio":None,
+            "fk_convenio_id":None})
+
+def pesquisar_dados_medico(cpf):
+    session_db=Session()
+
+    pessoa=session_db.query(Pessoa).filter(Pessoa.cpf == cpf).one_or_none()
+    if pessoa:
+        medico=session_db.query(Medico).filter(Medico.fk_pessoa_id == pessoa.id).one_or_none()
+    else:
+        return jsonify({"flgencontrou": False})
+    if medico:
+        app.logger.info(f" {medico.flgativo}")
+        return jsonify({
+            "flgencontrou": True,
+            'nome': pessoa.nome,
+            'rg': pessoa.rg,
+            'data_nas': pessoa.data_nas.strftime('%Y-%m-%d'),  # Formata a data
+            'cep': pessoa.cep,
+            'uf': pessoa.uf,
+            'cidade': pessoa.cidade,
+            'endereco': pessoa.endereco,
+            'complemento': pessoa.complemento,
+            'numero': pessoa.numero,
+            'telefone_01': pessoa.telefone_01,
+            'telefone_02': pessoa.telefone_02,
+            'telefone_03': pessoa.telefone_03,
+            "crm":medico.crm,
+            "flgativo":medico.flgativo,
+            "codespecialidade":medico.codespecialidade
+        })
+    elif pessoa:
+        return jsonify({
+           "flgencontrou": True,
+           'nome': pessoa.nome,
+            'rg': pessoa.rg,
+            'data_nas': pessoa.data_nas.strftime('%Y-%m-%d'),  # Formata a data
+            'cep': pessoa.cep,
+            'uf': pessoa.uf,
+            'cidade': pessoa.cidade,
+            'endereco': pessoa.endereco,
+            'complemento': pessoa.complemento,
+            'numero': pessoa.numero,
+            'telefone_01': pessoa.telefone_01,
+            'telefone_02': pessoa.telefone_02,
+            'telefone_03': pessoa.telefone_03,
+            "crm":None,
+            "flgativo":None,
+            "codespecialidade":None})    
+    
 
 
 @app.route("/",methods=['GET'])
@@ -131,7 +281,7 @@ def index():
 def cadastro_paciente():
     
     convenios=lista_convenios()
-    app.logger.info(f"iniciando{len(convenios)}")
+
     return render_template('cadastropaciente.html',lista_convenios=convenios)
 
 @app.route('/cadastro_convenio',methods=['GET'])
@@ -203,10 +353,6 @@ def salvar_medico():
     if  valida==False:
         return render_template("cadastromedicos.html", mensagem=f"Ocorreu uma falha no cadastro!")
 
-
-    # Obtenha o ID da nova pessoa para o relacionamento com o médico
-    
-
     # Cria uma nova instância da classe Medico
     medico = Medico(
         crm=crm,
@@ -214,22 +360,11 @@ def salvar_medico():
         flgativo=int(flgativo)
         ,codespecialidade=codespecialidade
     )
-    session_db = Session()
-    # Adiciona o novo médico à sessão
-    session_db.add(medico)
 
-    # Tenta salvar as alterações no banco de dados
-    try:
-        session_db.add(medico)
-        session_db.commit()
-       
-    except Exception as e:
-        session_db.rollback()  # Desfaz a sessão em caso de erro
-        app.logger.info(f" {e}")
-        return render_template("cadastromedicos.html", mensagem=f"Ocorreu uma falha no cadastro!")
-
-    finally :
-        session_db.close
+    valida,id=gravar_medico(medico)
+    
+    if valida==False:
+        return render_template("cadastromedicos.html", mensagem=f"Ocorreu uma falha no cadastro do medico!")
     
     return render_template("cadastromedicos.html", mensagem=f"Dados gravados com sucesso!")
     
@@ -291,19 +426,13 @@ def salvar_paciente():
         flgconvenio=flgconvenio
        
     )
-    session_db=Session()
-  
-    try:
-        session_db.add(paciente)
-        session_db.commit()
-       
-    except Exception as e:
-        session_db.rollback()  # Desfaz a sessão em caso de erro
-        app.logger.info(f" {e}")
-        return render_template("cadastropaciente.html", mensagem=f"Ocorreu uma falha no cadastro!")
 
-    finally :
-        session_db.close
+    valida,id=gravar_paciente(paciente)
+ 
+    if valida==False:
+        return render_template("cadastropaciente.html", mensagem=f"Ocorreu uma falha no cadastro!")
+  
+   
     
     return render_template("cadastropaciente.html", mensagem=f"Dados gravados com sucesso!")
    
@@ -312,47 +441,15 @@ def salvar_paciente():
     
 @app.route('/pesquisar_paciente/<cpf>', methods=['GET'])
 def pesquisar_paciente(cpf):
-    session_db=Session()
-    #cpf=request.args.get('cpf')
-    pessoa=session_db.query(Pessoa).filter(Pessoa.cpf == cpf).one_or_none()
-  
-    paciente=session_db.query(Paciente).filter(Paciente.fk_pessoa_id == pessoa.id).one_or_none()
-   
-    if paciente:
-        return jsonify({
-            'nome': pessoa.nome,
-            'rg': pessoa.rg,
-            'data_nas': pessoa.data_nas.strftime('%Y-%m-%d'),  # Formata a data
-            'cep': pessoa.cep,
-            'uf': pessoa.uf,
-            'cidade': pessoa.cidade,
-            'endereco': pessoa.endereco,
-            'complemento': pessoa.complemento,
-            'numero': pessoa.numero,
-            'telefone_01': pessoa.telefone_01,
-            'telefone_02': pessoa.telefone_02,
-            'telefone_03': pessoa.telefone_03,
-            "flgconvenio":paciente.flgconvenio,
-            "tipoconvenio":paciente.tipoconvenio
-        })
-    elif pessoa:
-        return jsonify({
-           'nome': pessoa.nome,
-            'rg': pessoa.rg,
-            'data_nas': pessoa.data_nas.strftime('%Y-%m-%d'),  # Formata a data
-            'cep': pessoa.cep,
-            'uf': pessoa.uf,
-            'cidade': pessoa.cidade,
-            'endereco': pessoa.endereco,
-            'complemento': pessoa.complemento,
-            'numero': pessoa.numero,
-            'telefone_01': pessoa.telefone_01,
-            'telefone_02': pessoa.telefone_02,
-            'telefone_03': pessoa.telefone_03,
-            "flgconvenio":None,
-            "tipoconvenio":None})
+    return pesquisar_dados_paciente(cpf)
+
+
+@app.route('/pesquisar_medico/<cpf>', methods=['GET'])
+def pesquisar_medico(cpf):
+    return pesquisar_dados_medico(cpf)
     
-    return jsonify({"error": "Paciente não encontrado."}), 404
+ 
+
 
 @app.route('/buscar_pessoa/<cpf>', methods=['GET'])
 def buscar_pessoa(cpf):

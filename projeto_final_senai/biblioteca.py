@@ -16,53 +16,26 @@ class Pessoa:
         self.id=id
  
 
-    def to_dict(self):
-        return {
-            "nome": self.nome,
-            "cpf": self.cpf,
-            "data_nas":self.data_nas,
-            "telefone_o1":self.telefone_01,
-            "telefone_02":self.telefone_02,
-            "telefone_03":self.telefone_03
 
-           
-        }
-
-class Paciente (Pessoa):
-    def __init__(self,fk_pessoa_id, nome, endereco, cep, uf, cidade, complemento, numero, telefone_01, telefone_02, telefone_03, rg, cpf, data_nas, tipoconvenio, fk_convenio_id, flgconvenio):
+class Paciente ():
+    def __init__(self,fk_pessoa_id, tipoconvenio, fk_convenio_id, flgconvenio):
         # Inicializa os atributos herdados da classe Pessoa
-        super().__init__(nome=nome,endereco= endereco,cep= cep,uf= uf,cidade= cidade,complemento= complemento,numero= numero,telefone_01= telefone_01,telefone_02= telefone_02, telefone_03=telefone_03,rg= rg,cpf= cpf,data_nas= data_nas)
+       
         self.fk_pessoa_id=fk_pessoa_id
         self.flgconvenio=flgconvenio
         self.tipoconvenio=tipoconvenio
         self.fk_convenio_id=fk_convenio_id
 
-    def retornar_dados_pessoais(self):
-        return Pessoa(nome=self.nome,
-                endereco=self.endereco,
-                cep=self.cep,
-                uf=self.uf,
-                cidade=self.cidade,
-                complemento=self.complemento,
-                numero=self.numero,
-                telefone_01=self.telefone_01,
-                telefone_02=self.telefone_02,
-                telefone_03=self.telefone_03,
-                rg=self.rg,
-                cpf=self.cpf,
-                data_nas=self.data_nas,
-                tipo=self.tipo)
 
-class Medico(Pessoa):
-    def __init__(self, id_pessoa, nome, endereco, cep, uf, cidade, complemento, numero, telefone_01, telefone_02, telefone_03, rg, cpf, data_nas, codmedico, crm, flgativo,codespecialidade):
-        # Inicializa os atributos herdados da classe Pessoa
-        super().__init__(nome=nome,endereco= endereco,cep= cep,uf= uf,cidade= cidade,complemento= complemento,numero= numero,telefone_01= telefone_01,telefone_02= telefone_02, telefone_03=telefone_03,rg= rg,cpf= cpf,data_nas= data_nas)
-        
+
+class Medico():
+    def __init__(self, fk_pessoa_id,codmedico, crm, flgativo,codespecialidade):
+          
         # Atributos específicos de Medico
         self.codmedico = codmedico
         self.crm = crm
         self.flgativo = flgativo
-        self.id_pessoa=id_pessoa
+        self.fk_pessoa_id=fk_pessoa_id
         self.codespecialidade=codespecialidade
 
 

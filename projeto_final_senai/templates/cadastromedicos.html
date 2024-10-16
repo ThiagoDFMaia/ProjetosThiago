@@ -5,7 +5,7 @@
 {% block content %}
 
 <h3>Cadastro de Médicos</h3>
-<form action="/salvar_medico" method="POST">
+<form id="form-medico" action="/salvar_medico" method="POST">
     <h4>Dados Pessoais</h4>
 
 
@@ -105,7 +105,7 @@
         </select>
     </div>
 
-    <button type="submit" class="btn btn-primary">Cadastrar Médico</button>
+    <button type="submit" id="btn-salvar" class="btn btn-primary">Cadastrar Médico</button>
 </form>
 {% if mensagem %}
     <h4 class="text-danger text-center">{{ mensagem }}</h4>
@@ -134,47 +134,68 @@
     cpf = cpf.replace(/\D/g, '');
 
     if (cpf.length === 11) {
-        fetch(`/buscar_pessoa/${cpf}`)
+        fetch(`/pesquisar_medico/${cpf}`)
             .then(response => response.json())
             .then(data => {
                 if (data) {
+                    if(data.flgencontrou){
                     // Exibe o modal informando que o CPF já está cadastrado
-                    document.getElementById('modal').style.display = 'flex';
-                    
-                        // Configura o botão "Sim"
-                        document.getElementById('btn-sim').onclick = () => {
-                        preencherDadosCallback(); // Preenche os dados
-                        document.getElementById('modal').style.display = 'none'; // Fecha o modal
-                    };
+                        document.getElementById('modal').style.display = 'flex';
+                        
+                            // Configura o botão "Sim"
+                            document.getElementById('btn-sim').onclick = () => {
+                            preencherDadosCallback(); // Preenche os dados
+                            document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                        };
 
-                    // Configura o botão "Não"
-                    document.getElementById('btn-nao').onclick = () => {
-                        limparCPF(); // Limpa o campo CPF
-                        document.getElementById('modal').style.display = 'none'; // Fecha o modal
-                    };
+                        // Configura o botão "Não"
+                        document.getElementById('btn-nao').onclick = () => {
+                            limparCPF(); // Limpa o campo CPF
+                            document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                        };
 
-                    // Função para preencher dados
-                    const preencherDadosCallback = () => {
-                        document.getElementById('nome').value = data.nome;
-                        document.getElementById('rg').value = data.rg;
-                        document.getElementById('data_nas').value = data.data_nas;
-                        document.getElementById('cep').value = data.cep;
-                        document.getElementById('uf').value = data.uf;
-                        document.getElementById('cidade').value = data.cidade;
-                        document.getElementById('endereco').value = data.endereco;
-                        document.getElementById('complemento').value = data.complemento;
-                        document.getElementById('numero').value = data.numero;
-                        document.getElementById('telefone_01').value = data.telefone_01;
-                        document.getElementById('telefone_02').value = data.telefone_02;
-                        document.getElementById('telefone_03').value = data.telefone_03;
-                    };
+                        // Função para preencher dados
+                        const preencherDadosCallback = () => {
+                            document.getElementById('nome').value = data.nome+data.flgativo;
+                            document.getElementById('rg').value = data.rg;
+                            document.getElementById('data_nas').value = data.data_nas;
+                            document.getElementById('cep').value = data.cep;
+                            document.getElementById('uf').value = data.uf;
+                            document.getElementById('cidade').value = data.cidade;
+                            document.getElementById('endereco').value = data.endereco;
+                            document.getElementById('complemento').value = data.complemento;
+                            document.getElementById('numero').value = data.numero + data.flgativo;
+                            document.getElementById('telefone_01').value = data.telefone_01;
+                            document.getElementById('telefone_02').value = data.telefone_02;
+                            document.getElementById('telefone_03').value = data.telefone_03;
 
-                    
+                            document.getElementById('crm').value = data.crm;
+                            document.getElementById('crm').value = data.crm;
+                            
+                            document.getElementById('flgativo').value = data.flgativo ;
+                            
+
+                            document.getElementById('especialidade').value = data.codespecialidade;
+                            
+                        };
+
+                    }
                 } 
             })
             .catch(error => console.error('Erro ao buscar dados:', error));
     }
 }
+
+// Prevenção do envio automático do formulário
+document.getElementById('form-medico').addEventListener('submit', function(event) {
+    event.preventDefault(); // Previne envio automático
+});
+
+// Envio controlado pelo botão de salvar
+document.getElementById('btn-salvar').onclick = function() {
+    document.getElementById('form-medico').submit(); // Agora o envio é controlado
+};
+
 
 function limparCPF() {
     document.getElementById('cpf').value = ''; // Limpa o campo CPF

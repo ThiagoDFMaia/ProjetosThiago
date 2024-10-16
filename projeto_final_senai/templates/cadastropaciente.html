@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1>Cadastro de Pacientes</h1>
-<form action="/salvar_paciente" method="POST">
+<form id="form-paciente" action="/salvar_paciente" method="POST">
 
     <!-- Seção Dados Pessoais e Documentos -->
     <div class="section">
@@ -38,7 +38,7 @@
         <h2>Endereço</h2>
 
         <label for="CEP">CEP:</label><br>
-        <input type="text" id="CEP" name="CEP" required placeholder="00.000-000" pattern="\d{2}\.\d{3}-\d{3}" style="width: 20%;"><br>
+        <input type="text" id="CEP" name="CEP" required placeholder="00.000-000" pattern="\d{2}\.\d{3}-\d{3}" oninput="formatarCEP(this)" style="width: 20%;"><br>
 
         <label for="UF">UF:</label><br>
         <input type="text" id="UF" name="UF" maxlength="2" required style="width: 50%;"><br>
@@ -100,7 +100,7 @@
     </div>
 
     <!-- Botão Salvar -->
-    <button type="submit" style="width: 100%;">Salvar</button>
+    <button type="submit" id="btn-salvar" style="width: 100%;">Salvar</button>
 </form>
 {% if mensagem %}
     <h4 class="text-danger text-center">{{ mensagem }}</h4>
@@ -136,6 +136,18 @@
 
         cpfField.value = cpf; // Atualiza o campo com o CPF formatado
     }
+    function formatarCEP(cepField) {
+    // Remove todos os caracteres não numéricos
+    let cep = cepField.value.replace(/\D/g, '');
+
+    // Verifica se o CEP tem 8 dígitos antes de aplicar a formatação
+    if (cep.length === 8) {
+        cep = cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3'); // Formata como XX.XXX-XXX
+    }
+
+    // Atualiza o campo com o CEP formatado
+    cepField.value = cep;
+}
 
     function buscarPessoaPorCPF(cpf) {
     // Remove caracteres especiais do CPF
@@ -146,58 +158,72 @@
             .then(response => response.json())
             .then(data => {
                 if (data) {
-                    // Exibe o modal informando que o CPF já está cadastrado
-                    document.getElementById('modal').style.display = 'flex';
-                    
-                        // Configura o botão "Sim"
-                        document.getElementById('btn-sim').onclick = () => {
-                        preencherDadosCallback(); // Preenche os dados
-                        document.getElementById('modal').style.display = 'none'; // Fecha o modal
-                    };
-
-                    // Configura o botão "Não"
-                    document.getElementById('btn-nao').onclick = () => {
-                        limparCPF(); // Limpa o campo CPF
-                        document.getElementById('modal').style.display = 'none'; // Fecha o modal
-                    };
-
-                    // Função para preencher dados
-                    const preencherDadosCallback = () => {
-                       
-                        document.getElementById('Nome').value = data.nome;
-                        document.getElementById('RG').value = data.rg;
-                        document.getElementById('Data_Nascimento').value = data.data_nas;
-                        document.getElementById('CEP').value = data.cep;
-                        document.getElementById('UF').value = data.uf;
-                        document.getElementById('Cidade').value = data.cidade;
-                        document.getElementById('Endereco').value = data.endereco;
-                        document.getElementById('Complemento').value = data.complemento;
-                        document.getElementById('numero').value = data.numero;
-                        document.getElementById('Telefone_01').value = data.telefone_01;
-                        document.getElementById('Telefone_02').value = data.telefone_02;
-                        document.getElementById('Telefone_03').value = data.telefone_03;
+                    if(data.flgencontrou){
 
                         
-                       // Ajustar o campo "possui_convenio" para selecionar "Sim" ou "Não" com base no valor de flgconvenio
-                        document.getElementById('possui_convenio').value = data.flgconvenio === 1 ? 'sim' : 'nao';
-
-                        // Exibir a seção de convênio se flgconvenio for 1 (Sim)
-                        toggleConvenio(data.flgconvenio === 1 ? 'sim' : 'nao');
-
-                        // Ajustar o campo "convenio" para selecionar o convênio correspondente
-                        if (data.flgconvenio === 1) {
-                            document.getElementById('tipoconvenio').value = data.tipoconvenio;
-                        }
-
+                        // Exibe o modal informando que o CPF já está cadastrado
+                        document.getElementById('modal').style.display = 'flex';
                         
-                    };
+                            // Configura o botão "Sim"
+                            document.getElementById('btn-sim').onclick = () => {
+                            preencherDadosCallback(); // Preenche os dados
+                            document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                        };
 
-                    
+                        // Configura o botão "Não"
+                        document.getElementById('btn-nao').onclick = () => {
+                            limparCPF(); // Limpa o campo CPF
+                            document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                        };
+
+                        // Função para preencher dados
+                        const preencherDadosCallback = () => {
+                        
+                            document.getElementById('Nome').value = data.nome;
+                            document.getElementById('RG').value = data.rg;
+                            document.getElementById('Data_Nascimento').value = data.data_nas;
+                            document.getElementById('CEP').value = data.cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3');;
+                            document.getElementById('UF').value = data.uf;
+                            document.getElementById('Cidade').value = data.cidade;
+                            document.getElementById('Endereco').value = data.endereco;
+                            document.getElementById('Complemento').value = data.complemento;
+                            document.getElementById('numero').value = data.numero;
+                            document.getElementById('Telefone_01').value = data.telefone_01;
+                            document.getElementById('Telefone_02').value = data.telefone_02;
+                            document.getElementById('Telefone_03').value = data.telefone_03;
+
+                            
+                        // Ajustar o campo "possui_convenio" para selecionar "Sim" ou "Não" com base no valor de flgconvenio
+                            document.getElementById('possui_convenio').value = data.flgconvenio === 1 ? 'sim' : 'nao';
+
+                            // Exibir a seção de convênio se flgconvenio for 1 (Sim)
+                            toggleConvenio(data.flgconvenio === 1 ? 'sim' : 'nao');
+
+                            // Ajustar o campo "convenio" para selecionar o convênio correspondente
+                            if (data.flgconvenio === 1) {
+                                document.getElementById('tipoconvenio').value = data.tipoconvenio;
+                                document.getElementById('convenio').value = data.fk_convenio_id;
+                            
+                            }
+
+                            
+                        };
+
+                    }
                 } 
             })
             .catch(error => console.error('Erro ao buscar dados:', error));
     }
 }
+// Prevenção do envio automático do formulário
+document.getElementById('form-paciente').addEventListener('submit', function(event) {
+    event.preventDefault(); // Previne envio automático
+});
+
+// Envio controlado pelo botão de salvar
+document.getElementById('btn-salvar').onclick = function() {
+    document.getElementById('form-paciente').submit(); // Agora o envio é controlado
+};
 
 function limparCPF() {
     document.getElementById('CPF').value = ''; // Limpa o campo CPF
