@@ -1,11 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Cadastro de Escala{% endblock %}
+{% block title %}Agendamento de Pacientes{% endblock %}
 
 {% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário com Vagas</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- FullCalendar CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css">
+    <style>
+        /* Ajusta o layout do calendário */
+        #calendario {
+            width: 50%;
+            margin-right: 2%;
+            float: left;
+        }
 
-<h3>Cadastro de Escala</h3>
+        /* Estilização da tabela de vagas */
+        .vagas_liberadas {
+            width:35%;
+            float: left;
+        }
+
+        .vagas_liberadas table {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .vagas_liberadas th, .vagas-liberadas td {
+            text-align: center;
+            padding: 10px;
+        }
+       
+    </style>
+</head>
+<body>
 <form action="/cadastro_escala" method="POST" id="form-medico">
+    
+    <div class="form-group">
+        <label for="codmedico">Código Do Médico:</label>
+        <input type="text" id="codmedico" name="codmedico" class="form-control" placeholder="codmedico" disabled>
+    </div>
     <div class="form-group">   
         <label for="CPF">CPF:</label><br>
         <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" maxlength="14" oninput="formatarCPF(this)" onblur="buscarPessoaPorCPF(this.value)"><br>
@@ -24,19 +62,17 @@
         <input type="text" id="especialidade" name="especialidade" class="form-control" disabled>
     </div>
 
-    <hr>
-    <div style="display: flex; justify-content: space-between;">
-        <!-- FullCalendar Div -->
-        <div id="calendario" style="width: 50%;"></div>
     
-        <!-- Tabela de Vagas -->
-        <div id="vagas" style="width: 30%;">
-            <h2>Vagas Liberadas</h2>
+    <div class="container" style="display: none;">
+        <div id="calendario"></div>
+    
+        <div class="vagas_liberadas">
+            <h3>Vagas Liberadas</h3>
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th style="width: 30%;">Turno</th>
-                        <th style="width: 20%;">Quantidade de Vagas</th>
+                        <th>Turno</th>
+                        <th>Quantidade de Vagas</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,13 +92,20 @@
             </table>
         </div>
     </div>
-    
     <!-- Botão de Cadastrar Escala -->
   
 </form>
 
-<!-- FullCalendar Script -->
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<!-- FullCalendar JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/lang/pt-br.js"></script>
 
 <script>
     // Função de formatação do CPF
@@ -92,9 +135,9 @@
                         document.getElementById('nome').value = data.nome;
                         document.getElementById('especialidade').value = data.especialidade;
                         document.getElementById('crm').value = data.crm;
-
+                        document.getElementById('codmedico').value = data.codmedico;
                         // Pode ativar a busca das escalas aqui se estiver tudo ok
-                         buscarEscalasPorMedico(data.codmedico);
+                        buscarEscalasPorMedico(data.codmedico);
                     } else {
                         alert('Médico não encontrado');
                     }
@@ -108,57 +151,101 @@
         }
     }
 
-    function buscarEscalasPorMedico(cpf) {
-            fetch(`/buscar_escalas/${cpf}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.escalas.forEach(escala => {
-                        // Marcar as datas de disponibilidade no calendário
-                        calendar.addEvent({
-                            title: 'Disponível',
-                            start: dataFormatada,
-                            allDay: true,
-                            backgroundColor: '#ff0000',
-                            borderColor: '#28a745',
-                            color: '#28a745' // Tenta forçar a cor do texto e do fundo
-                        });
-                    });
-                })
-                .catch(error => console.error('Erro ao buscar escalas:', error));
-    }
+    // Variável global para armazenar as datas das escalas
+    let datasEscalas = [];
 
-    // Função para buscar as vagas por data
-    function buscarVagasPorData(data) {
-        fetch(`/buscar_vagas_por_data/${data}`)
+    function buscarEscalasPorMedico(codmedico) {
+        fetch(`/buscar_escalas/${codmedico}`)
             .then(response => response.json())
             .then(data => {
-                document.getElementById('vagas_manha').textContent = data.vagasManha;
-                document.getElementById('vagas_tarde').textContent = data.vagasTarde;
-                document.getElementById('vagas_noite').textContent = data.vagasNoite;
+                // Limpa a lista de datas de escalas antes de adicionar novas
+                datasEscalas = []; 
+                alert('ok')
+                data.datas.forEach(escala => {
+                    // Adiciona a data da escala à lista
+                    test= new Date(escala.split(',')[1].trim())
+                    datasEscalas.push(test.toISOString().split('T')[0]);
+                    
+               
+                 
+                    $('#calendario').fullCalendar('renderEvent', {
+                        
+                        title: 'Disponível',
+                        start: escala.data, // Formatar a data corretamente
+                        allDay: true,
+                        backgroundColor: '#ff0000',
+                        borderColor: '#28a745',
+                        color: '#28a745' // Força a cor do texto e do fundo
+                    }, true);
+                 
+                    abriraescala()
+                  
+                    $('.container').show(); 
+                });
+                
+                // Atualiza o calendário para aplicar as novas cores
+                $('#calendario').fullCalendar('rerenderEvents');
             })
-            .catch(error => console.error('Erro ao buscar vagas:', error));
+            .catch(error => console.error('Erro ao buscar escalas:', error));
     }
 
-    // Quando o documento é carregado
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendario');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
+    function abriraescala() {
+        $('#calendario').fullCalendar({
             locale: 'pt-br',
-            headerToolbar: {
+            header: {
                 left: 'prev,next',
                 center: 'title',
-                right: 'today'
+                right: 'month today'
             },
             buttonText: {
                 month: 'Mês',
                 today: 'Hoje'
             },
-            dateClick: function(info) {
-                buscarVagasPorData(info.dateStr); // Função para buscar vagas ao clicar na data
+            monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+            dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+            selectable: true,
+            dayClick: function(date, jsEvent, view) {
+                var codmedico = document.getElementById('codmedico').value;
+                buscarVagasPorData(date.format('YYYY-MM-DD'), codmedico);
+            },
+            dayRender: function(date, cell) {
+                for (let i = 0; i < datasEscalas.length; i++) {
+                    if (date.format('YYYY-MM-DD') === datasEscalas[i]) {
+                        cell.css("background-color", "green"); // Aplica a cor desejada
+                       
+                        break; // Sai do loop após encontrar a data
             }
+        }
+    }
         });
-        calendar.render();
-    });
+
+        function buscarVagasPorData(data, codmedico) {
+            // Faz a requisição para a rota que busca as vagas por data e médico
+            fetch(`/buscar_vagas_por_data/${data}/${codmedico}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.message) {
+                        document.getElementById('vagas_manha').textContent = data.vagasManha || '0'; 
+                        document.getElementById('vagas_tarde').textContent = data.vagasTarde || '0'; 
+                        document.getElementById('vagas_noite').textContent = data.vagasNoite || '0'; 
+                    } else {
+                        document.getElementById('vagas_manha').textContent = '0'; 
+                        document.getElementById('vagas_tarde').textContent = '0'; 
+                        document.getElementById('vagas_noite').textContent = '0'; 
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar vagas:', error);
+                    alert('Ocorreu um erro ao buscar as vagas.');
+                });
+        }
+    };
+
+   
 </script>
+
+
+
+</body>
+</html>
 {% endblock %}

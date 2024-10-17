@@ -540,6 +540,33 @@ def buscar_escalas(codmedico):
     finally:
         session_db.close()
 
+@app.route('/buscar_vagas_por_data/<data>/<codmedico>', methods=['GET'])
+def buscar_vagas_por_data(data, codmedico):
+    session_db = Session()
+
+    try:
+        # Consulta para buscar a escala do médico para a data específica
+        escala = session_db.query(Escala).filter_by(codmedico=codmedico, data=data).first()
+        
+        if escala:
+            # Log para verificar as vagas encontradas
+            app.logger.info(f"Vagas encontradas para {data}: Manhã: {escala.quantvagasmanha}, Tarde: {escala.quantvagastarde}, Noite: {escala.quantvagasnoite}")
+            
+            # Retorna as vagas para os diferentes turnos
+            return jsonify({
+                'vagasManha': escala.quantvagasmanha,
+                'vagasTarde': escala.quantvagastarde,
+                'vagasNoite': escala.quantvagasnoite
+                
+            })
+        else:
+            # Se nenhuma escala for encontrada, retorna 404
+            return jsonify({'message': 'Escala não encontrada para essa data'})
+    except Exception as e:
+        app.logger.error(f"Erro ao buscar vagas: {e}")
+        return jsonify({'message': 'Erro ao buscar vagas'}), 500
+    finally:
+        session_db.close()
 
 
 
