@@ -15,7 +15,7 @@ app.secret_key = "df6e83eb7983f75b2561c875cbebc40ab9900624b22c6040f5831ecd6faaea
 
 
 user = 'root'
-password = urllib.parse.quote_plus('123456')
+password = urllib.parse.quote_plus('senai@123')
 host = 'localhost'
 database = 'clinica'
 # ==========================================

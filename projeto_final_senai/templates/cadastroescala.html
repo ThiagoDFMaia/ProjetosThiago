@@ -66,30 +66,41 @@
     <div class="container" style="display: none;">
         <div id="calendario"></div>
     
-        <div class="vagas_liberadas">
+        <div class="container mt-5 vagas_liberadas">
             <h3>Vagas Liberadas</h3>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Turno</th>
-                        <th>Quantidade de Vagas</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Manhã</td>
-                        <td id="vagas_manha">--</td>
-                    </tr>
-                    <tr>
-                        <td>Tarde</td>
-                        <td id="vagas_tarde">--</td>
-                    </tr>
-                    <tr>
-                        <td>Noite</td>
-                        <td id="vagas_noite">--</td>
-                    </tr>
-                </tbody>
-            </table>
+            <form id="formVagas">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Turno</th>
+                            <th>Quantidade de Vagas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Manhã</td>
+                            <td>
+                                <input type="number" id="vagas_manha_input" min="0" required />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tarde</td>
+                            <td>
+                                <input type="number" id="vagas_tarde_input"  min="0" required />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Noite</td>
+                            <td>
+                                <input type="number" id="vagas_noite_input"  min="0" required />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary">Salvar Escala</button>
+            </form>
+            
+       
         </div>
     </div>
     <!-- Botão de Cadastrar Escala -->
@@ -179,6 +190,7 @@
                     }, true);
                  
                     abriraescala()
+                     // Atualiza o calendário
                   
                     $('.container').show(); 
                 });
@@ -225,13 +237,13 @@
                 .then(response => response.json())
                 .then(data => {
                     if (!data.message) {
-                        document.getElementById('vagas_manha').textContent = data.vagasManha || '0'; 
-                        document.getElementById('vagas_tarde').textContent = data.vagasTarde || '0'; 
-                        document.getElementById('vagas_noite').textContent = data.vagasNoite || '0'; 
+                        document.getElementById('vagas_manha_input').value = data.vagasManha || '0'; 
+                        document.getElementById('vagas_tarde_input').value = data.vagasTarde || '0'; 
+                        document.getElementById('vagas_noite_input').value = data.vagasNoite || '0'; 
                     } else {
-                        document.getElementById('vagas_manha').textContent = '0'; 
-                        document.getElementById('vagas_tarde').textContent = '0'; 
-                        document.getElementById('vagas_noite').textContent = '0'; 
+                        document.getElementById('vagas_manha_input').value = '0'; 
+                        document.getElementById('vagas_tarde_input').value = '0'; 
+                        document.getElementById('vagas_noite_input').value = '0'; 
                     }
                 })
                 .catch(error => {
@@ -241,7 +253,7 @@
         }
     };
 
-   
+
 </script>
 
 

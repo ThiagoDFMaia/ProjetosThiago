@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vagas Liberadas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5 vagas_liberadas">
+        <h3>Vagas Liberadas</h3>
+        <form id="formVagas">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Turno</th>
+                        <th>Quantidade de Vagas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Manhã</td>
+                        <td>
+                            <input type="number" id="vagas_manha_input" min="0" required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tarde</td>
+                        <td>
+                            <input type="number" id="vagas_tarde_input"  min="0" required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Noite</td>
+                        <td>
+                            <input type="number" id="vagas_noite_input"  min="0" required />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary">Salvar Escala</button>
+        </form>
+        
+   
+    </div>
+
+    <script>
+        document.getElementById('formVagas').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita o envio padrão do formulário
+
+            const manha = document.getElementById('vagas_manha_input').value;
+            const tarde = document.getElementById('vagas_tarde_input').value;
+            const noite = document.getElementById('vagas_noite_input').value;
+
+            // Atualiza a tabela com as vagas salvas
+            document.getElementById('vagas_manha').innerText = manha;
+            document.getElementById('vagas_tarde').innerText = tarde;
+            document.getElementById('vagas_noite').innerText = noite;
+
+            // Limpa os inputs após salvar
+            document.getElementById('formVagas').reset();
+        });
+    </script>
+</body>
+</html>
