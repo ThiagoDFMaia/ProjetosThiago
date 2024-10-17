@@ -62,3 +62,12 @@ class Especialidade:
     def __init__(self,descricao,codespecialidade):
         self.descricao=descricao
         self.codespecialidade=codespecialidade
+
+class Escala:
+    def __init__(self,data,quantvagasmanha,quantvagastarde,quantvagasnoite,flaativo,codmedico):
+        self.data=data
+        self.quantvagasmanha=quantvagasmanha
+        self.quantvagastarde=quantvagastarde
+        self.quantvagasnoite=quantvagasnoite
+        self.flaativo=flaativo
+        self.codmedico=codmedico

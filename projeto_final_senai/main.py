@@ -15,7 +15,7 @@ app.secret_key = "df6e83eb7983f75b2561c875cbebc40ab9900624b22c6040f5831ecd6faaea
 
 
 user = 'root'
-password = urllib.parse.quote_plus('senai@123')
+password = urllib.parse.quote_plus('123456')
 host = 'localhost'
 database = 'clinica'
 # ==========================================
@@ -50,6 +50,7 @@ Paciente= Base.classes.paciente
 Convenio= Base.classes.convenio
 Medico=Base.classes.medico
 Especialidade=Base.classes.especialidade
+Escala=Base.classes.escala
 
 
 # Relacionamentos entre tabelas
@@ -237,6 +238,7 @@ def pesquisar_dados_medico(cpf):
         app.logger.info(f" {medico.flgativo}")
         return jsonify({
             "flgencontrou": True,
+            'codmedico':medico.codmedico,
             'nome': pessoa.nome,
             'rg': pessoa.rg,
             'data_nas': pessoa.data_nas.strftime('%Y-%m-%d'),  # Formata a data
@@ -271,7 +273,33 @@ def pesquisar_dados_medico(cpf):
             "crm":None,
             "flgativo":None,
             "codespecialidade":None})    
+
+def pesquisar_dados_medico_escala(cpf):
+    session_db=Session()
+
+    pessoa=session_db.query(Pessoa).filter(Pessoa.cpf == cpf).one_or_none()
+    if pessoa:
+        medico=session_db.query(Medico).filter(Medico.fk_pessoa_id == pessoa.id).one_or_none()
+  
+    else:
+
+        return jsonify({"flgencontrou": False})
+    if medico:
+       
+        especialidade=session_db.query(Especialidade).filter(Especialidade.codespecialidade == medico.codespecialidade).one_or_none()
+     
+        return jsonify({
+            'flgencontrou': True,
+            'codmedico':medico.codmedico,
+            'nome': pessoa.nome,
+            'crm':medico.crm,
+            'flgativo':medico.flgativo,
+            'codespecialidade':medico.codespecialidade,
+            'especialidade':especialidade.descricao
+        })
+    else:
     
+        return jsonify({"flgencontrou": False})
 
 
 @app.route("/",methods=['GET'])
@@ -444,6 +472,9 @@ def salvar_paciente():
 def pesquisar_paciente(cpf):
     return pesquisar_dados_paciente(cpf)
 
+@app.route('/pesquisar_medico_cadescala/<cpf>',methods=['GET'])
+def pesquisar_medico_cadescala(cpf):
+    return pesquisar_dados_medico_escala(cpf)
 
 @app.route('/pesquisar_medico/<cpf>', methods=['GET'])
 def pesquisar_medico(cpf):
@@ -480,6 +511,38 @@ def buscar_pessoa(cpf):
            app.logger.info(f" {e}")
     finally:
         session_db.close()
+
+
+@app.route('/buscar_escalas/<codmedico>',methods=['GET'])
+def buscar_escalas(codmedico):
+    session_db = Session()
+
+    try:
+        # Consulta para buscar todas as escalas do médico
+        escalas = session_db.query(Escala).filter_by(codmedico=codmedico).all()
+        
+        if escalas:
+            # Extrai apenas as datas das escalas e cria uma lista
+            datas = [escala.data for escala in escalas]
+            
+            # Log para verificar as datas encontradas
+            app.logger.info(f"Escalas encontradas: {datas}")
+            
+            # Retorna as datas das escalas em formato de lista
+            return jsonify({
+                'datas': datas
+            })
+        else:
+            # Se nenhuma escala for encontrada, retorna 404
+            return jsonify(None), 404
+    except Exception as e:
+        app.logger.error(f"Erro ao buscar escalas: {e}")
+    finally:
+        session_db.close()
+
+
+
+
 
 @app.route('/salvar_convenio',methods=['POST'])
 def salvar_convenio():

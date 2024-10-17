@@ -3,42 +3,162 @@
 {% block title %}Cadastro de Escala{% endblock %}
 
 {% block content %}
+
 <h3>Cadastro de Escala</h3>
-<form action="/cadastro_escala" method="POST">
-    <div class="form-group">
-        <label for="data">Data:</label>
-        <input type="date" id="data" name="data" class="form-control" required>
+<form action="/cadastro_escala" method="POST" id="form-medico">
+    <div class="form-group">   
+        <label for="CPF">CPF:</label><br>
+        <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" maxlength="14" oninput="formatarCPF(this)" onblur="buscarPessoaPorCPF(this.value)"><br>
     </div>
     
     <div class="form-group">
-        <label for="quantvagasmanha">Quantidade de Vagas (Manhã):</label>
-        <input type="number" id="quantvagasmanha" name="quantvagasmanha" class="form-control" placeholder="Vagas Manhã" required>
+        <label for="nome">Nome Do Médico:</label>
+        <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome Completo" disabled>
     </div>
-    
     <div class="form-group">
-        <label for="quantvagastarde">Quantidade de Vagas (Tarde):</label>
-        <input type="number" id="quantvagastarde" name="quantvagastarde" class="form-control" placeholder="Vagas Tarde" required>
+        <label for="crm">Crm Do Médico:</label>
+        <input type="text" id="crm" name="crm" class="form-control" disabled>
     </div>
-    
     <div class="form-group">
-        <label for="quantvagasnoite">Quantidade de Vagas (Noite):</label>
-        <input type="number" id="quantvagasnoite" name="quantvagasnoite" class="form-control" placeholder="Vagas Noite" required>
-    </div>
-    
-    <div class="form-group">
-        <label for="fk_clinica_codclinica">Código da Clínica (fk_clinica_codclinica):</label>
-        <input type="number" id="fk_clinica_codclinica" name="fk_clinica_codclinica" class="form-control" placeholder="Código da Clínica" required>
-    </div>
-    
-    <div class="form-group">
-        <label for="flaativo">Ativo:</label>
-        <select id="flaativo" name="flaativo" class="form-control" required>
-            <option value="1">Sim</option>
-            <option value="0">Não</option>
-        </select>
+        <label for="especialidade">Especialidade Do Médico:</label>
+        <input type="text" id="especialidade" name="especialidade" class="form-control" disabled>
     </div>
 
-    <button type="submit" class="btn btn-primary">Cadastrar Escala</button>
+    <hr>
+    <div style="display: flex; justify-content: space-between;">
+        <!-- FullCalendar Div -->
+        <div id="calendario" style="width: 50%;"></div>
+    
+        <!-- Tabela de Vagas -->
+        <div id="vagas" style="width: 30%;">
+            <h2>Vagas Liberadas</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Turno</th>
+                        <th style="width: 20%;">Quantidade de Vagas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Manhã</td>
+                        <td id="vagas_manha">--</td>
+                    </tr>
+                    <tr>
+                        <td>Tarde</td>
+                        <td id="vagas_tarde">--</td>
+                    </tr>
+                    <tr>
+                        <td>Noite</td>
+                        <td id="vagas_noite">--</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Botão de Cadastrar Escala -->
+  
 </form>
-<hr>
+
+<!-- FullCalendar Script -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+<script>
+    // Função de formatação do CPF
+    function formatarCPF(cpfField) {
+        let cpf = cpfField.value.replace(/\D/g, ''); // Remove qualquer caractere que não seja número
+        if (cpf.length <= 11) {
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        }
+        cpfField.value = cpf; // Atualiza o valor formatado no campo
+    }
+
+    // Função para buscar os dados do médico pelo CPF
+    function buscarPessoaPorCPF(cpf) {
+        cpf = cpf.replace(/\D/g, ''); // Remove qualquer caractere que não seja número
+        console.log('CPF formatado:', cpf); // Adiciona um log para verificar se o CPF está formatado corretamente
+        if (cpf.length === 11) { // CPF só é válido se tiver 11 dígitos
+            fetch(`/pesquisar_medico_cadescala/${cpf}`) // Faz a requisição
+                .then(response => {
+                    console.log('Status da resposta:', response.status); // Verifica o status da resposta
+                    return response.json(); // Converte para JSON
+                })
+                .then(data => {
+                    console.log('Dados retornados:', data); // Exibe os dados retornados no console
+                    if (data.flgencontrou) { // Se o médico foi encontrado
+                        document.getElementById('nome').value = data.nome;
+                        document.getElementById('especialidade').value = data.especialidade;
+                        document.getElementById('crm').value = data.crm;
+
+                        // Pode ativar a busca das escalas aqui se estiver tudo ok
+                         buscarEscalasPorMedico(data.codmedico);
+                    } else {
+                        alert('Médico não encontrado');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar dados do médico:', error); // Loga o erro
+                });
+        } else {
+            console.error('CPF inválido:', cpf); // Loga CPF inválido
+            alert('CPF inválido. Por favor, verifique o formato e tente novamente.');
+        }
+    }
+
+    function buscarEscalasPorMedico(cpf) {
+            fetch(`/buscar_escalas/${cpf}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.escalas.forEach(escala => {
+                        // Marcar as datas de disponibilidade no calendário
+                        calendar.addEvent({
+                            title: 'Disponível',
+                            start: dataFormatada,
+                            allDay: true,
+                            backgroundColor: '#ff0000',
+                            borderColor: '#28a745',
+                            color: '#28a745' // Tenta forçar a cor do texto e do fundo
+                        });
+                    });
+                })
+                .catch(error => console.error('Erro ao buscar escalas:', error));
+    }
+
+    // Função para buscar as vagas por data
+    function buscarVagasPorData(data) {
+        fetch(`/buscar_vagas_por_data/${data}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('vagas_manha').textContent = data.vagasManha;
+                document.getElementById('vagas_tarde').textContent = data.vagasTarde;
+                document.getElementById('vagas_noite').textContent = data.vagasNoite;
+            })
+            .catch(error => console.error('Erro ao buscar vagas:', error));
+    }
+
+    // Quando o documento é carregado
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendario');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'pt-br',
+            headerToolbar: {
+                left: 'prev,next',
+                center: 'title',
+                right: 'today'
+            },
+            buttonText: {
+                month: 'Mês',
+                today: 'Hoje'
+            },
+            dateClick: function(info) {
+                buscarVagasPorData(info.dateStr); // Função para buscar vagas ao clicar na data
+            }
+        });
+        calendar.render();
+    });
+</script>
 {% endblock %}
