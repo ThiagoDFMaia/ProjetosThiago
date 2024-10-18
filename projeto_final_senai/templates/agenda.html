@@ -60,15 +60,15 @@
                 <!-- Grupo de Botões -->
                 <div class="btn-group mb-3" role="group" aria-label="Horários">
                     <div>
-                        <button type="button" class="btn btn-primary col">Manhã</button>
+                        <button type="button" id ="btnManha" class="btn btn-primary col">Manhã</button>
                         <input type="text" id="vagasManha" class="form-control text-center"disabled>
                     </div>
                     <div>
-                        <button type="button" class="btn btn-primary col">Tarde</button>
+                        <button type="button" id="btnTarde" class="btn btn-primary col">Tarde</button>
                         <input type="text" id="vagasTarde" class="form-control text-center"disabled>
                     </div>
                     <div>
-                        <button type="button" class="btn btn-primary col">Noite</button>
+                        <button type="button" id="btnNoite" class="btn btn-primary col">Noite</button>
                         <input type="text" id="vagasNoite" class="form-control text-center" disabled>
                     </div>
                 </div>
@@ -232,7 +232,68 @@ document.getElementById('btnPesquisarpaciente').addEventListener('click', functi
             .catch(error => console.error('Erro ao buscar escalas:', error));
 
 });
-     
+
+document.getElementById('btnManha').addEventListener('click', function() {
+ 
+    // Supondo que o valor de vagasManha é o número de horários disponíveis (por exemplo, 10 vagas)
+    let vagasManha = 10; // Esse valor deve vir de algum lugar, pode ser uma variável ou input
+
+    // Definindo o horário inicial (07:00)
+    let horaAtual = new Date();
+    horaAtual.setHours(7, 0, 0); // Inicia as 07:00
+
+    // Obtendo o elemento onde os horários serão adicionados
+    let listaHorarios = document.getElementById('listaHorarios');
+    
+    // Limpando a lista antes de adicionar novos horários
+    listaHorarios.innerHTML = '';
+
+    // Adicionando os horários para a manhã
+    for (let i = 0; i < vagasManha; i++) {
+        let horaFormatada = formatarHora(horaAtual); // Formata a hora no formato HH:MM
+        let itemLista = document.createElement('li');
+        itemLista.classList.add('list-group-item');
+        itemLista.textContent = `${horaFormatada} --- Livre`;
+
+        // Adiciona o item à lista
+        listaHorarios.appendChild(itemLista);
+
+        // Evento de duplo clique para marcar o horário como "Ocupado"
+        itemLista.addEventListener('dblclick', function() {
+            if (itemLista.textContent.includes('Livre')) {
+                itemLista.textContent = `${horaFormatada} --- Ocupado`;
+                itemLista.style.backgroundColor = '#f8d7da'; // Mudando cor de fundo para indicar "ocupado"
+            }
+        });
+
+        horaAtual.setMinutes(horaAtual.getMinutes() + 30);
+
+});
+itemLista.addEventListener('dblclick', function() {
+    if (itemLista.textContent.includes('Livre')) {
+        itemLista.textContent = `${horaFormatada} --- Ocupado`;
+        itemLista.style.backgroundColor = '#f8d7da'; // Mudando cor de fundo para indicar "ocupado"
+    }
+});
+
+// Função para formatar a hora em HH:MM
+function formatarHora(data) {
+    let horas = data.getHours().toString().padStart(2, '0');
+    let minutos = data.getMinutes().toString().padStart(2, '0');
+    return `${horas}:${minutos}`;
+}
+
+
+document.getElementById('btnTarde').addEventListener('click',function(){
+    alert('tarde')
+
+});
+
+document.getElementById('btnNoite').addEventListener('click',function(){
+    alert('noite')
+
+});
+
 // Função para atualizar os horários com base no turno selecionado
 function atualizaHorarios(turno) {
     // Limpar a lista atual de horários
