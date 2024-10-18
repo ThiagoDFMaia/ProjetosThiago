@@ -5,7 +5,7 @@ import urllib.parse
 # realizar o mapeamento objeto relacional -DB First
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, aliased
 from biblioteca import *
 
 # definindo objeto flask
@@ -15,7 +15,7 @@ app.secret_key = "df6e83eb7983f75b2561c875cbebc40ab9900624b22c6040f5831ecd6faaea
 
 
 user = 'root'
-password = urllib.parse.quote_plus('senai@123')
+password = urllib.parse.quote_plus('123456')
 host = 'localhost'
 database = 'clinica'
 # ==========================================
@@ -80,6 +80,21 @@ def lista_convenios():
         session_db.close()
 
     return convenios
+
+def lista_especialidades():
+    session_db = Session()
+    try:
+            # Executa a consulta e retorna todos os convênios
+        especialidades =  session_db.query(Especialidade).all()
+        
+    except Exception as e:
+        session_db.rollback()
+
+        return []
+    finally:
+        session_db.close()
+    
+    return especialidades
 
 def gravar_pessoa(pessoa):
     session_db = Session()
@@ -302,6 +317,25 @@ def pesquisar_dados_medico_escala(cpf):
         return jsonify({"flgencontrou": False})
 
 
+def pesquisar_medico_por_especialidade(codespecialidade):
+    session_db = Session()
+      # Consulta para buscar o código do médico e o nome da pessoa associada ao médico
+    medicos = session_db.query(Medico.codmedico, Pessoa.nome).join(Pessoa).filter(Medico.codespecialidade == codespecialidade).all()
+
+    # Criando uma lista de dicionários para os médicos encontrados
+    medicos_list = [
+        {
+            "codmedico": medico_cod,  # Acessando o código diretamente da consulta
+            "nome": nome              # Acessando o nome diretamente da consulta
+        }
+        for medico_cod, nome in medicos
+    ]
+    app.logger.info(f" medicos: {medicos_list}")
+    return jsonify({
+        "flgencontrou": len(medicos_list) > 0,  # Retorna True se encontrou médicos
+        "medicos": medicos_list
+    })
+
 @app.route("/",methods=['GET'])
 def index():
     return render_template("index.html")
@@ -319,9 +353,7 @@ def cadastro_convenio():
 
 @app.route('/cadastro_medico',methods=['GET'])
 def cadastro_medico():
-    session_db = Session()
- 
-    especialidades =  session_db.query(Especialidade).all()
+    especialidades =  lista_especialidades()
     return render_template('cadastromedicos.html', especialidades=especialidades)
 
 
@@ -335,7 +367,8 @@ def cadastro_clinica():
 
 @app.route('/abrir_agenda', methods=['GET'])
 def abrir_agenda():
-    return render_template('agenda.html')
+    especialidades =  lista_especialidades()
+    return render_template('agenda.html', especialidades=especialidades)
 
 
 @app.route('/salvar_medico', methods=['POST'])
@@ -471,6 +504,12 @@ def salvar_paciente():
 @app.route('/pesquisar_paciente/<cpf>', methods=['GET'])
 def pesquisar_paciente(cpf):
     return pesquisar_dados_paciente(cpf)
+
+@app.route('/pesquisar_medico_especialidade/<codespecialidade>', methods=['GET'])
+def pesquisar_paciepesquisar_medico_especialidadente(codespecialidade):
+    return pesquisar_medico_por_especialidade(codespecialidade)
+
+
 
 @app.route('/pesquisar_medico_cadescala/<cpf>',methods=['GET'])
 def pesquisar_medico_cadescala(cpf):

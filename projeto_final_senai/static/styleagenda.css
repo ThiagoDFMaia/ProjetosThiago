@@ -15,7 +15,7 @@ body {
 .col-md-4 {
     border-radius: 8px; /* Bordas arredondadas nas colunas */
     padding: 15px; /* Padding interno */
-    color: #ffffff; /* Texto branco */
+    color: #141313; /* Texto branco */
     margin-bottom: 20px; /* Espaçamento entre colunas */
 }
 #horarios {
@@ -55,7 +55,7 @@ h2 {
 }
 /* Cor da data de hoje no calendário (vermelho suave) */
 .fc-today {
-    background-color: rgba(255, 99, 71, 0.3) !important; /* Vermelho suave com opacidade */
+    background-color: rgba(71, 255, 126, 0.3) !important; /* Vermelho suave com opacidade */
     border: 1px solid rgba(255, 99, 71, 1) !important; /* Borda vermelha */
 }
 /* Cor do dia selecionado no calendário (verde) */
