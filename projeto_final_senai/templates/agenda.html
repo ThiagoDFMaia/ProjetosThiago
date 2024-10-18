@@ -51,18 +51,36 @@
            
         </div>
        
-        <!-- Coluna 2: Exibição de Horários -->
-        <div class="col-md-4 horarios">
-            <h2>Horários Disponíveis</h2>
-            <div id="horarios">
-                <!-- Os horários serão preenchidos aqui -->
-                <ul class="list-group">
-                    <li class="list-group-item">08:00 - 08:30: Livre</li>
-                    <li class="list-group-item">09:00 - 09:30: Livre</li>
-                    <li class="list-group-item">10:00 - 10:30: Livre</li>
-                </ul>
+            <!-- Coluna 2: Exibição de Horários -->
+            <div class="col-md-4 horarios">
+                <h2>Horários Disponíveis</h2>
+                
+                <!-- Grupo de Botões -->
+                <!-- Grupo de Botões -->
+                <!-- Grupo de Botões -->
+                <div class="btn-group mb-3" role="group" aria-label="Horários">
+                    <div>
+                        <button type="button" class="btn btn-primary col">Manhã</button>
+                        <input type="text" id="vagasManha" class="form-control text-center"disabled>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary col">Tarde</button>
+                        <input type="text" id="vagasTarde" class="form-control text-center"disabled>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary col">Noite</button>
+                        <input type="text" id="vagasNoite" class="form-control text-center" disabled>
+                    </div>
+                </div>
+            
+            
+                <div id="horarios" class="mt-3">
+                    <!-- Os horários serão preenchidos aqui -->
+                    <ul class="list-group" id="listaHorarios">
+                        <!-- Os horários serão preenchidos aqui -->
+                    </ul>
+                </div>
             </div>
-        </div>
 
         <!-- Coluna 3: Dados do Paciente -->
         <div class="col-md-4 paciente">
@@ -179,75 +197,91 @@
                     }, true);
                  
                     abriraescala()
+                    
                      // Atualiza o calendário
                   
                     $('#calendar').show(); 
+                   
                 });
              
                 // Atualiza o calendário para aplicar as novas cores
-                $('#calendario').fullCalendar('rerenderEvents');
+                $('#calendar').fullCalendar('rerenderEvents');
+                document.querySelector('.fc-next-button').click();
+                document.querySelector('.fc-prev-button').click();
             })
             .catch(error => console.error('Erro ao buscar escalas:', error));
         });
-/*
-$(document).ready(function() {
-    // Inicializa o calendário
-    $('#calendar').fullCalendar({
-        locale: 'pt-br',
-        header: {
-            left: 'prev,next',
-            center: 'title',
-            right: 'month today' // Mantendo apenas 'Mês' e 'Hoje'
-        },
-        buttonText: {
-            month: 'Mês', // Alterando o texto de 'month' para 'Mês'
-            today: 'Hoje' // Botão "Hoje" em português
-        },
-        monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-        dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
-        selectable: true,
-        selectHelper: true,
-        dayClick: function(date, jsEvent, view) {
-            // Remove a seleção anterior
-            $('.fc-day').removeClass('fc-selected');
-            // Adiciona a classe 'fc-selected' ao dia clicado
-            $(this).addClass('fc-selected');
-            alert('Data selecionada: ' + date.format('DD/MM/YYYY')); // Formato da data em português
-            // Carregar horários disponíveis para essa data
-            $('#horarios ul').html(`
-                <li class="list-group-item">08:00 - 08:30: Livre</li>
-                <li class="list-group-item">09:00 - 09:30: Livre</li>
-                <li class="list-group-item">10:00 - 10:30: Livre</li>
-            `);
-        }
-    });
 
-    // Lógica para pesquisar o paciente ao clicar no botão
-    $('#btnPesquisarpaciente').click(function() {
-        const cpf = $('#cpf').val();
-        if (cpf) {
-            $.get('/pesquisar_paciente', { cpf: cpf }, function(data) {
-                // Preencher os campos com os dados retornados
-                $('#nome').val(data.nome).prop('disabled', true);
-                $('#data_nascimento').val(new Date(data.data_nas).toISOString().split('T')[0]).prop('disabled', true);
-                $('#telefone1').val(data.telefone_01).prop('disabled', true);
-                $('#telefone2').val(data.telefone_02).prop('disabled', true);
-                $('#telefone3').val(data.telefone_03).prop('disabled', true);
-                
-            }).fail(function() {
-                alert('Paciente não encontrado.');
-                // Limpa os campos se o paciente não for encontrado
-                $('#nome').val('').prop('disabled', true);
-                $('#data_nascimento').val('').prop('disabled', true);
-                $('#telefone1').val('').prop('disabled', true);
-                $('#telefone2').val('').prop('disabled', true);
-                $('#telefone3').val('').prop('disabled', true);
-            });
-        } else {
-            alert('Por favor, digite um CPF para pesquisar.');
-        }
-    });
-});*/
+document.getElementById('btnPesquisarpaciente').addEventListener('click', function(){
+    var cpf = document.getElementById('cpf').value.replace(/\D/g, '');;
+    fetch(`/pesquisar_paciente/${cpf}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    if(data.flgencontrou){               
+                        
+                            document.getElementById('nome').value = data.nome;
+                            document.getElementById('data_nascimento').value = data.data_nas;
+                            document.getElementById('telefone1').value = data.telefone_01;
+                            document.getElementById('telefone2').value = data.telefone_02;
+                            document.getElementById('telefone3').value = data.telefone_03             
+
+                    }
+                }
+            })
+            .catch(error => console.error('Erro ao buscar escalas:', error));
+
+});
+     
+// Função para atualizar os horários com base no turno selecionado
+function atualizaHorarios(turno) {
+    // Limpar a lista atual de horários
+    const lista = document.getElementById('listaHorarios');
+    lista.innerHTML = '';
+
+    // Obter a quantidade de vagas com base no turno selecionado
+    let vagas;
+    if (turno === 'manha') {
+        vagas = document.getElementById('vagasManha').value;
+    } else if (turno === 'tarde') {
+        vagas = document.getElementById('vagasTarde').value;
+    } else {
+        vagas = document.getElementById('vagasNoite').value;
+    }
+
+    // Converter a quantidade de vagas para número
+    vagas = Math.max(0, Math.min(5, parseInt(vagas))); // Limite de 0 a 5 para facilitar
+
+    // Horários disponíveis
+    const horariosDisponiveis = {
+        manha: gerarHorarios(8, 30, vagas),  // 08:00 às 12:00
+        tarde: gerarHorarios(13, 30, vagas), // 13:00 às 17:00
+        noite: gerarHorarios(18, 30, vagas)   // 18:00 às 22:00
+    };
+
+    // Preencher a lista com os horários disponíveis
+    const horariosSelecionados = horariosDisponiveis[turno];
+    for (let i = 0; i < horariosSelecionados.length; i++) {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.textContent = `${horariosSelecionados[i]}: Livre`;
+        lista.appendChild(li);
+    }
+}
+
+// Função para gerar horários a partir de uma hora inicial, incremento e quantidade de horários
+function gerarHorarios(inicio, incremento, quantidade) {
+    const horarios = [];
+    for (let i = 0; i < quantidade; i++) {
+        const hora = inicio + Math.floor((i * incremento) / 60);
+        const minuto = (i * incremento) % 60;
+        const horaFormatada = `${String(hora).padStart(2, '0')}:${String(minuto).padStart(2, '0')}`;
+        horarios.push(horaFormatada);
+    }
+    return horarios;
+}
+
+
 function abriraescala() {
      
         $('#calendar').fullCalendar({
@@ -264,13 +298,16 @@ function abriraescala() {
             monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
             dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
             selectable: true,
+      
             dayClick: function(date, jsEvent, view) {
-               // var codmedico = document.getElementById('codmedico').value;
-               // buscarVagasPorData(date.format('YYYY-MM-DD'), codmedico);
+                var codmedico = document.getElementById('medico').value;
+                buscarVagasPorData(date.format('YYYY-MM-DD'), codmedico);
+                
             },
             dayRender: function(date, cell) {
-               // cell.css("background-color", "green"); 
-                for (let i = 0; i < datasEscalas.length; i++) {
+             
+              
+               for (let i = 0; i < datasEscalas.length; i++) {
                     cell[0].offsetHeight;
                     if (date.format('YYYY-MM-DD') == datasEscalas[i]) {
                         cell.css("background-color", "green"); // Aplica a cor desejada
@@ -278,22 +315,24 @@ function abriraescala() {
                         break
                     }
                  }
+                    
+                        
              }
         });
-        /*
+        
         function buscarVagasPorData(data, codmedico) {
             // Faz a requisição para a rota que busca as vagas por data e médico
             fetch(`/buscar_vagas_por_data/${data}/${codmedico}`)
                 .then(response => response.json())
                 .then(data => {
                     if (!data.message) {
-                        document.getElementById('vagas_manha_input').value = data.vagasManha || '0'; 
-                        document.getElementById('vagas_tarde_input').value = data.vagasTarde || '0'; 
-                        document.getElementById('vagas_noite_input').value = data.vagasNoite || '0'; 
+                        document.getElementById('vagasManha').value = data.vagasManha || '0'; 
+                        document.getElementById('vagasTarde').value = data.vagasTarde || '0'; 
+                        document.getElementById('vagasNoite').value = data.vagasNoite || '0'; 
                     } else {
-                        document.getElementById('vagas_manha_input').value = '0'; 
-                        document.getElementById('vagas_tarde_input').value = '0'; 
-                        document.getElementById('vagas_noite_input').value = '0'; 
+                        document.getElementById('vagasManha').value = '0'; 
+                        document.getElementById('vagasTarde').value = '0'; 
+                        document.getElementById('vagasNoite').value = '0'; 
                     }
                 })
                 .catch(error => {
@@ -301,7 +340,7 @@ function abriraescala() {
                     alert('Ocorreu um erro ao buscar as vagas.');
                 });
         }
-        */
+        
     };
    
 </script>

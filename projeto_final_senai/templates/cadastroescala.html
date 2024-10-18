@@ -132,22 +132,21 @@
 
     // Função para buscar os dados do médico pelo CPF
     function buscarPessoaPorCPF(cpf) {
-        cpf = cpf.replace(/\D/g, ''); // Remove qualquer caractere que não seja número
-        console.log('CPF formatado:', cpf); // Adiciona um log para verificar se o CPF está formatado corretamente
-        if (cpf.length === 11) { // CPF só é válido se tiver 11 dígitos
-            fetch(`/pesquisar_medico_cadescala/${cpf}`) // Faz a requisição
+        cpf = cpf.replace(/\D/g, ''); 
+        if (cpf.length === 11) { 
+            fetch(`/pesquisar_medico_cadescala/${cpf}`) 
                 .then(response => {
-                    console.log('Status da resposta:', response.status); // Verifica o status da resposta
+                  
                     return response.json(); // Converte para JSON
                 })
                 .then(data => {
-                    console.log('Dados retornados:', data); // Exibe os dados retornados no console
-                    if (data.flgencontrou) { // Se o médico foi encontrado
+                  
+                    if (data.flgencontrou) { 
                         document.getElementById('nome').value = data.nome;
                         document.getElementById('especialidade').value = data.especialidade;
                         document.getElementById('crm').value = data.crm;
                         document.getElementById('codmedico').value = data.codmedico;
-                        // Pode ativar a busca das escalas aqui se estiver tudo ok
+                      
                         buscarEscalasPorMedico(data.codmedico);
                     } else {
                         alert('Médico não encontrado');
@@ -171,7 +170,7 @@
             .then(data => {
                 // Limpa a lista de datas de escalas antes de adicionar novas
                 datasEscalas = []; 
-                alert('ok')
+              
                 data.datas.forEach(escala => {
                     // Adiciona a data da escala à lista
                     test= new Date(escala.split(',')[1].trim())
@@ -197,6 +196,8 @@
                 
                 // Atualiza o calendário para aplicar as novas cores
                 $('#calendario').fullCalendar('rerenderEvents');
+                document.querySelector('.fc-next-button').click();
+                document.querySelector('.fc-prev-button').click();
             })
             .catch(error => console.error('Erro ao buscar escalas:', error));
     }
@@ -225,14 +226,14 @@
                     if (date.format('YYYY-MM-DD') === datasEscalas[i]) {
                         cell.css("background-color", "green"); // Aplica a cor desejada
                        
-                        break; // Sai do loop após encontrar a data
+                        break; 
             }
         }
     }
         });
 
         function buscarVagasPorData(data, codmedico) {
-            // Faz a requisição para a rota que busca as vagas por data e médico
+        
             fetch(`/buscar_vagas_por_data/${data}/${codmedico}`)
                 .then(response => response.json())
                 .then(data => {
