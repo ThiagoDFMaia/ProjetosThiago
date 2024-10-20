@@ -54,11 +54,13 @@
             <!-- Coluna 2: Exibição de Horários -->
             <div class="col-md-4 horarios">
                 <h2>Horários Disponíveis</h2>
-                
-                <!-- Grupo de Botões -->
-                <!-- Grupo de Botões -->
-                <!-- Grupo de Botões -->
+                <div>
+
+                    <input type="text" id="dataselecionada" class="form-control text-center"disabled>
+                </div>
+             
                 <div class="btn-group mb-3" role="group" aria-label="Horários">
+                   
                     <div>
                         <button type="button" id ="btnManha" class="btn btn-primary col">Manhã</button>
                         <input type="text" id="vagasManha" class="form-control text-center"disabled>
@@ -75,6 +77,7 @@
             
             
                 <div id="horarios" class="mt-3">
+                    <input type="text" id="turnoselecionado" class="form-control text-center" disabled>
                     <!-- Os horários serão preenchidos aqui -->
                     <ul class="list-group" id="listaHorarios">
                         <!-- Os horários serão preenchidos aqui -->
@@ -92,6 +95,11 @@
             </div>
             <button type="button" id="btnPesquisarpaciente" class="btn btn-primary">Pesquisar</button>
             <!-- Outros campos desativados -->
+            <div class="form-group">
+                <label for="nome">Código do paciente:</label>
+                <input type="text" id="idpaciente" name="idpaciente" class="form-control" disabled>
+            </div>
+            
             <div class="form-group">
                 <label for="nome">Nome:</label>
                 <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome" disabled>
@@ -221,10 +229,12 @@ document.getElementById('btnPesquisarpaciente').addEventListener('click', functi
                     if(data.flgencontrou){               
                         
                             document.getElementById('nome').value = data.nome;
+                            document.getElementById('idpaciente').value = data.idpaciente;
                             document.getElementById('data_nascimento').value = data.data_nas;
                             document.getElementById('telefone1').value = data.telefone_01;
                             document.getElementById('telefone2').value = data.telefone_02;
-                            document.getElementById('telefone3').value = data.telefone_03             
+                            document.getElementById('telefone3').value = data.telefone_0;
+                                   
 
                     }
                 }
@@ -235,46 +245,100 @@ document.getElementById('btnPesquisarpaciente').addEventListener('click', functi
 
 document.getElementById('btnManha').addEventListener('click', function() {
  
-    // Supondo que o valor de vagasManha é o número de horários disponíveis (por exemplo, 10 vagas)
-    let vagasManha = 10; // Esse valor deve vir de algum lugar, pode ser uma variável ou input
+    let vagas = document.getElementById('vagasManha').value; 
 
-    // Definindo o horário inicial (07:00)
-    let horaAtual = new Date();
-    horaAtual.setHours(7, 0, 0); // Inicia as 07:00
 
+    let horainicial = new Date();
+    horainicial.setHours(7, 0, 0); 
+    document.getElementById('turnoselecionado').value="Manhã"
+
+    var codmedico = document.getElementById('medico').value;
+            
+    var dataselecionada=  document.getElementById('dataselecionada').value;
+    var turno=document.getElementById('turnoselecionado').value.toLowerCase();
+
+    fetch(`/pesquisar_pacientes_agendados/${codmedico}/${dataselecionada}/${turno}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                   
+                atualizaHorarios(horainicial, vagas, data.agendados);
+            }
+    })   
+
+    //atualizaHorarios(horainicial,vagas)
+});
+
+function atualizaHorarios(hora,vagas,agendados){
     // Obtendo o elemento onde os horários serão adicionados
     let listaHorarios = document.getElementById('listaHorarios');
     
     // Limpando a lista antes de adicionar novos horários
     listaHorarios.innerHTML = '';
-
+  
+   
     // Adicionando os horários para a manhã
-    for (let i = 0; i < vagasManha; i++) {
-        let horaFormatada = formatarHora(horaAtual); // Formata a hora no formato HH:MM
+    for (let i = 0; i < vagas; i++) {
+     
+        let horaFormatada = formatarHora(hora); // Formata a hora no formato HH:MM
         let itemLista = document.createElement('li');
         itemLista.classList.add('list-group-item');
-        itemLista.textContent = `${horaFormatada} --- Livre`;
 
-        // Adiciona o item à lista
+        agendados = Array.isArray(agendados) ? agendados : [];
+        let pacienteAgendado = agendados.find(ag => ag.horaagendamento === horaFormatada);
+
+
+        if (pacienteAgendado) {
+           
+            itemLista.textContent = `${horaFormatada} --- ${pacienteAgendado.nome}`;
+            itemLista.style.backgroundColor = '#f8d7da';
+        } else {
+            
+            itemLista.textContent = `${horaFormatada} --- Livre`;
+        }
         listaHorarios.appendChild(itemLista);
 
         // Evento de duplo clique para marcar o horário como "Ocupado"
         itemLista.addEventListener('dblclick', function() {
-            if (itemLista.textContent.includes('Livre')) {
-                itemLista.textContent = `${horaFormatada} --- Ocupado`;
-                itemLista.style.backgroundColor = '#f8d7da'; // Mudando cor de fundo para indicar "ocupado"
+            let nome=document.getElementById('nome').value;
+            let idpaciente= document.getElementById('idpaciente').value; 
+            if (idpaciente!=""){
+               
+                
+                
+                var codmedico = document.getElementById('medico').value;
+                var horaagendamento= itemLista.textContent.split(' --- ')[0]
+                var dataselecionada=  document.getElementById('dataselecionada').value;
+                var turno=document.getElementById('turnoselecionado').value.toLowerCase();
+          
+                if (itemLista.textContent.includes('Livre')) {
+                    
+                    
+                    fetch(`/agendar_paciente/${idpaciente}/${codmedico}/${dataselecionada}/${horaagendamento}/${turno}`, {
+                        method: 'POST',
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('agendamento realizadao')
+                    })
+
+                    itemLista.textContent = `${horaFormatada} --- ${nome}`;
+                    itemLista.style.backgroundColor = '#f8d7da';
+                }else{
+                    alert('Esse horário não esta livre!')
+                }
+            
+            }else{
+                alert('Selecione primeiro o paciente!')
             }
+            
         });
 
-        horaAtual.setMinutes(horaAtual.getMinutes() + 30);
-
-});
-itemLista.addEventListener('dblclick', function() {
-    if (itemLista.textContent.includes('Livre')) {
-        itemLista.textContent = `${horaFormatada} --- Ocupado`;
-        itemLista.style.backgroundColor = '#f8d7da'; // Mudando cor de fundo para indicar "ocupado"
+        hora.setMinutes(hora.getMinutes() + 30);
     }
-});
+}
+
+
 
 // Função para formatar a hora em HH:MM
 function formatarHora(data) {
@@ -285,64 +349,27 @@ function formatarHora(data) {
 
 
 document.getElementById('btnTarde').addEventListener('click',function(){
-    alert('tarde')
+    let vagasManha = document.getElementById('vagasManha').value; 
+
+
+    let horainicial = new Date();
+    horainicial.setHours(13, 0, 0); 
+    document.getElementById('turnoselecionado').value="Tarde"
+    atualizaHorarios(horainicial,vagasManha)
 
 });
 
 document.getElementById('btnNoite').addEventListener('click',function(){
-    alert('noite')
+    let vagas = document.getElementById('vagasNoite').value; 
+
+
+    let horainicial = new Date();
+    horainicial.setHours(18, 0, 0); 
+    document.getElementById('turnoselecionado').value="Noite"
+
+    atualizaHorarios(horainicial,vagas)
 
 });
-
-// Função para atualizar os horários com base no turno selecionado
-function atualizaHorarios(turno) {
-    // Limpar a lista atual de horários
-    const lista = document.getElementById('listaHorarios');
-    lista.innerHTML = '';
-
-    // Obter a quantidade de vagas com base no turno selecionado
-    let vagas;
-    if (turno === 'manha') {
-        vagas = document.getElementById('vagasManha').value;
-    } else if (turno === 'tarde') {
-        vagas = document.getElementById('vagasTarde').value;
-    } else {
-        vagas = document.getElementById('vagasNoite').value;
-    }
-
-    // Converter a quantidade de vagas para número
-    vagas = Math.max(0, Math.min(5, parseInt(vagas))); // Limite de 0 a 5 para facilitar
-
-    // Horários disponíveis
-    const horariosDisponiveis = {
-        manha: gerarHorarios(8, 30, vagas),  // 08:00 às 12:00
-        tarde: gerarHorarios(13, 30, vagas), // 13:00 às 17:00
-        noite: gerarHorarios(18, 30, vagas)   // 18:00 às 22:00
-    };
-
-    // Preencher a lista com os horários disponíveis
-    const horariosSelecionados = horariosDisponiveis[turno];
-    for (let i = 0; i < horariosSelecionados.length; i++) {
-        const li = document.createElement('li');
-        li.className = 'list-group-item';
-        li.textContent = `${horariosSelecionados[i]}: Livre`;
-        lista.appendChild(li);
-    }
-}
-
-// Função para gerar horários a partir de uma hora inicial, incremento e quantidade de horários
-function gerarHorarios(inicio, incremento, quantidade) {
-    const horarios = [];
-    for (let i = 0; i < quantidade; i++) {
-        const hora = inicio + Math.floor((i * incremento) / 60);
-        const minuto = (i * incremento) % 60;
-        const horaFormatada = `${String(hora).padStart(2, '0')}:${String(minuto).padStart(2, '0')}`;
-        horarios.push(horaFormatada);
-    }
-    return horarios;
-}
-
-
 function abriraescala() {
      
         $('#calendar').fullCalendar({
@@ -381,16 +408,18 @@ function abriraescala() {
              }
         });
         
-        function buscarVagasPorData(data, codmedico) {
+        function buscarVagasPorData(dataselecionada, codmedico) {
             // Faz a requisição para a rota que busca as vagas por data e médico
-            fetch(`/buscar_vagas_por_data/${data}/${codmedico}`)
+            fetch(`/buscar_vagas_por_data/${dataselecionada}/${codmedico}`)
                 .then(response => response.json())
                 .then(data => {
                     if (!data.message) {
+                        document.getElementById('dataselecionada').value = dataselecionada
                         document.getElementById('vagasManha').value = data.vagasManha || '0'; 
                         document.getElementById('vagasTarde').value = data.vagasTarde || '0'; 
                         document.getElementById('vagasNoite').value = data.vagasNoite || '0'; 
                     } else {
+                        document.getElementById('dataselecionada').value = dataselecionada
                         document.getElementById('vagasManha').value = '0'; 
                         document.getElementById('vagasTarde').value = '0'; 
                         document.getElementById('vagasNoite').value = '0'; 

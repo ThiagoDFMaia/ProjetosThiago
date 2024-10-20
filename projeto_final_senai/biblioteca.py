@@ -71,3 +71,16 @@ class Escala:
         self.quantvagasnoite=quantvagasnoite
         self.flaativo=flaativo
         self.codmedico=codmedico
+
+class Agendamento:
+    def __init__(self,dataagenda,datacadastro,flgsituacao,fk_paciente_id,escala_id,horaagendamento,turno):
+       
+        self.dataagenda=dataagenda
+        self.datacadastro=datacadastro
+        self.flgsituacao=flgsituacao
+        self.fk_paciente_id=fk_paciente_id
+        self.escala_id=escala_id
+        self.horaagendamento=horaagendamento
+        self.turno=turno
+
+

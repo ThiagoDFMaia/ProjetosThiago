@@ -7,6 +7,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import sessionmaker, aliased
 from biblioteca import *
+from datetime import datetime
 
 # definindo objeto flask
 app = Flask(__name__)
@@ -15,7 +16,7 @@ app.secret_key = "df6e83eb7983f75b2561c875cbebc40ab9900624b22c6040f5831ecd6faaea
 
 
 user = 'root'
-password = urllib.parse.quote_plus('senai@123')
+password = urllib.parse.quote_plus('123456')
 host = 'localhost'
 database = 'clinica'
 # ==========================================
@@ -51,6 +52,7 @@ Convenio= Base.classes.convenio
 Medico=Base.classes.medico
 Especialidade=Base.classes.especialidade
 Escala=Base.classes.escala
+Agendamento=Base.classes.agendamento
 
 
 # Relacionamentos entre tabelas
@@ -170,7 +172,7 @@ def gravar_medico(medico):
     session_db = Session()
     
     try:
-
+        
         medico_existente = session_db.query(Medico).filter_by(fk_pessoa_id=medico.fk_pessoa_id).first()
 
         if medico_existente:
@@ -188,6 +190,31 @@ def gravar_medico(medico):
     except Exception as e:
         session_db.rollback()  # Desfaz a sessão em caso de erro
         app.logger.info(f"Erro ao gravar o medico: {e}")
+        return False, None
+    finally:
+        session_db.close()
+
+    return True, id
+
+def gravar_agendamento(codpaciente,codmedico,dataagenda,horaagendamento,turno):
+    session_db = Session()
+
+    try:
+           
+            escala = session_db.query(Escala).filter(Escala.codmedico==codmedico and Escala.data==dataagenda).first()
+           
+            data=datetime.now()
+            app.logger.error(f"Iniciando agendamento: {data}{escala.data} ")    
+        
+            agendamento=Agendamento(dataagenda= escala.data,datacadastro=data,flgsituacao='01',fk_paciente_id=codpaciente,escala_id=escala.id,horaagendamento=horaagendamento,turno=turno)
+            session_db.add(agendamento)
+            session_db.commit()
+            id = agendamento.codigo  # Retorna o ID da pessoa existente
+   
+    
+    except Exception as e:
+        session_db.rollback()  # Desfaz a sessão em caso de erro
+        app.logger.info(f"Erro ao gravar o agendamento: {e}")
         return False, None
     finally:
         session_db.close()
@@ -220,7 +247,8 @@ def pesquisar_dados_paciente(cpf):
             'telefone_03': pessoa.telefone_03,
             "flgconvenio":paciente.flgconvenio,
             "tipoconvenio":paciente.tipoconvenio,
-            "fk_convenio_id":paciente.fk_convenio_id
+            "fk_convenio_id":paciente.fk_convenio_id,
+            "idpaciente":paciente.id
         })
     elif pessoa:
         return jsonify({
@@ -316,6 +344,43 @@ def pesquisar_dados_medico_escala(cpf):
     
         return jsonify({"flgencontrou": False})
 
+def pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno):
+    session_db=Session()
+
+    try:
+        agendados = (
+        session_db.query(Agendamento.horaagendamento, Pessoa.nome)
+        .join(Escala,Agendamento.escala_id==Escala.id and Escala.codmedico==codmedico)
+        .join(Paciente, Agendamento.fk_paciente_id == Paciente.id) 
+        .join(Pessoa, Paciente.fk_pessoa_id == Pessoa.id)  # Join com Pessoa usando idpessoa
+        .filter(Agendamento.dataagenda==dataselecionada and Agendamento.turno==turno)
+        ).all()
+        
+    except Exception as e:
+        session_db.rollback() 
+        app.logger.info(f"Erro ao pesquisar os pacientes: {e}")
+        return None
+    finally:
+        session_db.close()
+
+    if agendados:
+        app.logger.info(f"Agendados teste{agendados}")
+        agendados_json = [
+        {"horaagendamento": ag.horaagendamento.strftime("%H:%M"), "nome": ag.nome} for ag in agendados
+        ]
+
+        return jsonify({
+            'agendados': agendados_json,
+          
+        })
+  
+    else:
+         return jsonify({
+            'agendados': None,
+          
+        })
+
+   
 
 def pesquisar_medico_por_especialidade(codespecialidade):
     session_db = Session()
@@ -565,7 +630,7 @@ def buscar_escalas(codmedico):
             datas = [escala.data for escala in escalas]
             
             # Log para verificar as datas encontradas
-            app.logger.info(f"Escalas encontradas: {datas}")
+     
             
             # Retorna as datas das escalas em formato de lista
             return jsonify({
@@ -608,7 +673,15 @@ def buscar_vagas_por_data(data, codmedico):
         session_db.close()
 
 
+@app.route('/agendar_paciente/<codpaciente>/<codmedico>/<dataselecionada>/<horaagendamento>/<turno>',methods=['POST'])
+def agendar_paciente(codpaciente,codmedico,dataselecionada,horaagendamento,turno):
+    
+    return gravar_agendamento(codpaciente,codmedico,dataselecionada,horaagendamento,turno)
 
+
+@app.route('/pesquisar_pacientes_agendados/<codmedico>/<dataselecionada>/<turno>',methods=['GET'])
+def pesquisar_pacientes_agendados(codmedico, dataselecionada,turno):
+    return pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno)
 
 @app.route('/salvar_convenio',methods=['POST'])
 def salvar_convenio():

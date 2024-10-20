@@ -1,3 +1,5 @@
+
+drop database clinica;
 -- MySQL Workbench Forward Engineering
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
@@ -38,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`pessoa` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `cpf_UNIQUE` (`cpf` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 22
+AUTO_INCREMENT = 24
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -53,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`convenio` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `cnpj` (`cnpj` ASC) VISIBLE)
 ENGINE = InnoDB
+AUTO_INCREMENT = 7
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -62,14 +65,14 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `clinica`.`paciente` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `tipoconvenio` ENUM('individual', 'coletivo', 'publico') NULL,
+  `tipoconvenio` ENUM('individual', 'coletivo', 'publico') NULL DEFAULT NULL,
   `fk_pessoa_id` INT NOT NULL,
   `fk_convenio_id` INT NULL DEFAULT NULL,
-  `flgconvenio` BIT NOT NULL,
+  `flgconvenio` BIT(1) NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
   INDEX `fk_paciente_2` (`fk_pessoa_id` ASC) VISIBLE,
   INDEX `fk_paciente_3` (`fk_convenio_id` ASC) VISIBLE,
-  UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
   CONSTRAINT `fk_paciente_2`
     FOREIGN KEY (`fk_pessoa_id`)
     REFERENCES `clinica`.`pessoa` (`id`)
@@ -78,6 +81,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`paciente` (
     FOREIGN KEY (`fk_convenio_id`)
     REFERENCES `clinica`.`convenio` (`id`))
 ENGINE = InnoDB
+AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -90,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`especialidade` (
   `descricao` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`codespecialidade`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 21
+AUTO_INCREMENT = 81
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -105,9 +109,9 @@ CREATE TABLE IF NOT EXISTS `clinica`.`medico` (
   `flgativo` BIT(1) NOT NULL,
   `codespecialidade` INT NOT NULL,
   PRIMARY KEY (`codmedico`),
+  UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
   INDEX `fk_medico_2` (`fk_pessoa_id` ASC) VISIBLE,
   INDEX `fk_medico_especialidade1_idx` (`codespecialidade` ASC) VISIBLE,
-  UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
   CONSTRAINT `fk_medico_2`
     FOREIGN KEY (`fk_pessoa_id`)
     REFERENCES `clinica`.`pessoa` (`id`)
@@ -116,7 +120,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`medico` (
     FOREIGN KEY (`codespecialidade`)
     REFERENCES `clinica`.`especialidade` (`codespecialidade`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 7
+AUTO_INCREMENT = 12
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -138,6 +142,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`escala` (
     FOREIGN KEY (`codmedico`)
     REFERENCES `clinica`.`medico` (`codmedico`))
 ENGINE = InnoDB
+AUTO_INCREMENT = 13
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -149,9 +154,11 @@ CREATE TABLE IF NOT EXISTS `clinica`.`agendamento` (
   `codigo` INT NOT NULL AUTO_INCREMENT,
   `dataagenda` DATE NOT NULL,
   `datacadastro` DATE NOT NULL,
-  `flgsituacao` CHAR(2) NOT NULL COMMENT '01- agendado\\\\\\\\n02- cancelado\\\\\\\\n03- presenca\\\\\\\\n04- falta',
+  `flgsituacao` CHAR(2) NOT NULL COMMENT '01- agendado\\\\\\\\\\\\\\\\n02- cancelado\\\\\\\\\\\\\\\\n03- presenca\\\\\\\\\\\\\\\\n04- falta',
   `fk_paciente_id` INT NULL DEFAULT NULL,
   `escala_id` INT NOT NULL,
+  `horaagendamento` TIME NOT NULL,
+  `turno` ENUM('manhã', 'tarde', 'noite') NOT NULL,
   PRIMARY KEY (`codigo`),
   INDEX `fk_agendamento_3` (`fk_paciente_id` ASC) VISIBLE,
   INDEX `fk_agendamento_escala1_idx` (`escala_id` ASC) VISIBLE,
@@ -163,6 +170,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`agendamento` (
     FOREIGN KEY (`escala_id`)
     REFERENCES `clinica`.`escala` (`id`))
 ENGINE = InnoDB
+AUTO_INCREMENT = 7
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -191,9 +199,9 @@ CREATE TABLE IF NOT EXISTS `clinica`.`usuario` (
   `fk_pessoa_id` INT NOT NULL,
   `fk_setor_id` INT NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
   INDEX `fk_usuario_2` (`fk_pessoa_id` ASC) VISIBLE,
   INDEX `fk_usuario_3` (`fk_setor_id` ASC) VISIBLE,
-  UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
   CONSTRAINT `fk_usuario_2`
     FOREIGN KEY (`fk_pessoa_id`)
     REFERENCES `clinica`.`pessoa` (`id`)
@@ -245,3 +253,11 @@ COLLATE = utf8mb4_0900_ai_ci;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+ALTER TABLE especialidade AUTO_INCREMENT = 1;
+ALTER TABLE paciente AUTO_INCREMENT = 1;
+ALTER TABLE agendamento AUTO_INCREMENT = 1;
+ALTER TABLE pessoa AUTO_INCREMENT = 1;
+ALTER TABLE medico AUTO_INCREMENT = 1;
+ALTER TABLE escala AUTO_INCREMENT = 1;

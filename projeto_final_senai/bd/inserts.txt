@@ -1,34 +1,38 @@
 INSERT INTO especialidade (descricao) VALUES 
 ('Cardiologia'),
-('Dermatologia'),
-('Ginecologia'),
-('Ortopedia'),
-('Pediatria'),
-('Neurologia'),
-('Oftalmologia'),
-('Psiquiatria'),
-('Endocrinologia'),
-('Gastroenterologia');
+('Ginecologia');
 
 INSERT INTO convenio (cnpj, descricao)
 VALUES ('12345678000190', 'Unimed');
 
-INSERT INTO escala (data, quantvagasmanha, quantvagastarde, quantvagasnoite, flaativo, codmedico)
-VALUES 
-('2024-10-18', 5, 4, 3, 1, 7),
-('2024-10-19', 6, 5, 4, 1, 7),
-('2024-10-20', 3, 6, 5, 1, 7),
-('2024-10-21', 8, 7, 6, 1, 7),
-('2024-10-22', 7, 8, 6, 1, 7),
-('2024-10-23', 5, 6, 7, 1, 7),
-('2024-10-24', 9, 8, 5, 1, 7);
+INSERT INTO pessoa (nome, endereco, cep, uf, cidade, complemento, numero, telefone_01, telefone_02, telefone_03, rg, cpf, data_nas) VALUES
+('João Silva', 'Rua das Flores, 123', '12345678', 'SP', 'São Paulo', 'Apto 101', '123', '11912345678', '11987654321', NULL, '123456789', '12345678901', '1990-01-15'),
+('Maria Oliveira', 'Av. Brasil, 456', '23456789', 'RJ', 'Rio de Janeiro', 'Bloco B', '456', '21998765432', NULL, NULL, '987654321', '10987654321', '1985-05-20'),
+('Carlos Pereira', 'Praça da Liberdade, 789', '34567890', 'MG', 'Belo Horizonte', '', '789', '31912348765', '31998765432', NULL, '234567890', '23456789012', '1992-03-25'),
+('Ana Santos', 'Rua da Paz, 321', '45678901', 'SP', 'São Paulo', 'Casa 2', '321', '11998765432', NULL, '11999999999', '543216789', '32165498766', '1995-07-10'),
+('Lucas Costa', 'Rua 7 de Setembro, 654', '56789012', 'PR', 'Curitiba', '', '654', '41987654321', '41912345678', NULL, '123456789', '45678912346', '1988-11-05'),
+('Mariana Lima', 'Av. dos Estados, 147', '67890123', 'RS', 'Porto Alegre', '', '147', '51998765432', NULL, NULL, '654321789', '65432198767', '1994-09-15'),
+('Thiago Almeida', 'Rua do Comércio, 258', '78901234', 'BA', 'Salvador', 'Sala 3', '258', '71912345678', NULL, '71999999999', '987654321', '32132132133', '1991-04-22'),
+('Juliana Rocha', 'Praça do Sol, 369', '89012345', 'SP', 'Campinas', '', '369', '19998765432', '19912345678', NULL, '147258369', '12312312313', '1993-06-18'),
+('Rafael Martins', 'Rua das Acácias, 159', '90123456', 'MG', 'Uberlândia', '', '159', '34987654321', NULL, NULL, '852963741', '78945612346', '1987-10-11'),
+('Fernanda Nunes', 'Av. dos Pássaros, 753', '01234567', 'CE', 'Fortaleza', 'Apto 3', '753', '85912345678', NULL, NULL, '963258741', '32165498768', '1990-12-30');
 
-INSERT INTO escala (data, quantvagasmanha, quantvagastarde, quantvagasnoite, flaativo, codmedico)
-VALUES 
-('2024-11-18', 5, 4, 3, 1, 7),
-('2024-11-19', 6, 5, 4, 1, 7),
-('2024-11-20', 3, 6, 5, 1, 7),
-('2024-11-21', 8, 7, 6, 1, 7),
-('2024-11-22', 7, 8, 6, 1, 7),
-('2024-11-23', 5, 6, 7, 1, 7),
-('2024-11-24', 9, 8, 5, 1, 7);
+
+INSERT INTO medico (crm, fk_pessoa_id, flgativo, codespecialidade) VALUES
+('CRM12345', 1, 1, 1),
+('CRM12346', 2, 1, 2),
+('CRM12347', 3, 1, 1),
+('CRM12348', 4, 1, 2),
+('CRM12349', 5, 1, 1);
+
+INSERT INTO paciente (tipoconvenio, fk_pessoa_id, fk_convenio_id, flgconvenio) VALUES
+('individual', 1, 1, 1),
+('coletivo', 2, 1, 1),
+('publico', 3, 1, 1),
+('individual', 4, 1, 1),
+('coletivo', 5, NULL, 0),
+('publico', 6, NULL, 0),
+('individual', 7, NULL, 0),
+('coletivo', 8, NULL, 0),
+('publico', 9, NULL, 0),
+('individual', 10, NULL, 0);
