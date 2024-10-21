@@ -91,7 +91,7 @@
         <form id="cadastroPaciente">
             <div class="form-group">
                 <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" class="form-control" placeholder="Digite o CPF" required>
+                <input type="text" id="cpf" name="cpf" class="form-control" placeholder="Digite o CPF" maxlength="14" oninput="formatarCPF(this)" required>
             </div>
             <button type="button" id="btnPesquisarpaciente" class="btn btn-primary">Pesquisar</button>
             <!-- Outros campos desativados -->
@@ -236,6 +236,8 @@ document.getElementById('btnPesquisarpaciente').addEventListener('click', functi
                             document.getElementById('telefone3').value = data.telefone_0;
                                    
 
+                    }else{
+                        alert('Paciente não localizado pelo CPF informado!')
                     }
                 }
             })
@@ -318,12 +320,17 @@ function atualizaHorarios(hora,vagas,agendados){
                         method: 'POST',
                     })
                     .then(response => response.json())
-                    .then(data => {
-                        alert('agendamento realizadao')
+                    .then(response => {
+                        if (response.flgagendamento){
+                            alert('agendamento realizadao com sucesso!')
+                            itemLista.textContent = `${horaFormatada} --- ${nome}`;
+                            itemLista.style.backgroundColor = '#f8d7da';
+                        }else{
+                            alert('Não foi possível realizar o agendamento! Tente novamente')
+                        }
                     })
 
-                    itemLista.textContent = `${horaFormatada} --- ${nome}`;
-                    itemLista.style.backgroundColor = '#f8d7da';
+                   
                 }else{
                     alert('Esse horário não esta livre!')
                 }
@@ -419,18 +426,36 @@ function abriraescala() {
                         document.getElementById('vagasTarde').value = data.vagasTarde || '0'; 
                         document.getElementById('vagasNoite').value = data.vagasNoite || '0'; 
                     } else {
+
+                       
+                        alert('Não foi cadastrado nenhuma escala para esse médicono dia selecionado.')
+               
                         document.getElementById('dataselecionada').value = dataselecionada
                         document.getElementById('vagasManha').value = '0'; 
                         document.getElementById('vagasTarde').value = '0'; 
                         document.getElementById('vagasNoite').value = '0'; 
                     }
-                })
+                })  
                 .catch(error => {
                     console.error('Erro ao buscar vagas:', error);
                     alert('Ocorreu um erro ao buscar as vagas.');
                 });
         }
         
+    };
+
+    function formatarCPF(cpfField) {
+        // Remove caracteres não numéricos
+        let cpf = cpfField.value.replace(/\D/g, '');
+
+        // Adiciona a formatação
+        if (cpf.length <= 11) {
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o primeiro ponto
+            cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o segundo ponto
+            cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Adiciona o traço
+        }
+
+        cpfField.value = cpf; // Atualiza o campo com o CPF formatado
     };
    
 </script>

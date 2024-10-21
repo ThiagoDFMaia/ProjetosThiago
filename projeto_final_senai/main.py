@@ -201,25 +201,56 @@ def gravar_agendamento(codpaciente,codmedico,dataagenda,horaagendamento,turno):
 
     try:
            
-            escala = session_db.query(Escala).filter(Escala.codmedico==codmedico and Escala.data==dataagenda).first()
+            escala = session_db.query(Escala).filter(Escala.codmedico==codmedico , Escala.data==dataagenda).first()
            
             data=datetime.now()
-            app.logger.error(f"Iniciando agendamento: {data}{escala.data} ")    
+            
         
             agendamento=Agendamento(dataagenda= escala.data,datacadastro=data,flgsituacao='01',fk_paciente_id=codpaciente,escala_id=escala.id,horaagendamento=horaagendamento,turno=turno)
             session_db.add(agendamento)
             session_db.commit()
-            id = agendamento.codigo  # Retorna o ID da pessoa existente
+            codigo = agendamento.codigo  
    
     
     except Exception as e:
         session_db.rollback()  # Desfaz a sessão em caso de erro
         app.logger.info(f"Erro ao gravar o agendamento: {e}")
-        return False, None
+        return jsonify({"flgagendamento": False, "codigo":None})
     finally:
         session_db.close()
 
-    return True, id
+    return jsonify({"flgagendamento": True, "codigo":codigo})
+
+def gravar_escala(codmedico,dataselecionada,quantmanha,quanttarde,quantnoite):
+    session_db = Session()
+    #  def __init__(self,data,quantvagasmanha,quantvagastarde,quantvagasnoite,flaativo,codmedico):
+    try:
+  
+        
+        escala_existente=session_db.query(Escala).filter(Escala.codmedico==codmedico , Escala.data==dataselecionada).first()
+        escala = Escala(data=dataselecionada,quantvagasmanha=quantmanha,quantvagastarde=quanttarde,quantvagasnoite=quantnoite,codmedico=codmedico,flaativo=1)
+        if escala_existente:
+        
+            escala_existente.quantvagasmanha=escala.quantvagasmanha
+            escala_existente.quantvagastarde=escala.quantvagastarde
+            escala_existente.quantvagasnoite=escala.quantvagasnoite
+         
+            session_db.commit()
+            id = escala_existente.id 
+        else:
+            session_db.add(escala)
+            session_db.commit()
+            id = escala.id  
+
+    except Exception as e:
+        session_db.rollback()  # Desfaz a sessão em caso de erro
+        app.logger.info(f"Erro ao gravar o escala: {e}")
+        return jsonify({"flggravar": False, "id":None})
+    finally:
+        session_db.close()
+
+    return jsonify({"flggravar": True, "id":id})
+
 
 def pesquisar_dados_paciente(cpf):
     session_db=Session()
@@ -278,7 +309,7 @@ def pesquisar_dados_medico(cpf):
     else:
         return jsonify({"flgencontrou": False})
     if medico:
-        app.logger.info(f" {medico.flgativo}")
+      
         return jsonify({
             "flgencontrou": True,
             'codmedico':medico.codmedico,
@@ -395,7 +426,7 @@ def pesquisar_medico_por_especialidade(codespecialidade):
         }
         for medico_cod, nome in medicos
     ]
-    app.logger.info(f" medicos: {medicos_list}")
+   
     return jsonify({
         "flgencontrou": len(medicos_list) > 0,  # Retorna True se encontrou médicos
         "medicos": medicos_list
@@ -654,7 +685,7 @@ def buscar_vagas_por_data(data, codmedico):
         
         if escala:
             # Log para verificar as vagas encontradas
-            app.logger.info(f"Vagas encontradas para {data}: Manhã: {escala.quantvagasmanha}, Tarde: {escala.quantvagastarde}, Noite: {escala.quantvagasnoite}")
+          
             
             # Retorna as vagas para os diferentes turnos
             return jsonify({
@@ -675,9 +706,13 @@ def buscar_vagas_por_data(data, codmedico):
 
 @app.route('/agendar_paciente/<codpaciente>/<codmedico>/<dataselecionada>/<horaagendamento>/<turno>',methods=['POST'])
 def agendar_paciente(codpaciente,codmedico,dataselecionada,horaagendamento,turno):
-    
     return gravar_agendamento(codpaciente,codmedico,dataselecionada,horaagendamento,turno)
 
+
+
+@app.route('/salvar_escala/<codmedico>/<dataselecionada>/<quantmanha>/<quanttarde>/<quantnoite>',methods=['POST'])
+def salvar_escala(codmedico,dataselecionada,quantmanha,quanttarde,quantnoite):
+    return gravar_escala(codmedico,dataselecionada,quantmanha,quanttarde,quantnoite)
 
 @app.route('/pesquisar_pacientes_agendados/<codmedico>/<dataselecionada>/<turno>',methods=['GET'])
 def pesquisar_pacientes_agendados(codmedico, dataselecionada,turno):

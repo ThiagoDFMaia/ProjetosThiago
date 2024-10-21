@@ -215,14 +215,14 @@
             .catch(error => console.error('Erro ao buscar dados:', error));
     }
 }
-// Prevenção do envio automático do formulário
+
 document.getElementById('form-paciente').addEventListener('submit', function(event) {
-    event.preventDefault(); // Previne envio automático
+    event.preventDefault();
 });
 
-// Envio controlado pelo botão de salvar
+
 document.getElementById('btn-salvar').onclick = function() {
-    document.getElementById('form-paciente').submit(); // Agora o envio é controlado
+    document.getElementById('form-paciente').submit(); 
 };
 
 function limparCPF() {
