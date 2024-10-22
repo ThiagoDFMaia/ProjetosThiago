@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: #e0f7e9; /* Verde claro no fundo */
             margin: 0;
             padding: 20px;
         }
@@ -29,6 +29,10 @@
         }
         h3 {
             margin-top: 0;
+        }
+        h2 {
+            text-align: center;
+            font-size: 24px;
         }
         .input-group {
             margin-bottom: 15px;
@@ -66,10 +70,17 @@
         button:hover {
             background-color: #45a049;
         }
+        .gravar-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
 
+    <h2>Formulário Médico</h2>
+    
     <div class="container">
         <!-- Form Section -->
         <div class="form-section">
@@ -77,36 +88,6 @@
             <div class="input-group">
                 <label for="anamnese">Descreva aqui:</label>
                 <textarea id="anamnese" rows="5"></textarea>
-            </div>
-
-            <div class="input-group">
-                <label for="habitos">Hábitos de vida e Outras informações</label>
-                <div class="radio-group">
-                    <input type="radio" id="sim-habitos" name="habitos" value="sim">
-                    <label for="sim-habitos">Sim</label>
-                    <input type="radio" id="nao-habitos" name="habitos" value="nao">
-                    <label for="nao-habitos">Não</label>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="detalhes">Mais Detalhes</label>
-                <div class="radio-group">
-                    <input type="radio" id="sim-detalhes" name="detalhes" value="sim">
-                    <label for="sim-detalhes">Sim</label>
-                    <input type="radio" id="nao-detalhes" name="detalhes" value="nao">
-                    <label for="nao-detalhes">Não</label>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="exame-fisico">Exame Físico</label>
-                <div class="radio-group">
-                    <input type="radio" id="sim-exame" name="exame-fisico" value="sim">
-                    <label for="sim-exame">Sim</label>
-                    <input type="radio" id="nao-exame" name="exame-fisico" value="nao">
-                    <label for="nao-exame">Não</label>
-                </div>
             </div>
 
             <h3>Conclusão Diagnóstica</h3>
@@ -133,6 +114,11 @@
                 <button>Imprimir</button>
             </div>
         </div>
+    </div>
+
+    <!-- Botão Gravar Formulário -->
+    <div class="gravar-button">
+        <button>Gravar Formulário</button>
     </div>
 
 </body>
