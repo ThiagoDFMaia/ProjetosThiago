@@ -129,6 +129,71 @@
     </div>
 </div>
 
+    <!-- Modal -->
+<div id="modal-myModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modal-closeModal">&times;</span>
+            <div class="modal-form-section">
+                <h3 class="modal-h3">Dados do Paciente</h3>
+                
+                <div class="modal-input-group">
+                    <label class="modal-label" for="modal-nome">Nome do Paciente:</label>
+                    <input type="text" class="modal-input" id="modal_nome" disabled value="Nome do Paciente">
+                </div>
+                
+                <div class="modal-input-group">
+                    <label class="modal-label" for="modal-data-nascimento">Data de Nascimento:</label>
+                    <input type="text" class="modal-input" id="modal_data_nascimento" disabled value="01/01/2000">
+                </div>
+                
+                <div class="modal-input-group">
+                    <label class="modal-label" for="modal-id-paciente">ID do Paciente:</label>
+                    <input type="text" class="modal-input" id="modal_id_paciente" disabled value="12345">
+                </div>
+            </div>
+            <!-- Formulário Médico -->
+            <h2 class="modal-h2">Formulário Médico</h2>
+            <div class="modal-container">
+                <!-- Form Section -->
+                <div class="modal-form-section">
+                    <h3 class="modal-h3">Anamnese</h3>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="modal_anamnese">Descreva aqui:</label>
+                        <textarea class="modal-textarea" id="modal_anamnese" rows="5"></textarea>
+                    </div>
+
+                    <h3 class="modal-h3">Conclusão Diagnóstica</h3>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="modal_conclusao">Descreva aqui:</label>
+                        <textarea class="modal-textarea" id="modal_conclusao" rows="5"></textarea>
+                    </div>
+
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="modal_cid">CID</label>
+                        <input type="text" class="modal-input" id="modal_cid" placeholder="Pesquise pelo CID...">
+                    </div>
+                </div>
+
+                <!-- Right Panel -->
+                <div class="modal-right-panel">
+                    <h3 class="modal-h3">Lista de problemas</h3>
+                    <textarea class="modal-textarea" id="modal_problemas" rows="5"></textarea>
+
+                    <h3 class="modal-h3">Documentos</h3>
+                    <div class="modal-button-group">
+                        <button>+ Novo</button>
+                        <button>Modelo</button>
+                        <button>Imprimir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botão Gravar Formulário -->
+            <div class="modal-gravar-button">
+                <button type="submit" id="gravar_prontuario">Gravar Formulário</button>
+            </div>
+        </div>
+</div>
 <!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!-- Bootstrap JS -->
@@ -290,11 +355,89 @@ function atualizaHorarios(hora,vagas,agendados){
         let pacienteAgendado = agendados.find(ag => ag.horaagendamento === horaFormatada);
 
 
-        if (pacienteAgendado) {
-           
-            itemLista.textContent = `${horaFormatada} --- ${pacienteAgendado.nome}`;
-            itemLista.style.backgroundColor = '#f8d7da';
-        } else {
+            if (pacienteAgendado) {
+                // Cria o item da lista com o nome do paciente e a hora agendada
+                itemLista.textContent = `${horaFormatada} --- ${pacienteAgendado.nome}`;
+                itemLista.style.backgroundColor = '#f8d7da';
+
+                // Criação de um contêiner para os botões
+                const botoesContainer = document.createElement('div');
+                botoesContainer.style.marginTop = '10px'; // Espaço entre o nome e os botões
+                botoesContainer.style.display = 'flex';
+                botoesContainer.style.gap = '10px'; // Espaço entre os botões
+
+                // Criação do botão 'Detalhar'
+                const btnDetalhar = document.createElement('button');
+                btnDetalhar.textContent = 'Detalhar';
+                btnDetalhar.style.backgroundColor = '#007bff';
+                btnDetalhar.style.color = 'white';
+                btnDetalhar.style.border = 'none';
+                btnDetalhar.style.padding = '5px 10px';
+                btnDetalhar.style.borderRadius = '4px';
+                btnDetalhar.style.cursor = 'pointer';
+
+                // Função ao clicar no botão 'Detalhar'
+                btnDetalhar.addEventListener('click', function() {
+                    alert(`Detalhes do paciente: ${pacienteAgendado.nome}`);
+                    // Aqui você pode adicionar lógica para abrir uma página de detalhes ou mostrar mais informações
+                });
+
+                // Criação do botão 'Iniciar Atendimento'
+                const btnIniciarAtendimento = document.createElement('button');
+                btnIniciarAtendimento.textContent = 'Iniciar Atendimento';
+                btnIniciarAtendimento.style.backgroundColor = '#28a745';
+                btnIniciarAtendimento.style.color = 'white';
+                btnIniciarAtendimento.style.border = 'none';
+                btnIniciarAtendimento.style.padding = '5px 10px';
+                btnIniciarAtendimento.style.borderRadius = '4px';
+                btnIniciarAtendimento.style.cursor = 'pointer';
+                btnIniciarAtendimento.id = 'iniciar_atendimento';
+
+
+                // Obter o modal
+                var modal = document.getElementById("modal-myModal");
+
+                // Obter o botão que abre o modal
+                var btn = document.getElementById("iniciar_atendimento");
+
+                // Obter o elemento <span> que fecha o modal
+                var span = document.getElementById("modal-closeModal");
+
+            
+
+                // Função ao clicar no botão 'Iniciar Atendimento'
+                btnIniciarAtendimento.addEventListener('click', function() {
+                    alert(`Iniciando atendimento para: ${pacienteAgendado.nome}`);
+                    document.getElementById("modal_nome").value=pacienteAgendado.nome;
+                    document.getElementById("modal_id_paciente").value=pacienteAgendado.id;
+                    document.getElementById("modal_data_nascimento").value=pacienteAgendado.data_nascimento;
+                    // Aqui você pode adicionar a lógica para iniciar o atendimento do paciente
+                    $('#calendar').hide();
+                    modal.style.display = "block";
+                });
+
+                // Quando o <span> é clicado, fecha o modal
+                span.onclick = function() {
+                    modal.style.display = "none";
+                    $('#calendar').show();
+                }
+
+                // Quando o usuário clica fora do modal, fecha-o
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                        $('#calendar').show();
+                    }
+                }
+
+                // Adiciona os botões ao contêiner
+                botoesContainer.appendChild(btnDetalhar);
+                botoesContainer.appendChild(btnIniciarAtendimento);
+
+                // Adiciona o contêiner de botões ao item da lista
+                itemLista.appendChild(document.createElement('br')); // Quebra de linha para os botões ficarem abaixo
+                itemLista.appendChild(botoesContainer);
+            }else {
             
             itemLista.textContent = `${horaFormatada} --- Livre`;
         }
@@ -457,6 +600,31 @@ function abriraescala() {
 
         cpfField.value = cpf; // Atualiza o campo com o CPF formatado
     };
+
+    document.getElementById('gravar_prontuario').onclick = function() {
+   
+    var cid= document.getElementById('modal_cid').value;
+    var codmedico= document.getElementById('medico').value;
+  
+    var anamnese=document.getElementById('modal_anamnese').value;
+  
+     
+   
+    var problemas= document.getElementById('modal_problemas').value;
+    var conclusao= document.getElementById('modal_conclusao').value; 
+    
+    
+    
+    fetch(`/gravar_prontuario/${codmedico}/${cid}/${anamnese}/${problemas}/${conclusao}`, {
+                        method: 'POST',
+                    })
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.flggravar){
+                            alert('Escala Salva com sucesso!')
+                    }
+            })
+};
    
 </script>
 

@@ -251,6 +251,8 @@ def gravar_escala(codmedico,dataselecionada,quantmanha,quanttarde,quantnoite):
 
     return jsonify({"flggravar": True, "id":id})
 
+def salvar_prontuario(codmedico,cid,anamnese,problemas,conclusao):
+    pass
 
 def pesquisar_dados_paciente(cpf):
     session_db=Session()
@@ -380,7 +382,7 @@ def pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno):
 
     try:
         agendados = (
-        session_db.query(Agendamento.horaagendamento, Pessoa.nome)
+        session_db.query(Agendamento.horaagendamento, Pessoa.nome, Paciente.id,Pessoa.data_nas)
         .join(Escala,Agendamento.escala_id==Escala.id and Escala.codmedico==codmedico)
         .join(Paciente, Agendamento.fk_paciente_id == Paciente.id) 
         .join(Pessoa, Paciente.fk_pessoa_id == Pessoa.id)  # Join com Pessoa usando idpessoa
@@ -395,9 +397,9 @@ def pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno):
         session_db.close()
 
     if agendados:
-        app.logger.info(f"Agendados teste{agendados}")
+        
         agendados_json = [
-        {"horaagendamento": ag.horaagendamento.strftime("%H:%M"), "nome": ag.nome} for ag in agendados
+        {"horaagendamento": ag.horaagendamento.strftime("%H:%M"), "nome": ag.nome,"id":ag.id,"data_nascimento":ag.data_nas.strftime('%Y-%m-%d')} for ag in agendados
         ]
 
         return jsonify({
@@ -714,6 +716,13 @@ def agendar_paciente(codpaciente,codmedico,dataselecionada,horaagendamento,turno
 def salvar_escala(codmedico,dataselecionada,quantmanha,quanttarde,quantnoite):
     return gravar_escala(codmedico,dataselecionada,quantmanha,quanttarde,quantnoite)
 
+
+# /gravar_prontuario/${codmedico}/${cid}/${anamnese}/${problemas}/${conclusao}
+
+@app.route('/gravar_prontuario/<codmedico>/<cid>/<anamnese>/<problemas>/<conclusao>',methods=['POST'])
+def gravar_prontuario(codmedico,cid,anamnese,problemas,conclusao):
+    return salvar_prontuario(codmedico,cid,anamnese,problemas,conclusao)
+
 @app.route('/pesquisar_pacientes_agendados/<codmedico>/<dataselecionada>/<turno>',methods=['GET'])
 def pesquisar_pacientes_agendados(codmedico, dataselecionada,turno):
     return pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno)
@@ -736,6 +745,9 @@ def salvar_convenio():
     # Redireciona para uma página de sucesso ou outra rota
    
     return render_template("cadastroconvenio.html", mensagem=f"Cadastro Realizado com sucesso!")
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 

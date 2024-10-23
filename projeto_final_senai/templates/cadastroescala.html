@@ -261,23 +261,23 @@
 //});
 
 
-document.getElementById('salvar_escala').onclick = function() {
-    var quantmanha=document.getElementById('vagas_manha_input').value;
-    var quanttarde= document.getElementById('vagas_tarde_input').value; 
-    var quantnoite= document.getElementById('vagas_noite_input').value;
-    var dataselecionada= document.getElementById('dataselecionada').value;
-    var codmedico= document.getElementById('codmedico').value;
-    alert('enviando dados')
-    fetch(`/salvar_escala/${codmedico}/${dataselecionada}/${quantmanha}/${quanttarde}/${quantnoite}`, {
-                        method: 'POST',
-                    })
-                    .then(response => response.json())
-                    .then(response => {
-                        if (response.flggravar){
-                            alert('Escala Salva com sucesso!')
-                    }
-            })
-};
+    document.getElementById('salvar_escala').onclick = function() {
+        var quantmanha=document.getElementById('vagas_manha_input').value;
+        var quanttarde= document.getElementById('vagas_tarde_input').value; 
+        var quantnoite= document.getElementById('vagas_noite_input').value;
+        var dataselecionada= document.getElementById('dataselecionada').value;
+        var codmedico= document.getElementById('codmedico').value;
+    
+        fetch(`/salvar_escala/${codmedico}/${dataselecionada}/${quantmanha}/${quanttarde}/${quantnoite}`, {
+                            method: 'POST',
+                        })
+                        .then(response => response.json())
+                        .then(response => {
+                            if (response.flggravar){
+                                alert('Escala Salva com sucesso!')
+                        }
+                })
+    };
 
 </script>
 
