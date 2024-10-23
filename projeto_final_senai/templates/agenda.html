@@ -148,7 +148,11 @@
                 
                 <div class="modal-input-group">
                     <label class="modal-label" for="modal-id-paciente">ID do Paciente:</label>
-                    <input type="text" class="modal-input" id="modal_id_paciente" disabled value="12345">
+                    <input type="text" class="modal-input" id="modal_id_paciente" disabled >
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="modal-id-paciente">Código do Agendamento:</label>
+                    <input type="text" class="modal-input" id="modal_codigo_agendamento" disabled >
                 </div>
             </div>
             <!-- Formulário Médico -->
@@ -411,7 +415,10 @@ function atualizaHorarios(hora,vagas,agendados){
                     document.getElementById("modal_nome").value=pacienteAgendado.nome;
                     document.getElementById("modal_id_paciente").value=pacienteAgendado.id;
                     document.getElementById("modal_data_nascimento").value=pacienteAgendado.data_nascimento;
+                    document.getElementById("modal_codigo_agendamento").value=pacienteAgendado.codigo;
+                 
                     // Aqui você pode adicionar a lógica para iniciar o atendimento do paciente
+                    
                     $('#calendar').hide();
                     modal.style.display = "block";
                 });
@@ -611,20 +618,38 @@ function abriraescala() {
      
    
     var problemas= document.getElementById('modal_problemas').value;
-    var conclusao= document.getElementById('modal_conclusao').value; 
+    var conclusao= document.getElementById('modal_conclusao').value;
+    var dataAgenda= document.getElementById('dataselecionada').value;
     
-    
-    
-    fetch(`/gravar_prontuario/${codmedico}/${cid}/${anamnese}/${problemas}/${conclusao}`, {
-                        method: 'POST',
-                    })
-                    .then(response => response.json())
-                    .then(response => {
-                        if (response.flggravar){
-                            alert('Escala Salva com sucesso!')
-                    }
-            })
+    var idpaciente= document.getElementById('modal_id_paciente').value ;
+  
+    var codagendamento=document.getElementById('modal_codigo_agendamento').value ;
+    var data = {
+    idpaciente: idpaciente,
+    codmedico: codmedico,
+    cid: cid,
+    anamnese: anamnese,
+    problemas: problemas,
+    conclusao: conclusao,
+    dataAgenda: dataAgenda,
+    codagendamento:codagendamento
 };
+
+    fetch('/gravar_prontuario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)  // Convertendo o objeto em uma string JSON
+        })
+        .then(response => response.json())
+        .then(response => {
+            if (response.flggravar) {
+                alert('Prontuário gravado com sucesso');
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+        };
    
 </script>
 

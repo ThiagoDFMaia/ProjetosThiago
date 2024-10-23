@@ -53,6 +53,7 @@ Medico=Base.classes.medico
 Especialidade=Base.classes.especialidade
 Escala=Base.classes.escala
 Agendamento=Base.classes.agendamento
+Prontuario=Base.classes.prontuario
 
 
 # Relacionamentos entre tabelas
@@ -251,8 +252,27 @@ def gravar_escala(codmedico,dataselecionada,quantmanha,quanttarde,quantnoite):
 
     return jsonify({"flggravar": True, "id":id})
 
-def salvar_prontuario(codmedico,cid,anamnese,problemas,conclusao):
-    pass
+def salvar_prontuario(prontuario):
+    session_db = Session()
+
+    try:
+           
+           
+            session_db.add(prontuario)
+            session_db.commit()
+            num = prontuario.numprontuario  
+
+            session_db.query(Agendamento).filter(Agendamento.codigo == prontuario.fk_codigo_agendamento).update({"flgsituacao": "05"})
+   
+    
+    except Exception as e:
+        session_db.rollback()  # Desfaz a sessão em caso de erro
+        app.logger.info(f"Erro ao gravar o prontuaio: {e}")
+        return jsonify({"flggravar": False, "num":None})
+    finally:
+        session_db.close()
+
+    return jsonify({"flggravar": True, "num":num})
 
 def pesquisar_dados_paciente(cpf):
     session_db=Session()
@@ -382,7 +402,7 @@ def pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno):
 
     try:
         agendados = (
-        session_db.query(Agendamento.horaagendamento, Pessoa.nome, Paciente.id,Pessoa.data_nas)
+        session_db.query(Agendamento.codigo,Agendamento.horaagendamento, Pessoa.nome, Paciente.id,Pessoa.data_nas)
         .join(Escala,Agendamento.escala_id==Escala.id and Escala.codmedico==codmedico)
         .join(Paciente, Agendamento.fk_paciente_id == Paciente.id) 
         .join(Pessoa, Paciente.fk_pessoa_id == Pessoa.id)  # Join com Pessoa usando idpessoa
@@ -399,7 +419,7 @@ def pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno):
     if agendados:
         
         agendados_json = [
-        {"horaagendamento": ag.horaagendamento.strftime("%H:%M"), "nome": ag.nome,"id":ag.id,"data_nascimento":ag.data_nas.strftime('%Y-%m-%d')} for ag in agendados
+        {"codigo":ag.codigo,"horaagendamento": ag.horaagendamento.strftime("%H:%M"), "nome": ag.nome,"id":ag.id,"data_nascimento":ag.data_nas.strftime('%Y-%m-%d')} for ag in agendados
         ]
 
         return jsonify({
@@ -717,11 +737,16 @@ def salvar_escala(codmedico,dataselecionada,quantmanha,quanttarde,quantnoite):
     return gravar_escala(codmedico,dataselecionada,quantmanha,quanttarde,quantnoite)
 
 
-# /gravar_prontuario/${codmedico}/${cid}/${anamnese}/${problemas}/${conclusao}
 
-@app.route('/gravar_prontuario/<codmedico>/<cid>/<anamnese>/<problemas>/<conclusao>',methods=['POST'])
-def gravar_prontuario(codmedico,cid,anamnese,problemas,conclusao):
-    return salvar_prontuario(codmedico,cid,anamnese,problemas,conclusao)
+
+@app.route('/gravar_prontuario',methods=['POST'])
+def gravar_prontuario():
+
+    data = request.json  # Capturando o JSON enviado
+
+    prontuario = Prontuario(fk_paciente_id=data.get('idpaciente'),fk_codmedico=data.get('codmedico'),cid=data.get('cid'),anamnese=data.get('anamnese'),lista_de_problemas=data.get('problemas'),conclusao_diagnostica=data.get('conclusao'),dataAgenda=data.get('dataAgenda'),fk_codigo_agendamento=data.get('codagendamento') )
+
+    return salvar_prontuario(prontuario)
 
 @app.route('/pesquisar_pacientes_agendados/<codmedico>/<dataselecionada>/<turno>',methods=['GET'])
 def pesquisar_pacientes_agendados(codmedico, dataselecionada,turno):

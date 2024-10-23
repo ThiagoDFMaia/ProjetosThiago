@@ -84,3 +84,16 @@ class Agendamento:
         self.turno=turno
 
 
+
+
+class Prontuario:
+    def __init__(self,fk_paciente_id,anamnese,conclusao_diagnostica,lista_de_problemas,cid,fk_codmedico,dataAgenda,fk_codigo_agendamento):
+       
+        self.fk_paciente_id=fk_paciente_id
+        self.anamnese=anamnese
+        self.conclusao_diagnostica=conclusao_diagnostica
+        self.lista_de_problemas=lista_de_problemas
+        self.cid=cid
+        self.fk_codmedico=fk_codmedico
+        self.dataAgenda=dataAgenda
+        self.fk_codigo_agendamento=fk_codigo_agendamento

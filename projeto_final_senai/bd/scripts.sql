@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`convenio` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `cnpj` (`cnpj` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 8
+AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`agendamento` (
   `codigo` INT NOT NULL AUTO_INCREMENT,
   `dataagenda` DATE NOT NULL,
   `datacadastro` DATE NOT NULL,
-  `flgsituacao` CHAR(2) NOT NULL COMMENT '01- agendado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n02- cancelado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n03- presenca\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n04- falta',
+  `flgsituacao` CHAR(2) NOT NULL COMMENT '01- agendado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n02- cancelado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n03- presenca\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n04- falta\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n05- atendido',
   `fk_paciente_id` INT NULL DEFAULT NULL,
   `escala_id` INT NOT NULL,
   `horaagendamento` TIME NOT NULL,
@@ -244,9 +244,15 @@ CREATE TABLE IF NOT EXISTS `clinica`.`prontuario` (
   `lista_de_problemas` TEXT NOT NULL,
   `cid` VARCHAR(10) NOT NULL,
   `fk_codmedico` INT NOT NULL,
+  `dataAgenda` DATE NOT NULL,
+  `fk_codigo_agendamento` INT NULL DEFAULT NULL,
   PRIMARY KEY (`numprontuario`),
   INDEX `fk_paciente_id` (`fk_paciente_id` ASC) VISIBLE,
   INDEX `fk_codmedico` (`fk_codmedico` ASC) VISIBLE,
+  INDEX `fk_codigo_agendamento` (`fk_codigo_agendamento` ASC) VISIBLE,
+  CONSTRAINT `fk_codigo_agendamento`
+    FOREIGN KEY (`fk_codigo_agendamento`)
+    REFERENCES `clinica`.`agendamento` (`codigo`),
   CONSTRAINT `prontuario_ibfk_1`
     FOREIGN KEY (`fk_paciente_id`)
     REFERENCES `clinica`.`paciente` (`id`),
@@ -254,6 +260,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`prontuario` (
     FOREIGN KEY (`fk_codmedico`)
     REFERENCES `clinica`.`medico` (`codmedico`))
 ENGINE = InnoDB
+AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -264,6 +271,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
 
+
 ALTER TABLE especialidade AUTO_INCREMENT = 1;
 ALTER TABLE paciente AUTO_INCREMENT = 1;
 ALTER TABLE agendamento AUTO_INCREMENT = 1;
@@ -271,3 +279,4 @@ ALTER TABLE pessoa AUTO_INCREMENT = 1;
 ALTER TABLE medico AUTO_INCREMENT = 1;
 ALTER TABLE escala AUTO_INCREMENT = 1;
 ALTER TABLE convenio AUTO_INCREMENT = 1;
+alter table prontuario AUTO_INCREMENT = 1
