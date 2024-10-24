@@ -265,6 +265,7 @@ def salvar_prontuario(prontuario):
                 prontuario_existente.cid=prontuario.cid
                 session_db.commit()
                 num = prontuario_existente.numprontuario 
+              
             else:
                 session_db.add(prontuario)
                 session_db.commit()
@@ -273,30 +274,31 @@ def salvar_prontuario(prontuario):
                 session_db.query(Agendamento).filter(Agendamento.codigo == prontuario.fk_codigo_agendamento).update({"flgsituacao": "05"})
                 session_db.commit()
     
+               
+            
+            
+     
     except Exception as e:
         session_db.rollback()  # Desfaz a sessão em caso de erro
-        app.logger.info(f"Erro ao gravar o prontuaio: {e}")
+        app.logger.info(f"Erro ao gravar o prontuario: {e}")
         return jsonify({"flggravar": False, "num":None})
     finally:
         session_db.close()
+    
+    
+   
+    return jsonify({
+           "flggravar": True, "num":num})
 
-    return jsonify({"flggravar": True, "num":num})
+
+
 
 def pesquisar_prontuario(numprontuario):
     session_db = Session()
     prontuario=session_db.query(Prontuario).filter(Prontuario.numprontuario == numprontuario).one_or_none()
    
     if prontuario:
-        '''    
-        self.fk_paciente_id=fk_paciente_id
-        self.anamnese=anamnese
-        self.conclusao_diagnostica=conclusao_diagnostica
-        self.lista_de_problemas=lista_de_problemas
-        self.cid=cid
-        self.fk_codmedico=fk_codmedico
-        self.dataAgenda=dataAgenda
-        self.fk_codigo_agendamento=fk_codigo_agendamento
-        '''
+    
         return jsonify({
             "anamnese":prontuario.anamnese,
             "conclusao_diagnostica":prontuario.conclusao_diagnostica,
@@ -436,15 +438,7 @@ def pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno):
     session_db=Session()
 
     try:
-        '''
-           agendados = (
-        session_db.query(Agendamento.codigo,Agendamento.horaagendamento, Pessoa.nome, Paciente.id,Pessoa.data_nas)
-        .join(Escala,Agendamento.escala_id==Escala.id and Escala.codmedico==codmedico)
-        .join(Paciente, Agendamento.fk_paciente_id == Paciente.id) 
-        .join(Pessoa, Paciente.fk_pessoa_id == Pessoa.id)  # Join com Pessoa usando idpessoa
-        .filter(Agendamento.dataagenda==dataselecionada and Agendamento.turno==turno)
-        ).all()
-        '''
+     
      
 
 
@@ -463,7 +457,7 @@ def pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno):
         .outerjoin(Prontuario, Agendamento.codigo == Prontuario.fk_codigo_agendamento)  
         .filter(Agendamento.dataagenda == dataselecionada and Agendamento.turno == turno)
         ).all()
-        app.logger.info(f"Erro ao pesquisar os pacientes: {agendados}")
+       
     except Exception as e:
         session_db.rollback() 
         app.logger.info(f"Erro ao pesquisar os pacientes: {e}")
@@ -473,20 +467,10 @@ def pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno):
 
     if agendados:
         
-        agendados_json = [
-        {"codigo":ag.codigo,"horaagendamento": ag.horaagendamento.strftime("%H:%M"), "nome": ag.nome,"id":ag.id,"data_nascimento":ag.data_nas.strftime('%Y-%m-%d'),"numprontuario":ag.numprontuario} for ag in agendados
-        ]
-
-        return jsonify({
-            'agendados': agendados_json,
-          
-        })
+      return agendados
   
     else:
-         return jsonify({
-            'agendados': None,
-          
-        })
+      return None
 
    
 
@@ -812,7 +796,27 @@ def pesquisar_prontuario_paciente_agenda(numprontuario):
 
 @app.route('/pesquisar_pacientes_agendados/<codmedico>/<dataselecionada>/<turno>',methods=['GET'])
 def pesquisar_pacientes_agendados(codmedico, dataselecionada,turno):
-    return pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno)
+    agendados=pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno)
+
+
+    if agendados:  
+        agendados_json = [
+        {"codigo":ag.codigo,"horaagendamento": ag.horaagendamento.strftime("%H:%M"), "nome": ag.nome,"id":ag.id,"data_nascimento":ag.data_nas.strftime('%Y-%m-%d'),"numprontuario":ag.numprontuario} for ag in agendados
+        ]
+
+        return jsonify({
+            'agendados': agendados_json,
+          
+    })
+    else:
+         return jsonify({
+            'agendados': None,
+          
+        })
+
+    
+
+     
 
 @app.route('/salvar_convenio',methods=['POST'])
 def salvar_convenio():

@@ -314,31 +314,7 @@ document.getElementById('btnPesquisarpaciente').addEventListener('click', functi
 
 });
 
-document.getElementById('btnManha').addEventListener('click', function() {
- 
-    let vagas = document.getElementById('vagasManha').value; 
 
-
-    let horainicial = new Date();
-    horainicial.setHours(7, 0, 0); 
-    document.getElementById('turnoselecionado').value="Manhã"
-
-    var codmedico = document.getElementById('medico').value;
-            
-    var dataselecionada=  document.getElementById('dataselecionada').value;
-    var turno=document.getElementById('turnoselecionado').value.toLowerCase();
-
-    fetch(`/pesquisar_pacientes_agendados/${codmedico}/${dataselecionada}/${turno}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                   
-                atualizaHorarios(horainicial, vagas, data.agendados);
-            }
-    })   
-
-    //atualizaHorarios(horainicial,vagas)
-});
 
 function atualizaHorarios(hora,vagas,agendados){
     // Obtendo o elemento onde os horários serão adicionados
@@ -539,15 +515,54 @@ function formatarHora(data) {
     return `${horas}:${minutos}`;
 }
 
+document.getElementById('btnManha').addEventListener('click', function() {
+ 
+ let vagas = document.getElementById('vagasManha').value; 
+
+
+ let horainicial = new Date();
+ horainicial.setHours(7, 0, 0); 
+ document.getElementById('turnoselecionado').value="Manhã"
+
+ var codmedico = document.getElementById('medico').value;
+         
+ var dataselecionada=  document.getElementById('dataselecionada').value;
+ var turno=document.getElementById('turnoselecionado').value.toLowerCase();
+
+ fetch(`/pesquisar_pacientes_agendados/${codmedico}/${dataselecionada}/${turno}`)
+         .then(response => response.json())
+         .then(data => {
+             if (data) {
+                
+             atualizaHorarios(horainicial, vagas, data.agendados);
+         }
+ })   
+
+ //atualizaHorarios(horainicial,vagas)
+});
 
 document.getElementById('btnTarde').addEventListener('click',function(){
-    let vagasManha = document.getElementById('vagasManha').value; 
+    let vagas = document.getElementById('vagasTarde').value; 
 
 
     let horainicial = new Date();
     horainicial.setHours(13, 0, 0); 
     document.getElementById('turnoselecionado').value="Tarde"
-    atualizaHorarios(horainicial,vagasManha)
+
+    var codmedico = document.getElementById('medico').value;
+            
+    var dataselecionada=  document.getElementById('dataselecionada').value;
+    var turno=document.getElementById('turnoselecionado').value.toLowerCase();
+
+    fetch(`/pesquisar_pacientes_agendados/${codmedico}/${dataselecionada}/${turno}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    
+                atualizaHorarios(horainicial, vagas, data.agendados);
+            }
+    })   
+
 
 });
 
@@ -559,7 +574,20 @@ document.getElementById('btnNoite').addEventListener('click',function(){
     horainicial.setHours(18, 0, 0); 
     document.getElementById('turnoselecionado').value="Noite"
 
-    atualizaHorarios(horainicial,vagas)
+    var codmedico = document.getElementById('medico').value;
+            
+    var dataselecionada=  document.getElementById('dataselecionada').value;
+    var turno=document.getElementById('turnoselecionado').value.toLowerCase();
+
+    fetch(`/pesquisar_pacientes_agendados/${codmedico}/${dataselecionada}/${turno}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                
+                atualizaHorarios(horainicial, vagas, data.agendados);
+            }
+    })   
+
 
 });
 function abriraescala() {
@@ -680,12 +708,34 @@ function abriraescala() {
             .then(response => response.json())
             .then(response => {
                 if (response.flggravar) {
-                    alert('Prontuário gravado com sucesso');
+                    alert("Prontuario gravado com sucesso!")
+                    let turno=document.getElementById('turnoselecionado').value
+                   
+                    switch (turno) {
+                    case 'Manhã':
+                        
+                        document.getElementById('btnManha').click();
+                        break;
+                    case 'Tarde':
+                       
+                        document.getElementById('btnTarde').click();
+                        break;
+                    case 'Noite':
+                       
+                        document.getElementById('btnNoite').click();
+                        break;
+                    default:
+                    
+                        console.log('Valor não reconhecido');
+                }
                     limparModal()
+
+
                     modal.style.display = "none";
                     $('#calendar').show();
-                    
-                }
+                    //alert(document.getElementById('turnoselecionado').value)
+                  
+                            }
             })
             .catch(error => console.error('Erro:', error));
             };
