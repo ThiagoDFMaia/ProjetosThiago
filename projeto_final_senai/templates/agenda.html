@@ -484,8 +484,10 @@ function atualizaHorarios(hora,vagas,agendados){
                     .then(response => {
                         if (response.flgagendamento){
                             alert('agendamento realizadao com sucesso!')
-                            itemLista.textContent = `${horaFormatada} --- ${nome}`;
-                            itemLista.style.backgroundColor = '#f8d7da';
+                            //itemLista.textContent = `${horaFormatada} --- ${nome}`;
+                            //itemLista.style.backgroundColor = '#f8d7da';
+                            let turno=document.getElementById('turnoselecionado').value
+                            atualizando_lista(turno)
                         }else{
                             alert('Não foi possível realizar o agendamento! Tente novamente')
                         }
@@ -711,23 +713,7 @@ function abriraescala() {
                     alert("Prontuario gravado com sucesso!")
                     let turno=document.getElementById('turnoselecionado').value
                    
-                    switch (turno) {
-                    case 'Manhã':
-                        
-                        document.getElementById('btnManha').click();
-                        break;
-                    case 'Tarde':
-                       
-                        document.getElementById('btnTarde').click();
-                        break;
-                    case 'Noite':
-                       
-                        document.getElementById('btnNoite').click();
-                        break;
-                    default:
-                    
-                        console.log('Valor não reconhecido');
-                }
+                    atualizando_lista(turno)
                     limparModal()
 
 
@@ -756,7 +742,25 @@ function abriraescala() {
         });
     }
 
-
+    function atualizando_lista(turno){
+        switch (turno) {
+            case 'Manhã':
+                
+                document.getElementById('btnManha').click();
+                break;
+            case 'Tarde':
+               
+                document.getElementById('btnTarde').click();
+                break;
+            case 'Noite':
+               
+                document.getElementById('btnNoite').click();
+                break;
+            default:
+            
+                console.log('Valor não reconhecido');
+        }
+    }
 </script>
 
 
