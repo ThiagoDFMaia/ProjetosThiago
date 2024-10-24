@@ -257,13 +257,21 @@ def salvar_prontuario(prontuario):
 
     try:
            
-           
-            session_db.add(prontuario)
-            session_db.commit()
-            num = prontuario.numprontuario  
+            prontuario_existente = session_db.query(Prontuario).filter_by(fk_codigo_agendamento=prontuario.fk_codigo_agendamento).first()
+            if prontuario_existente:
+                prontuario_existente.anamnese=prontuario.anamnese
+                prontuario_existente.lista_de_problemas=prontuario.lista_de_problemas
+                prontuario_existente.conclusao_diagnostica=prontuario.conclusao_diagnostica
+                prontuario_existente.cid=prontuario.cid
+                session_db.commit()
+                num = prontuario_existente.numprontuario 
+            else:
+                session_db.add(prontuario)
+                session_db.commit()
+                num = prontuario.numprontuario  
 
-            session_db.query(Agendamento).filter(Agendamento.codigo == prontuario.fk_codigo_agendamento).update({"flgsituacao": "05"})
-   
+                session_db.query(Agendamento).filter(Agendamento.codigo == prontuario.fk_codigo_agendamento).update({"flgsituacao": "05"})
+                session_db.commit()
     
     except Exception as e:
         session_db.rollback()  # Desfaz a sessão em caso de erro
@@ -273,6 +281,33 @@ def salvar_prontuario(prontuario):
         session_db.close()
 
     return jsonify({"flggravar": True, "num":num})
+
+def pesquisar_prontuario(numprontuario):
+    session_db = Session()
+    prontuario=session_db.query(Prontuario).filter(Prontuario.numprontuario == numprontuario).one_or_none()
+   
+    if prontuario:
+        '''    
+        self.fk_paciente_id=fk_paciente_id
+        self.anamnese=anamnese
+        self.conclusao_diagnostica=conclusao_diagnostica
+        self.lista_de_problemas=lista_de_problemas
+        self.cid=cid
+        self.fk_codmedico=fk_codmedico
+        self.dataAgenda=dataAgenda
+        self.fk_codigo_agendamento=fk_codigo_agendamento
+        '''
+        return jsonify({
+            "anamnese":prontuario.anamnese,
+            "conclusao_diagnostica":prontuario.conclusao_diagnostica,
+            "lista_de_problemas":prontuario.lista_de_problemas,
+            "cid":prontuario.cid
+
+
+        })
+    else:
+        return False
+           
 
 def pesquisar_dados_paciente(cpf):
     session_db=Session()
@@ -401,14 +436,34 @@ def pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno):
     session_db=Session()
 
     try:
-        agendados = (
+        '''
+           agendados = (
         session_db.query(Agendamento.codigo,Agendamento.horaagendamento, Pessoa.nome, Paciente.id,Pessoa.data_nas)
         .join(Escala,Agendamento.escala_id==Escala.id and Escala.codmedico==codmedico)
         .join(Paciente, Agendamento.fk_paciente_id == Paciente.id) 
         .join(Pessoa, Paciente.fk_pessoa_id == Pessoa.id)  # Join com Pessoa usando idpessoa
         .filter(Agendamento.dataagenda==dataselecionada and Agendamento.turno==turno)
         ).all()
-        
+        '''
+     
+
+
+        agendados = (
+        session_db.query(
+        Agendamento.codigo,
+        Agendamento.horaagendamento,
+        Pessoa.nome,
+        Paciente.id,
+        Pessoa.data_nas,
+        Prontuario.numprontuario  
+        )
+        .join(Escala, Agendamento.escala_id == Escala.id and Escala.codmedico == codmedico)
+        .join(Paciente, Agendamento.fk_paciente_id == Paciente.id)
+        .join(Pessoa, Paciente.fk_pessoa_id == Pessoa.id)
+        .outerjoin(Prontuario, Agendamento.codigo == Prontuario.fk_codigo_agendamento)  
+        .filter(Agendamento.dataagenda == dataselecionada and Agendamento.turno == turno)
+        ).all()
+        app.logger.info(f"Erro ao pesquisar os pacientes: {agendados}")
     except Exception as e:
         session_db.rollback() 
         app.logger.info(f"Erro ao pesquisar os pacientes: {e}")
@@ -419,7 +474,7 @@ def pesquisa_pacientes_agendados_data(codmedico,dataselecionada,turno):
     if agendados:
         
         agendados_json = [
-        {"codigo":ag.codigo,"horaagendamento": ag.horaagendamento.strftime("%H:%M"), "nome": ag.nome,"id":ag.id,"data_nascimento":ag.data_nas.strftime('%Y-%m-%d')} for ag in agendados
+        {"codigo":ag.codigo,"horaagendamento": ag.horaagendamento.strftime("%H:%M"), "nome": ag.nome,"id":ag.id,"data_nascimento":ag.data_nas.strftime('%Y-%m-%d'),"numprontuario":ag.numprontuario} for ag in agendados
         ]
 
         return jsonify({
@@ -747,6 +802,13 @@ def gravar_prontuario():
     prontuario = Prontuario(fk_paciente_id=data.get('idpaciente'),fk_codmedico=data.get('codmedico'),cid=data.get('cid'),anamnese=data.get('anamnese'),lista_de_problemas=data.get('problemas'),conclusao_diagnostica=data.get('conclusao'),dataAgenda=data.get('dataAgenda'),fk_codigo_agendamento=data.get('codagendamento') )
 
     return salvar_prontuario(prontuario)
+
+
+
+@app.route('/pesquisar_prontuario_paciente_agenda/<numprontuario>',methods=['GET'])
+def pesquisar_prontuario_paciente_agenda(numprontuario):
+    return pesquisar_prontuario(numprontuario)
+
 
 @app.route('/pesquisar_pacientes_agendados/<codmedico>/<dataselecionada>/<turno>',methods=['GET'])
 def pesquisar_pacientes_agendados(codmedico, dataselecionada,turno):
