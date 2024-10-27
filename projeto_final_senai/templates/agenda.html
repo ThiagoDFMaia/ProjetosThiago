@@ -164,6 +164,14 @@
                     <div class="modal-input-group">
                         <label class="modal-label" for="modal_anamnese">Descreva aqui:</label>
                         <textarea class="modal-textarea" id="modal_anamnese" rows="5"></textarea>
+                        <button id="modal_activate_senia" class="btn" type="button">
+                            <i class="fas fa-microphone"></i> Capturar por Voz
+                        </button>
+
+                        <div id="microphone-status">
+                            <span id="status-text">Aguardando captura de voz...</span>
+                            <i id="status-icon" class="fas fa-microphone-alt"></i>
+                        </div>
                     </div>
 
                     <h3 class="modal-h3">Conclusão Diagnóstica</h3>
@@ -761,6 +769,53 @@ function abriraescala() {
                 console.log('Valor não reconhecido');
         }
     }
+    let recognition;
+    let isRecording = false; // Variável para rastrear o estado de gravação
+
+    document.getElementById('modal_activate_senia').addEventListener('click', () => {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert('Seu navegador não suporta reconhecimento de voz. Tente o Google Chrome.');
+            return;
+        }
+
+        if (!recognition) {
+            recognition = new webkitSpeechRecognition();
+            recognition.lang = 'pt-BR';
+            recognition.continuous = true;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                document.getElementById('microphone-status').style.display = 'block';
+                document.getElementById('status-text').innerText = 'Gravando...';
+                document.getElementById('status-icon').className = 'fas fa-microphone';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[event.results.length - 1][0].transcript;
+                document.getElementById('modal_anamnese').value += transcript + ' ';
+            };
+
+            recognition.onerror = (event) => {
+                document.getElementById('status-text').innerText = 'Erro: ' + event.error;
+                document.getElementById('status-icon').className = 'fas fa-exclamation-circle';
+                setTimeout(() => {
+                    document.getElementById('microphone-status').style.display = 'none';
+                }, 2000);
+            };
+        }
+
+        if (isRecording) {
+            recognition.stop();
+            document.getElementById('status-text').innerText = 'Gravação interrompida.';
+            document.getElementById('status-icon').className = 'fas fa-stop';
+            document.getElementById('modal_activate_senia').innerHTML = '<i class="fas fa-microphone"></i> Ativar Voz';
+            isRecording = false;
+        } else {
+            recognition.start();
+            document.getElementById('modal_activate_senia').innerHTML = '<i class="fas fa-stop"></i> Parar Voz';
+            isRecording = true;
+        }
+    });
 </script>
 
 
