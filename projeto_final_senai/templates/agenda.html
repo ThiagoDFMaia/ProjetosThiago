@@ -133,78 +133,224 @@
 <div id="modal-myModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" id="modal-closeModal">&times;</span>
-            <div class="modal-form-section">
-                <h3 class="modal-h3">Dados do Paciente</h3>
-                
-                <div class="modal-input-group">
-                    <label class="modal-label" for="modal-nome">Nome do Paciente:</label>
-                    <input type="text" class="modal-input" id="modal_nome" disabled value="Nome do Paciente">
-                </div>
-                
-                <div class="modal-input-group">
-                    <label class="modal-label" for="modal-data-nascimento">Data de Nascimento:</label>
-                    <input type="text" class="modal-input" id="modal_data_nascimento" disabled value="01/01/2000">
-                </div>
-                
-                <div class="modal-input-group">
-                    <label class="modal-label" for="modal-id-paciente">ID do Paciente:</label>
-                    <input type="text" class="modal-input" id="modal_id_paciente" disabled >
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="modal-id-paciente">Código do Agendamento:</label>
-                    <input type="text" class="modal-input" id="modal_codigo_agendamento" disabled >
-                </div>
+            <!-- Tabs -->
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'FormularioMedico')" id="defaultOpen">Formulário Médico</button>
+                <button class="tablinks" onclick="openTab(event, 'AnalisarExame')">Analisar Exame</button>
             </div>
-            <!-- Formulário Médico -->
-            <h2 class="modal-h2">Formulário Médico</h2>
-            <div class="modal-container">
-                <!-- Form Section -->
+            <div id="FormularioMedico" class="tabcontent">
                 <div class="modal-form-section">
-                    <h3 class="modal-h3">Anamnese</h3>
+                    <h3 class="modal-h3">Dados do Paciente</h3>
+                    
                     <div class="modal-input-group">
-                        <label class="modal-label" for="modal_anamnese">Descreva aqui:</label>
-                        <textarea class="modal-textarea" id="modal_anamnese" rows="5"></textarea>
-                        <button id="modal_activate_senia" class="btn" type="button">
-                            <i class="fas fa-microphone"></i> Capturar por Voz
-                        </button>
+                        <label class="modal-label" for="modal-nome">Nome do Paciente:</label>
+                        <input type="text" class="modal-input" id="modal_nome" disabled value="Nome do Paciente">
+                    </div>
+                    
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="modal-data-nascimento">Data de Nascimento:</label>
+                        <input type="text" class="modal-input" id="modal_data_nascimento" disabled value="01/01/2000">
+                    </div>
+                    
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="modal-id-paciente">ID do Paciente:</label>
+                        <input type="text" class="modal-input" id="modal_id_paciente" disabled >
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="modal-id-paciente">Código do Agendamento:</label>
+                        <input type="text" class="modal-input" id="modal_codigo_agendamento" disabled >
+                    </div>
+                </div>
+            
+                <!-- Formulário Médico -->
+                <h2 class="modal-h2">Formulário Médico</h2>
+                <div class="modal-container">
+                    <!-- Form Section -->
+                    <div class="modal-form-section">
+                        <h3 class="modal-h3">Anamnese</h3>
+                        <div class="modal-input-group">
+                            <label class="modal-label" for="modal_anamnese">Descreva aqui:</label>
+                            <textarea class="modal-textarea" id="modal_anamnese" rows="5"></textarea>
+                            <button id="modal_activate_senia" class="btn" type="button">
+                                <i class="fas fa-microphone"></i> Capturar por Voz
+                            </button>
 
-                        <div id="microphone-status">
-                            <span id="status-text">Aguardando captura de voz...</span>
-                            <i id="status-icon" class="fas fa-microphone-alt"></i>
+                            <div id="microphone-status">
+                                <span id="status-text">Aguardando captura de voz...</span>
+                                <i id="status-icon" class="fas fa-microphone-alt"></i>
+                            </div>
+                        </div>
+
+                        <h3 class="modal-h3">Conclusão Diagnóstica</h3>
+                        <div class="modal-input-group">
+                            <label class="modal-label" for="modal_conclusao">Descreva aqui:</label>
+                            <textarea class="modal-textarea" id="modal_conclusao" rows="5"></textarea>
+                        </div>
+
+                        <div class="modal-input-group">
+                            <label class="modal-label" for="modal_cid">CID</label>
+                            <input type="text" class="modal-input" id="modal_cid" placeholder="Pesquise pelo CID...">
                         </div>
                     </div>
 
-                    <h3 class="modal-h3">Conclusão Diagnóstica</h3>
-                    <div class="modal-input-group">
-                        <label class="modal-label" for="modal_conclusao">Descreva aqui:</label>
-                        <textarea class="modal-textarea" id="modal_conclusao" rows="5"></textarea>
-                    </div>
+                    <!-- Right Panel -->
+                    <div class="modal-right-panel">
+                        <h3 class="modal-h3">Lista de problemas</h3>
+                        <textarea class="modal-textarea" id="modal_problemas" rows="5"></textarea>
 
-                    <div class="modal-input-group">
-                        <label class="modal-label" for="modal_cid">CID</label>
-                        <input type="text" class="modal-input" id="modal_cid" placeholder="Pesquise pelo CID...">
+                        <h3 class="modal-h3">Documentos</h3>
+                        <div class="modal-button-group">
+                            <button>+ Novo</button>
+                            <button>Modelo</button>
+                            <button>Imprimir</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Right Panel -->
-                <div class="modal-right-panel">
-                    <h3 class="modal-h3">Lista de problemas</h3>
-                    <textarea class="modal-textarea" id="modal_problemas" rows="5"></textarea>
-
-                    <h3 class="modal-h3">Documentos</h3>
-                    <div class="modal-button-group">
-                        <button>+ Novo</button>
-                        <button>Modelo</button>
-                        <button>Imprimir</button>
-                    </div>
+                <!-- Botão Gravar Formulário -->
+                <div class="modal-gravar-button">
+                    <button type="submit" id="gravar_prontuario">Gravar Formulário</button>
                 </div>
             </div>
 
-            <!-- Botão Gravar Formulário -->
-            <div class="modal-gravar-button">
-                <button type="submit" id="gravar_prontuario">Gravar Formulário</button>
+            <!-- Conteúdo da Aba: Ler Resultado de Exame -->
+        <div id="AnalisarExame" class="tabcontent">
+
+            <h3>Analisar Exame</h3>
+            <div class="modal-form-section">
+                
+              
+                <div class="modal-input-group">
+                    <label class="modal-label" for="radius_mean">Radius Mean:</label>
+                    <input type="number" class="modal-input" id="radius_mean" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="texture_mean">Texture Mean:</label>
+                    <input type="number" class="modal-input" id="texture_mean" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="perimeter_mean">Perimeter Mean:</label>
+                    <input type="number" class="modal-input" id="perimeter_mean" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="area_mean">Area Mean:</label>
+                    <input type="number" class="modal-input" id="area_mean" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="smoothness_mean">Smoothness Mean:</label>
+                    <input type="number" class="modal-input" id="smoothness_mean" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="compactness_mean">Compactness Mean:</label>
+                    <input type="number" class="modal-input" id="compactness_mean" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="concavity_mean">Concavity Mean:</label>
+                    <input type="number" class="modal-input" id="concavity_mean" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="concave_points_mean">Concave Points Mean:</label>
+                    <input type="number" class="modal-input" id="concave_points_mean" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="symmetry_mean">Symmetry Mean:</label>
+                    <input type="number" class="modal-input" id="symmetry_mean" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="fractal_dimension_mean">Fractal Dimension Mean:</label>
+                    <input type="number" class="modal-input" id="fractal_dimension_mean" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="radius_se">Radius SE:</label>
+                    <input type="number" class="modal-input" id="radius_se" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="texture_se">Texture SE:</label>
+                    <input type="number" class="modal-input" id="texture_se" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="perimeter_se">Perimeter SE:</label>
+                    <input type="number" class="modal-input" id="perimeter_se" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="area_se">Area SE:</label>
+                    <input type="number" class="modal-input" id="area_se" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="smoothness_se">Smoothness SE:</label>
+                    <input type="number" class="modal-input" id="smoothness_se" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="compactness_se">Compactness SE:</label>
+                    <input type="number" class="modal-input" id="compactness_se" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="concavity_se">Concavity SE:</label>
+                    <input type="number" class="modal-input" id="concavity_se" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="concave_points_se">Concave Points SE:</label>
+                    <input type="number" class="modal-input" id="concave_points_se" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="symmetry_se">Symmetry SE:</label>
+                    <input type="number" class="modal-input" id="symmetry_se" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="fractal_dimension_se">Fractal Dimension SE:</label>
+                    <input type="number" class="modal-input" id="fractal_dimension_se" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="radius_worst">Radius Worst:</label>
+                    <input type="number" class="modal-input" id="radius_worst" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="texture_worst">Texture Worst:</label>
+                    <input type="number" class="modal-input" id="texture_worst" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="perimeter_worst">Perimeter Worst:</label>
+                    <input type="number" class="modal-input" id="perimeter_worst" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="area_worst">Area Worst:</label>
+                    <input type="number" class="modal-input" id="area_worst" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="smoothness_worst">Smoothness Worst:</label>
+                    <input type="number" class="modal-input" id="smoothness_worst" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="compactness_worst">Compactness Worst:</label>
+                    <input type="number" class="modal-input" id="compactness_worst" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="concavity_worst">Concavity Worst:</label>
+                    <input type="number" class="modal-input" id="concavity_worst" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="concave_points_worst">Concave Points Worst:</label>
+                    <input type="number" class="modal-input" id="concave_points_worst" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="symmetry_worst">Symmetry Worst:</label>
+                    <input type="number" class="modal-input" id="symmetry_worst" value="0.000000" step="0.000001" min="-100">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-label" for="fractal_dimension_worst">Fractal Dimension Worst:</label>
+                    <input type="number" class="modal-input" id="fractal_dimension_worst" value="0.000000" step="0.000001" min="-100">
+                </div>
+                
+                <!-- Finaliza com o botão de gravação -->
+                <div class="modal-gravar-button">
+                    <button type="submit" id="analisar_exame">Analisar Exame</button>
+                </div>
             </div>
         </div>
+
+
+
+    </div>
 </div>
 <!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -818,7 +964,31 @@ function abriraescala() {
     });
 </script>
 
-
+<!-- JavaScript para controlar as abas -->
+<script>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+    
+        // Ocultar todas as abas
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+    
+        // Remover a classe "active" dos botões das abas
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+    
+        // Exibir a aba selecionada e adicionar a classe "active"
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+    
+    // Abrir a primeira aba por padrão
+    document.getElementById("defaultOpen").click();
+</script>
 
 </body>
 {% if mensagem %}
