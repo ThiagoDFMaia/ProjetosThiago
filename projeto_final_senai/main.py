@@ -8,7 +8,8 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import sessionmaker, aliased
 from biblioteca import *
 from datetime import datetime
-
+import requests
+import json
 # definindo objeto flask
 app = Flask(__name__)
 
@@ -789,6 +790,16 @@ def gravar_prontuario():
 
 
 
+@app.route('/analisar_exame',methods=['POST'])
+def analisar_exame():
+    urlapi='http://127.0.0.1:8000/prever_cancer/'
+    data = request.json  # Capturando o JSON enviado
+
+    # Enviar a requisição POST com o JSON
+    response = requests.post(urlapi, json=data)
+
+    app.logger.info(f"cod status: {response.status_code} resposta json: {response.json()} ")
+    return response.json()
 @app.route('/pesquisar_prontuario_paciente_agenda/<numprontuario>',methods=['GET'])
 def pesquisar_prontuario_paciente_agenda(numprontuario):
     return pesquisar_prontuario(numprontuario)

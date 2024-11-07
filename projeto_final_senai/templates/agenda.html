@@ -988,6 +988,91 @@ function abriraescala() {
     
     // Abrir a primeira aba por padrão
     document.getElementById("defaultOpen").click();
+
+    document.getElementById('analisar_exame').onclick = function() {
+   
+
+    var radius_mean = parseFloat(document.getElementById('radius_mean').value) || 0;
+    var texture_mean = parseFloat(document.getElementById('texture_mean').value) || 0;
+    var perimeter_mean = parseFloat(document.getElementById('perimeter_mean').value) || 0;
+    var area_mean = parseFloat(document.getElementById('area_mean').value) || 0;
+    var smoothness_mean = parseFloat(document.getElementById('smoothness_mean').value) || 0;
+    var compactness_mean = parseFloat(document.getElementById('compactness_mean').value) || 0;
+    var concavity_mean = parseFloat(document.getElementById('concavity_mean').value) || 0;
+    var concave_points_mean = parseFloat(document.getElementById('concave_points_mean').value) || 0;
+    var symmetry_mean = parseFloat(document.getElementById('symmetry_mean').value) || 0;
+    var fractal_dimension_mean = parseFloat(document.getElementById('fractal_dimension_mean').value) || 0;
+    var radius_se = parseFloat(document.getElementById('radius_se').value) || 0;
+    var texture_se = parseFloat(document.getElementById('texture_se').value) || 0;
+    var perimeter_se = parseFloat(document.getElementById('perimeter_se').value) || 0;
+    var area_se = parseFloat(document.getElementById('area_se').value) || 0;
+    var smoothness_se = parseFloat(document.getElementById('smoothness_se').value) || 0;
+    var compactness_se = parseFloat(document.getElementById('compactness_se').value) || 0;
+    var concavity_se = parseFloat(document.getElementById('concavity_se').value) || 0;
+    var concave_points_se = parseFloat(document.getElementById('concave_points_se').value) || 0;
+    var symmetry_se = parseFloat(document.getElementById('symmetry_se').value) || 0;
+    var fractal_dimension_se = parseFloat(document.getElementById('fractal_dimension_se').value) || 0;
+    var radius_worst = parseFloat(document.getElementById('radius_worst').value) || 0;
+    var texture_worst = parseFloat(document.getElementById('texture_worst').value) || 0;
+    var perimeter_worst = parseFloat(document.getElementById('perimeter_worst').value) || 0;
+    var area_worst = parseFloat(document.getElementById('area_worst').value) || 0;
+    var smoothness_worst = parseFloat(document.getElementById('smoothness_worst').value) || 0;
+    var compactness_worst = parseFloat(document.getElementById('compactness_worst').value) || 0;
+    var concavity_worst = parseFloat(document.getElementById('concavity_worst').value) || 0;
+    var concave_points_worst = parseFloat(document.getElementById('concave_points_worst').value) || 0;
+    var symmetry_worst = parseFloat(document.getElementById('symmetry_worst').value) || 0;
+    var fractal_dimension_worst = parseFloat(document.getElementById('fractal_dimension_worst').value) || 0;
+
+   var data = {
+        radius_mean: radius_mean,
+        texture_mean: texture_mean,
+        perimeter_mean: perimeter_mean,
+        area_mean: area_mean,
+        smoothness_mean: smoothness_mean,
+        compactness_mean: compactness_mean,
+        concavity_mean: concavity_mean,
+        concave_points_mean: concave_points_mean,
+        symmetry_mean: symmetry_mean,
+        fractal_dimension_mean: fractal_dimension_mean,
+       
+
+        smoothness_se: smoothness_se,
+        compactness_se: compactness_se,
+        concavity_se: concavity_se,
+        concave_points_se: concave_points_se,
+        radius_se: radius_se,
+        texture_se: texture_se,
+        perimeter_se: perimeter_se,
+        area_se: area_se,
+        symmetry_se: symmetry_se,
+        fractal_dimension_se: fractal_dimension_se,
+        radius_worst: radius_worst,
+        texture_worst: texture_worst,
+        perimeter_worst: perimeter_worst,
+        area_worst: area_worst,
+        smoothness_worst: smoothness_worst,
+        compactness_worst: compactness_worst,
+        concavity_worst: concavity_worst,
+        concave_points_worst: concave_points_worst,
+        symmetry_worst: symmetry_worst,
+        fractal_dimension_worst: fractal_dimension_worst
+
+   };
+
+   fetch('/analisar_exame', {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json'
+           },
+           body: JSON.stringify(data)  // Convertendo o objeto em uma string JSON
+       })
+       .then(response => response.json())
+       .then(response => {
+           alert("Resposta: "+response.previsao)
+           
+       })
+       .catch(error => console.error('Erro:', error));
+};
 </script>
 
 </body>
