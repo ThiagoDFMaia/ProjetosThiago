@@ -6,40 +6,11 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-from pydantic import BaseModel
-import numpy as np
 
-class CancerFeatures(BaseModel):
-    radius_mean: float
-    texture_mean: float
-    perimeter_mean: float
-    area_mean: float
-    smoothness_mean: float
-    compactness_mean: float
-    concavity_mean: float
-    concave_points_mean: float
-    symmetry_mean: float
-    fractal_dimension_mean: float
-    radius_se: float
-    texture_se: float
-    perimeter_se: float
-    area_se: float
-    smoothness_se: float
-    compactness_se: float
-    concavity_se: float
-    concave_points_se: float
-    symmetry_se: float
-    fractal_dimension_se: float
-    radius_worst: float
-    texture_worst: float
-    perimeter_worst: float
-    area_worst: float
-    smoothness_worst: float
-    compactness_worst: float
-    concavity_worst: float
-    concave_points_worst: float
-    symmetry_worst: float
-    fractal_dimension_worst: float
+import numpy as np
+from biblioteca import *
+
+
 
 
 modelo_cancer=None
@@ -115,6 +86,7 @@ async def carrega_modelo_infarto():
 @app.on_event("startup")
 async def load_dataset():
   global modelo_cancer
+  global modelo_infarto
   modelo_cancer= await carrega_modelo_cancer()
   modelo_infarto=await carrega_modelo_infarto()
 
@@ -124,8 +96,8 @@ async def index():
     return {"mensagem": "API está funcionando e os datasets foram carregadod!"}
 
 @app.post('/prever_cancer/')
-async def prever(features: CancerFeatures):
-    print('testandoooo')
+async def prever_cancer(features: CancerFeatures):
+
     colunas_treinamento = [
     'radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean',
     'compactness_mean', 'concavity_mean', 'concave points_mean', 'symmetry_mean', 'fractal_dimension_mean',
@@ -135,7 +107,7 @@ async def prever(features: CancerFeatures):
     'fractal_dimension_worst'
 ]
 
-# Criando um DataFrame com as características do usuário
+# Criando um DataFrame com colunas do treinamento
     dados = pd.DataFrame([[
     features.radius_mean,
     features.texture_mean,
@@ -144,7 +116,7 @@ async def prever(features: CancerFeatures):
     features.smoothness_mean,
     features.compactness_mean,
     features.concavity_mean,
-    features.concave_points_mean,  # Certificando-se que o nome da coluna está correto
+    features.concave_points_mean,  
     features.symmetry_mean,
     features.fractal_dimension_mean,
     features.radius_se,
@@ -154,7 +126,7 @@ async def prever(features: CancerFeatures):
     features.smoothness_se,
     features.compactness_se,
     features.concavity_se,
-    features.concave_points_se,  # Certificando-se que o nome da coluna está correto
+    features.concave_points_se,  
     features.symmetry_se,
     features.fractal_dimension_se,
     features.radius_worst,
@@ -164,18 +136,67 @@ async def prever(features: CancerFeatures):
     features.smoothness_worst,
     features.compactness_worst,
     features.concavity_worst,
-    features.concave_points_worst,  # Certificando-se que o nome da coluna está correto
+    features.concave_points_worst,  
     features.symmetry_worst,
     features.fractal_dimension_worst
 ]], columns=colunas_treinamento)
 
     # Realiza a previsão usando o modelo
     try:
-        resposta = modelo_cancer.predict(dados)  # modelo_cancer deve estar carregado anteriormente
-        print(f'respostaaaa: {resposta}')
-        return {"previsao": int(resposta)}
+     
+
+        # Agora, passe o DataFrame para o modelo
+        probabilidades = modelo_cancer.predict_proba(dados)
+
+        confianca = max(probabilidades[0]) * 100  # Converte para porcentagem
+
+        resposta = modelo_cancer.predict(dados)  
+        print(f'previsao: {resposta} confiança: {confianca:.2f}%')
+        return {"previsao": int(resposta), "confianca":confianca}
     except Exception as e:
-        print(f'errooooooooooooooooooooo {e}')
+      
+        raise HTTPException(status_code=500, detail=f"Erro na previsão: {e}")
+
+
+@app.post('/prever_infarto/')
+async def prever_infarto(features: InfartoFeatures):
+    
+    colunas_treinamento = [
+    'age', 'sex', 'cp', 'trtbps', 'chol', 'fbs', 'restecg', 'thalachh', 'exng', 'oldpeak', 
+    'slp', 'caa', 'thall'
+]
+
+    # Criando um DataFrame com as colunas do treinamento para infarto
+    dados = pd.DataFrame([[
+    features.age,
+    features.sex,
+    features.cp,
+    features.trtbps,
+    features.chol,
+    features.fbs,
+    features.restecg,
+    features.thalachh,
+    features.exng,
+    features.oldpeak,
+    features.slp,
+    features.caa,
+    features.thall
+]], columns=colunas_treinamento)
+
+    # Realiza a previsão usando o modelo
+    try:
+     
+
+        # Agora, passe o DataFrame para o modelo
+        probabilidades = modelo_infarto.predict_proba(dados)
+
+        confianca = max(probabilidades[0]) * 100  # Converte para porcentagem
+
+        resposta = modelo_infarto.predict(dados)  
+        print(f'previsao: {resposta} confiança: {confianca:.2f}%')
+        return {"previsao": int(resposta), "confianca":confianca}
+    except Exception as e:
+      
         raise HTTPException(status_code=500, detail=f"Erro na previsão: {e}")
 
 

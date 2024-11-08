@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 class Pessoa:
     def __init__(self,nome, rg, cpf,data_nas, endereco, numero, complemento, cidade, uf, cep, telefone_01, telefone_02, telefone_03,id=None):
         self.nome = nome
@@ -97,3 +98,52 @@ class Prontuario:
         self.fk_codmedico=fk_codmedico
         self.dataAgenda=dataAgenda
         self.fk_codigo_agendamento=fk_codigo_agendamento
+
+
+class CancerFeatures(BaseModel):
+    radius_mean: float
+    texture_mean: float
+    perimeter_mean: float
+    area_mean: float
+    smoothness_mean: float
+    compactness_mean: float
+    concavity_mean: float
+    concave_points_mean: float
+    symmetry_mean: float
+    fractal_dimension_mean: float
+    radius_se: float
+    texture_se: float
+    perimeter_se: float
+    area_se: float
+    smoothness_se: float
+    compactness_se: float
+    concavity_se: float
+    concave_points_se: float
+    symmetry_se: float
+    fractal_dimension_se: float
+    radius_worst: float
+    texture_worst: float
+    perimeter_worst: float
+    area_worst: float
+    smoothness_worst: float
+    compactness_worst: float
+    concavity_worst: float
+    concave_points_worst: float
+    symmetry_worst: float
+    fractal_dimension_worst: float
+
+class InfartoFeatures(BaseModel):
+    age: float
+    sex: float
+    cp: float
+    trtbps: float
+    chol: float
+    fbs: float
+    restecg: float
+    thalachh: float
+    exng: float
+    oldpeak: float
+    slp: float
+    caa: float
+    thall: float
+ 

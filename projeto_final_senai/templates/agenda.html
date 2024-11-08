@@ -345,6 +345,12 @@
                 <div class="modal-gravar-button">
                     <button type="submit" id="analisar_exame">Analisar Exame</button>
                 </div>
+
+                <!-- Espaço para exibir a previsão e a confiança -->
+                <div id="resultado" style="margin-top: 20px; display: none;">
+                    <p id="previsao"></p>
+                    <p id="confianca"></p>
+                </div>
             </div>
         </div>
 
@@ -1068,7 +1074,12 @@ function abriraescala() {
        })
        .then(response => response.json())
        .then(response => {
-           alert("Resposta: "+response.previsao)
+          
+            let previsao = response.previsao === 0 ? 'Benigno' : 'Maligno';
+
+            document.getElementById('resultado').style.display = 'block'; // Torna o bloco visível
+            document.getElementById('previsao').innerText = `Previsão: ${previsao}`;
+            document.getElementById('confianca').innerText = `Confiança: ${response.confianca}%`;
            
        })
        .catch(error => console.error('Erro:', error));
