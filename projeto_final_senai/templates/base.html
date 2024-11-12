@@ -12,14 +12,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Sistema de Cadastro</h1>
-            <h2>Sistema de Agendamentos de Consultas e Exames</h2>
+            <div class="logo">
+                <img src="{{ url_for('static', filename='imagens/logo.jpg') }}" alt="Logo">
+            </div><!--logo-->
+            <h1>LIFE MATTERS SYSTEMS</h1>
+            <h2>NOSSO COMPROMISSO É COM SUA SAÚDE</h2>
         </header>
 
         <nav>

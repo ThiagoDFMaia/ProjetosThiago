@@ -40,6 +40,22 @@ nav.menu-mobile{
 	background-size:100% 100%;
 	display: none;
 }
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 50px;
+}
+
+header h2 {
+    font-size: 30px;
+   
+   
+    color: #555;
+}
+
 
 nav.menu-mobile ul{
 	display: none;

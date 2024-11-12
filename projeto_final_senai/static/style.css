@@ -1,10 +1,12 @@
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #78995c;
+    background-color: #afb5aa;
     margin: 0;
     padding: 0;
     color: #333;
 }
+
+
 
 .container {
     max-width: 900px;
@@ -26,11 +28,49 @@ header h1 {
 
 header h2 {
     font-size: 18px;
+   
+   
     color: #555;
 }
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f7f7f7;
+    position: relative;
+}
+
+.logo {
+    position: absolute;
+    left: 20px; /* Ajuste a distância da borda esquerda */
+}
+
+.logo img {
+    width: 80px; /* Ajuste o tamanho da logo */
+    height: auto;
+}
+
+h1, h2 {
+    text-align: center;
+    margin: 0;
+    color: #333; /* Ajuste a cor conforme necessário */
+}
+
+h1 {
+    font-size: 24px;
+}
+
+h2 {
+    font-size: 18px;
+    color: #666;
+}
+
+
+
 
 nav {
-    background-color: #5b8c3c;
+    background-color: #a7e87e;
     padding: 10px 0;
 }
 
@@ -46,7 +86,7 @@ nav ul li {
 }
 
 nav ul li a {
-    color: white;
+    color: rgb(24, 23, 23);
     text-decoration: none;
     font-weight: 500;
 }
@@ -127,4 +167,52 @@ button:hover {
     align-items: center;
     justify-content: center;
     z-index: 999;
+}
+
+
+/* Estilo específico para o formulário de login */
+#login-form {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 300px;
+    text-align: center;
+    box-sizing: border-box;
+    margin: 0 auto;  /* Centraliza o formulário na página */
+}
+
+/* Estilo do título dentro do formulário de login */
+#login-form h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Estilo dos campos de input dentro do formulário de login */
+#login-form input[type="text"],
+#login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+/* Estilo do botão de submit dentro do formulário de login */
+#login-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#login-form button:hover {
+    background-color: #45a049;
 }

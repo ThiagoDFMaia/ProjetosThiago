@@ -55,7 +55,7 @@ Especialidade=Base.classes.especialidade
 Escala=Base.classes.escala
 Agendamento=Base.classes.agendamento
 Prontuario=Base.classes.prontuario
-
+Usuario=Base.classes.usuario
 
 # Relacionamentos entre tabelas
 #Medico.pessoa = relationship("Pessoa", backref="medicos", foreign_keys=[Medico.fk_pessoa_id])
@@ -495,7 +495,7 @@ def pesquisar_medico_por_especialidade(codespecialidade):
     })
 
 @app.route("/",methods=['GET'])
-def index():
+def  index():
     return render_template("index.html")
 
 @app.route("/index_sistema",methods=['GET'])
@@ -852,7 +852,36 @@ def salvar_convenio():
    
     return render_template("cadastroconvenio.html", mensagem=f"Cadastro Realizado com sucesso!")
 
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # Lógica de autenticação
+        login = request.form['username']
+        senha = request.form['password']
+       
+    
+    try:
+        session_db = Session()
+        usuario_login = session_db.query(Usuario).filter_by(login=login, senha=senha).first()
 
+        if usuario_login:
+         
+            app.logger.info(f"login realizado com sucesso {usuario_login.login}")
+            mensagem=f"Login realizado com sucesso! {usuario_login.login}"
+            
+        else:
+           app.logger.info("usuario nao encontrado")
+           mensagem="Usuario não encontrado"
+
+    except Exception as e:
+        session_db.rollback()  # Desfaz a sessão em caso de erro
+        app.logger.info(f"Erro fazer login: {e}")
+        mensagem="Erro ao fazer o login, procure o ADM do sistema"
+    finally:
+        session_db.close()
+
+
+    return render_template("indexsistema.html", mensagem=mensagem)
 
 if __name__ == "__main__":
     app.run(debug=True)

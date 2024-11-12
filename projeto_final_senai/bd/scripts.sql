@@ -1,6 +1,7 @@
 
 drop database clinica;
 -- MySQL Workbench Forward Engineering
+-- MySQL Workbench Forward Engineering
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -154,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`agendamento` (
   `codigo` INT NOT NULL AUTO_INCREMENT,
   `dataagenda` DATE NOT NULL,
   `datacadastro` DATE NOT NULL,
-  `flgsituacao` CHAR(2) NOT NULL COMMENT '01- agendado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n02- cancelado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n03- presenca\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n04- falta\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n05- atendido',
+  `flgsituacao` CHAR(2) NOT NULL COMMENT '01- agendado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n02- cancelado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n03- presenca\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n04- falta\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n05- atendido',
   `fk_paciente_id` INT NULL DEFAULT NULL,
   `escala_id` INT NOT NULL,
   `horaagendamento` TIME NOT NULL,
@@ -170,19 +171,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`agendamento` (
     FOREIGN KEY (`escala_id`)
     REFERENCES `clinica`.`escala` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 4
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `clinica`.`setor`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`setor` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `descricao` VARCHAR(100) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
+AUTO_INCREMENT = 24
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -194,21 +183,15 @@ CREATE TABLE IF NOT EXISTS `clinica`.`usuario` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `login` VARCHAR(10) NOT NULL,
   `senha` VARCHAR(8) NOT NULL,
-  `tipo` CHAR(2) NOT NULL,
   `flgativo` BIT(1) NOT NULL,
   `fk_pessoa_id` INT NOT NULL,
-  `fk_setor_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
   INDEX `fk_usuario_2` (`fk_pessoa_id` ASC) VISIBLE,
-  INDEX `fk_usuario_3` (`fk_setor_id` ASC) VISIBLE,
+  UNIQUE INDEX `login_UNIQUE` (`login` ASC) VISIBLE,
   CONSTRAINT `fk_usuario_2`
     FOREIGN KEY (`fk_pessoa_id`)
     REFERENCES `clinica`.`pessoa` (`id`)
-    ON DELETE CASCADE,
-  CONSTRAINT `fk_usuario_3`
-    FOREIGN KEY (`fk_setor_id`)
-    REFERENCES `clinica`.`setor` (`id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
@@ -260,7 +243,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`prontuario` (
     FOREIGN KEY (`fk_codmedico`)
     REFERENCES `clinica`.`medico` (`codmedico`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 5
+AUTO_INCREMENT = 20
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -268,6 +251,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
 
 
 

@@ -27,7 +27,14 @@ class Paciente ():
         self.tipoconvenio=tipoconvenio
         self.fk_convenio_id=fk_convenio_id
 
-
+class Usuario ():
+    def __init__(self,fk_pessoa_id, login, senha, flgativo):
+        # Inicializa os atributos herdados da classe Pessoa
+       
+        self.fk_pessoa_id=fk_pessoa_id
+        self.login=login
+        self.senha=senha
+        self.flgativo=flgativo
 
 class Medico():
     def __init__(self, fk_pessoa_id,codmedico, crm, flgativo,codespecialidade):
