@@ -263,4 +263,5 @@ ALTER TABLE pessoa AUTO_INCREMENT = 1;
 ALTER TABLE medico AUTO_INCREMENT = 1;
 ALTER TABLE escala AUTO_INCREMENT = 1;
 ALTER TABLE convenio AUTO_INCREMENT = 1;
-alter table prontuario AUTO_INCREMENT = 1
+alter table prontuario AUTO_INCREMENT = 1;
+alter table usuario AUTO_INCREMENT = 1

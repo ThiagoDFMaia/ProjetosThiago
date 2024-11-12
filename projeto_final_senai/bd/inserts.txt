@@ -5,6 +5,10 @@ INSERT INTO especialidade (descricao) VALUES
 INSERT INTO convenio (cnpj, descricao)
 VALUES ('12345678000190', 'Unimed');
 
+
+INSERT INTO pessoa (nome, endereco, cep, uf, cidade, complemento, numero, telefone_01, telefone_02, telefone_03, rg, cpf, data_nas) VALUES
+('admin', 'Rua das Flores, 123', '12345678', 'SP', 'São Paulo', 'Apto 101', '123', '11912345678', '11987654321', NULL, '10101012', '10101012450', '1990-01-15');
+
 INSERT INTO pessoa (nome, endereco, cep, uf, cidade, complemento, numero, telefone_01, telefone_02, telefone_03, rg, cpf, data_nas) VALUES
 ('João Silva', 'Rua das Flores, 123', '12345678', 'SP', 'São Paulo', 'Apto 101', '123', '11912345678', '11987654321', NULL, '123456789', '12345678901', '1990-01-15'),
 ('Maria Oliveira', 'Av. Brasil, 456', '23456789', 'RJ', 'Rio de Janeiro', 'Bloco B', '456', '21998765432', NULL, NULL, '987654321', '10987654321', '1985-05-20'),
@@ -87,4 +91,5 @@ INSERT INTO escala (data, quantvagasmanha, quantvagastarde, quantvagasnoite, fla
 ('2024-11-30', 2, 4, 6, 1, 5);
 
 INSERT INTO usuario (login, senha, flgativo, fk_pessoa_id)
-VALUES ('admin', '12345678', 1, 13);
+VALUES ('admin', '12345678', 1, 1);
+

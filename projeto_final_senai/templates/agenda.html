@@ -218,130 +218,194 @@
 
             <h3>Analisar Exame</h3>
             <div class="modal-form-section">
-                
-              
-                <div class="modal-input-group">
-                    <label class="modal-label" for="radius_mean">Radius Mean:</label>
-                    <input type="number" class="modal-input" id="radius_mean" value="0.000000" step="0.000001" min="-100">
+                <label for="condition">Escolha uma condição:</label>
+                <select id="condition" onchange="toggleFields()">
+                    <option value="">--Selecione--</option>
+                    <option value="cancer">Câncer</option>
+                    <option value="infarto">Infarto</option>
+                </select>
+                <div id="cancer-fields" class="hidden">
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="radius_mean">Radius Mean:</label>
+                        <input type="number" class="modal-input" id="radius_mean" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="texture_mean">Texture Mean:</label>
+                        <input type="number" class="modal-input" id="texture_mean" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="perimeter_mean">Perimeter Mean:</label>
+                        <input type="number" class="modal-input" id="perimeter_mean" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="area_mean">Area Mean:</label>
+                        <input type="number" class="modal-input" id="area_mean" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="smoothness_mean">Smoothness Mean:</label>
+                        <input type="number" class="modal-input" id="smoothness_mean" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="compactness_mean">Compactness Mean:</label>
+                        <input type="number" class="modal-input" id="compactness_mean" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="concavity_mean">Concavity Mean:</label>
+                        <input type="number" class="modal-input" id="concavity_mean" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="concave_points_mean">Concave Points Mean:</label>
+                        <input type="number" class="modal-input" id="concave_points_mean" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="symmetry_mean">Symmetry Mean:</label>
+                        <input type="number" class="modal-input" id="symmetry_mean" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="fractal_dimension_mean">Fractal Dimension Mean:</label>
+                        <input type="number" class="modal-input" id="fractal_dimension_mean" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="radius_se">Radius SE:</label>
+                        <input type="number" class="modal-input" id="radius_se" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="texture_se">Texture SE:</label>
+                        <input type="number" class="modal-input" id="texture_se" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="perimeter_se">Perimeter SE:</label>
+                        <input type="number" class="modal-input" id="perimeter_se" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="area_se">Area SE:</label>
+                        <input type="number" class="modal-input" id="area_se" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="smoothness_se">Smoothness SE:</label>
+                        <input type="number" class="modal-input" id="smoothness_se" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="compactness_se">Compactness SE:</label>
+                        <input type="number" class="modal-input" id="compactness_se" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="concavity_se">Concavity SE:</label>
+                        <input type="number" class="modal-input" id="concavity_se" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="concave_points_se">Concave Points SE:</label>
+                        <input type="number" class="modal-input" id="concave_points_se" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="symmetry_se">Symmetry SE:</label>
+                        <input type="number" class="modal-input" id="symmetry_se" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="fractal_dimension_se">Fractal Dimension SE:</label>
+                        <input type="number" class="modal-input" id="fractal_dimension_se" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="radius_worst">Radius Worst:</label>
+                        <input type="number" class="modal-input" id="radius_worst" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="texture_worst">Texture Worst:</label>
+                        <input type="number" class="modal-input" id="texture_worst" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="perimeter_worst">Perimeter Worst:</label>
+                        <input type="number" class="modal-input" id="perimeter_worst" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="area_worst">Area Worst:</label>
+                        <input type="number" class="modal-input" id="area_worst" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="smoothness_worst">Smoothness Worst:</label>
+                        <input type="number" class="modal-input" id="smoothness_worst" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="compactness_worst">Compactness Worst:</label>
+                        <input type="number" class="modal-input" id="compactness_worst" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="concavity_worst">Concavity Worst:</label>
+                        <input type="number" class="modal-input" id="concavity_worst" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="concave_points_worst">Concave Points Worst:</label>
+                        <input type="number" class="modal-input" id="concave_points_worst" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="symmetry_worst">Symmetry Worst:</label>
+                        <input type="number" class="modal-input" id="symmetry_worst" value="0.000000" step="0.000001" min="-100">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="fractal_dimension_worst">Fractal Dimension Worst:</label>
+                        <input type="number" class="modal-input" id="fractal_dimension_worst" value="0.000000" step="0.000001" min="-100">
+                    </div>
                 </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="texture_mean">Texture Mean:</label>
-                    <input type="number" class="modal-input" id="texture_mean" value="0.000000" step="0.000001" min="-100">
+                <div id="infarto-fields" class="hidden">
+                    <h3>Campos para Infarto</h3>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="age">Idade:</label>
+                        <input type="number" class="modal-input" id="age">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="sex">Sexo:</label>
+                        <select id="sex">
+                            <option value="1">Masculino</option>
+                            <option value="0">Feminino</option>
+                        </select>
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="cp">Tipo de dor no peito:</label>
+                        <input type="number" class="modal-input" id="cp">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="trtbps">Pressão arterial em repouso:</label>
+                        <input type="number" class="modal-input" id="trtbps">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="chol">Colesterol:</label>
+                        <input type="number" class="modal-input" id="chol">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="fbs">Glicose em jejum:</label>
+                        <input type="number" class="modal-input" id="fbs">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="restecg">ECG em repouso:</label>
+                        <input type="number" class="modal-input" id="restecg">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="thalachh">Máxima frequência cardíaca:</label>
+                        <input type="number" class="modal-input" id="thalachh">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="exng">Exercício de indução:</label>
+                        <input type="number" class="modal-input" id="exng">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="oldpeak">Depressão ST:</label>
+                        <input type="number" class="modal-input" id="oldpeak">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="slp">Inclinação do segmento ST:</label>
+                        <input type="number" class="modal-input" id="slp">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="caa">Número de vasos principais:</label>
+                        <input type="number" class="modal-input" id="caa">
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="modal-label" for="thall">Tipo de talassemia:</label>
+                        <input type="number" class="modal-input" id="thall">
+                    </div>
+                    <!-- Adicione outros campos relacionados ao infarto aqui -->
                 </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="perimeter_mean">Perimeter Mean:</label>
-                    <input type="number" class="modal-input" id="perimeter_mean" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="area_mean">Area Mean:</label>
-                    <input type="number" class="modal-input" id="area_mean" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="smoothness_mean">Smoothness Mean:</label>
-                    <input type="number" class="modal-input" id="smoothness_mean" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="compactness_mean">Compactness Mean:</label>
-                    <input type="number" class="modal-input" id="compactness_mean" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="concavity_mean">Concavity Mean:</label>
-                    <input type="number" class="modal-input" id="concavity_mean" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="concave_points_mean">Concave Points Mean:</label>
-                    <input type="number" class="modal-input" id="concave_points_mean" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="symmetry_mean">Symmetry Mean:</label>
-                    <input type="number" class="modal-input" id="symmetry_mean" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="fractal_dimension_mean">Fractal Dimension Mean:</label>
-                    <input type="number" class="modal-input" id="fractal_dimension_mean" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="radius_se">Radius SE:</label>
-                    <input type="number" class="modal-input" id="radius_se" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="texture_se">Texture SE:</label>
-                    <input type="number" class="modal-input" id="texture_se" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="perimeter_se">Perimeter SE:</label>
-                    <input type="number" class="modal-input" id="perimeter_se" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="area_se">Area SE:</label>
-                    <input type="number" class="modal-input" id="area_se" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="smoothness_se">Smoothness SE:</label>
-                    <input type="number" class="modal-input" id="smoothness_se" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="compactness_se">Compactness SE:</label>
-                    <input type="number" class="modal-input" id="compactness_se" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="concavity_se">Concavity SE:</label>
-                    <input type="number" class="modal-input" id="concavity_se" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="concave_points_se">Concave Points SE:</label>
-                    <input type="number" class="modal-input" id="concave_points_se" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="symmetry_se">Symmetry SE:</label>
-                    <input type="number" class="modal-input" id="symmetry_se" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="fractal_dimension_se">Fractal Dimension SE:</label>
-                    <input type="number" class="modal-input" id="fractal_dimension_se" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="radius_worst">Radius Worst:</label>
-                    <input type="number" class="modal-input" id="radius_worst" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="texture_worst">Texture Worst:</label>
-                    <input type="number" class="modal-input" id="texture_worst" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="perimeter_worst">Perimeter Worst:</label>
-                    <input type="number" class="modal-input" id="perimeter_worst" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="area_worst">Area Worst:</label>
-                    <input type="number" class="modal-input" id="area_worst" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="smoothness_worst">Smoothness Worst:</label>
-                    <input type="number" class="modal-input" id="smoothness_worst" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="compactness_worst">Compactness Worst:</label>
-                    <input type="number" class="modal-input" id="compactness_worst" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="concavity_worst">Concavity Worst:</label>
-                    <input type="number" class="modal-input" id="concavity_worst" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="concave_points_worst">Concave Points Worst:</label>
-                    <input type="number" class="modal-input" id="concave_points_worst" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="symmetry_worst">Symmetry Worst:</label>
-                    <input type="number" class="modal-input" id="symmetry_worst" value="0.000000" step="0.000001" min="-100">
-                </div>
-                <div class="modal-input-group">
-                    <label class="modal-label" for="fractal_dimension_worst">Fractal Dimension Worst:</label>
-                    <input type="number" class="modal-input" id="fractal_dimension_worst" value="0.000000" step="0.000001" min="-100">
-                </div>
-                
-                <!-- Finaliza com o botão de gravação -->
+          
                 <div class="modal-gravar-button">
                     <button type="submit" id="analisar_exame">Analisar Exame</button>
                 </div>
@@ -1084,6 +1148,23 @@ function abriraescala() {
        })
        .catch(error => console.error('Erro:', error));
 };
+</script>
+<script>
+    // Função para mostrar/esconder campos dependendo da seleção
+    function toggleFields() {
+        var condition = document.getElementById("condition").value;
+        
+        // Esconder todos os campos inicialmente
+        document.getElementById("cancer-fields").classList.add("hidden");
+        document.getElementById("infarto-fields").classList.add("hidden");
+        
+        // Mostrar os campos correspondentes à seleção
+        if (condition === "cancer") {
+            document.getElementById("cancer-fields").classList.remove("hidden");
+        } else if (condition === "infarto") {
+            document.getElementById("infarto-fields").classList.remove("hidden");
+        }
+    }
 </script>
 
 </body>

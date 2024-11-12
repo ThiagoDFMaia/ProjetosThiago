@@ -28,11 +28,18 @@
         <nav>
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="{{ url_for('cadastro_paciente') }}">Cadastro de Pacientes</a></li>
-                <li><a href="{{ url_for('cadastro_medico') }}">Cadastro de Medicos</a></li>
-                <li><a href="{{ url_for('cadastro_escala') }}">Cadastrar Escala</a></li>
-                <li><a href="{{ url_for('cadastro_convenio') }}">Cadastro de Convênios</a></li>
-                <li><a href="{{ url_for('abrir_agenda') }}">Abrir Agenda</a></li>
+                {% if session.get('user_logged_in') %}
+                    <li><a href="{{ url_for('cadastro_paciente') }}">Cadastro de Pacientes</a></li>
+                    <li><a href="{{ url_for('cadastro_medico') }}">Cadastro de Medicos</a></li>
+                    <li><a href="{{ url_for('cadastro_escala') }}">Cadastrar Escala</a></li>
+                    <li><a href="{{ url_for('cadastro_convenio') }}">Cadastro de Convênios</a></li>
+                    <li><a href="{{ url_for('abrir_agenda') }}">Abrir Agenda</a></li>
+                    <li><a href="{{ url_for('logout') }}">Sair</a></li>
+                    
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                 
+                {% endif %}
                 
             
             </ul>

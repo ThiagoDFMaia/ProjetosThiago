@@ -1,6 +1,6 @@
 # pip install flask (no terminal)
 # importando modulos
-from flask import Flask,render_template,request,redirect,url_for,jsonify
+from flask import Flask,render_template,request,redirect,url_for,jsonify, session
 import urllib.parse
 # realizar o mapeamento objeto relacional -DB First
 from sqlalchemy import create_engine, MetaData
@@ -17,7 +17,7 @@ app.secret_key = "df6e83eb7983f75b2561c875cbebc40ab9900624b22c6040f5831ecd6faaea
 
 
 user = 'root'
-password = urllib.parse.quote_plus('123456')
+password = urllib.parse.quote_plus('senai@123')
 host = 'localhost'
 database = 'clinica'
 # ==========================================
@@ -868,6 +868,7 @@ def login():
          
             app.logger.info(f"login realizado com sucesso {usuario_login.login}")
             mensagem=f"Login realizado com sucesso! {usuario_login.login}"
+            session['user_logged_in'] = True  # Marcar como logado
             
         else:
            app.logger.info("usuario nao encontrado")
@@ -882,6 +883,12 @@ def login():
 
 
     return render_template("indexsistema.html", mensagem=mensagem)
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user_logged_in', None)  # Remove a chave da sessão
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(debug=True)
