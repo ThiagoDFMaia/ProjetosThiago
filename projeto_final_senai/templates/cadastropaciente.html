@@ -140,13 +140,32 @@
     // Remove todos os caracteres não numéricos
     let cep = cepField.value.replace(/\D/g, '');
 
-    // Verifica se o CEP tem 8 dígitos antes de aplicar a formatação
+    // Verifica se o CEP tem 8 dígitos antes de aplicar a api
     if (cep.length === 8) {
-        cep = cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3'); // Formata como XX.XXX-XXX
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => {
+            if (!response.ok) throw new Error("CEP não encontrado.");
+            return response.json();
+            })
+            .then(data => {
+            if (data.erro) {
+                alert("CEP não encontrado.");
+            } else {
+                // Exibe os dados do endereço retornado pela API
+                document.getElementById("UF").value = data.uf;
+                document.getElementById("Cidade").value = data.localidade;
+                document.getElementById("Endereco").value = data.logradouro;
+                document.getElementById("Complemento").value = data.complemento;
+                cep = cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3');
+                cepField.value = cep;
+            }
+            })
+            .catch(error => console.error("Erro:", error));
+        
     }
 
     // Atualiza o campo com o CEP formatado
-    cepField.value = cep;
+    //cepField.value = cep;
     }
 
     function buscarPessoaPorCPF(cpf) {

@@ -498,6 +498,10 @@ def pesquisar_medico_por_especialidade(codespecialidade):
 def index():
     return render_template("index.html")
 
+@app.route("/index_sistema",methods=['GET'])
+def index_sistema():
+    return render_template("indexsistema.html")
+
 @app.route('/cadastro_pacientes',methods=['GET'])
 def cadastro_paciente():
     
