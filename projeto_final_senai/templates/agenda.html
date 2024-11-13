@@ -218,13 +218,12 @@
 
             <h3>Analisar Exame</h3>
             <div class="modal-form-section">
-                <label for="condition">Escolha uma condição:</label>
+                <label for="condition">Escolha qual modelo deseja:</label>
                 <select id="condition" onchange="toggleFields()">
-                    <option value="">--Selecione--</option>
                     <option value="cancer">Câncer</option>
                     <option value="infarto">Infarto</option>
                 </select>
-                <div id="cancer-fields" class="hidden">
+                <div id="cancer-fields" >
                     <div class="modal-input-group">
                         <label class="modal-label" for="radius_mean">Radius Mean:</label>
                         <input type="number" class="modal-input" id="radius_mean" value="0.000000" step="0.000001" min="-100">
@@ -359,9 +358,14 @@
                             <option value="0">Feminino</option>
                         </select>
                     </div>
-                    <div class="modal-input-group">
+                    <div class="modal-input-group"> 
                         <label class="modal-label" for="cp">Tipo de dor no peito:</label>
-                        <input type="number" class="modal-input" id="cp">
+                        <select class="modal-input" id="cp">
+                            <option value="0">ASY</option>
+                            <option value="1">ATA</option>
+                            <option value="2">NAP</option>
+                            <option value="3">TA</option>
+                        </select>
                     </div>
                     <div class="modal-input-group">
                         <label class="modal-label" for="trtbps">Pressão arterial em repouso:</label>
@@ -375,9 +379,15 @@
                         <label class="modal-label" for="fbs">Glicose em jejum:</label>
                         <input type="number" class="modal-input" id="fbs">
                     </div>
+               
+
                     <div class="modal-input-group">
-                        <label class="modal-label" for="restecg">ECG em repouso:</label>
-                        <input type="number" class="modal-input" id="restecg">
+                        <label class="modal-label" for="sex">ECG em repouso:</label>
+                        <select id="restecg">
+                            <option value="0">LVH</option>
+                            <option value="1">Normal</option>
+                            <option value="2">ST</option>
+                        </select>
                     </div>
                     <div class="modal-input-group">
                         <label class="modal-label" for="thalachh">Máxima frequência cardíaca:</label>
