@@ -19,6 +19,7 @@ app= FastAPI()
 
 auth2_scheme=OAuth2PasswordBearer(tokenUrl='token')
 
+# rodar api: uvicorn api:app --reload 
 
 async def carrega_modelo_cancer():
     try:
@@ -82,7 +83,7 @@ async def carrega_modelo_infarto():
         print(f"Ocorreu um erro ao carregar o dataset de infarto: {e}")
         return None
     return modelo
-# rodar api: uvicorn api:app --reload 
+
 @app.on_event("startup")
 async def load_dataset():
   global modelo_cancer

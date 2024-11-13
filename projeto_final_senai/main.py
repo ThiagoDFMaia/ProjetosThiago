@@ -796,8 +796,21 @@ def gravar_prontuario():
 
 @app.route('/analisar_exame',methods=['POST'])
 def analisar_exame():
+
+    data = request.json  # Capturando o JSON enviado
+    condition = data.get("condition")  # Verifica o valor de `condition
+
     urlapi='http://127.0.0.1:8000/prever_cancer/'
     data = request.json  # Capturando o JSON enviado
+
+   # Define a URL com base no valor de `condition`
+    if condition == "cancer":
+        urlapi = 'http://127.0.0.1:8000/prever_cancer/'
+    elif condition == "infarto":
+        urlapi = 'http://127.0.0.1:8000/prever_infarto/'
+    else:
+        return jsonify({"erro": "Condição inválida"}), 400  # Retorna erro se `condition` for inválido
+
 
     # Enviar a requisição POST com o JSON
     response = requests.post(urlapi, json=data)

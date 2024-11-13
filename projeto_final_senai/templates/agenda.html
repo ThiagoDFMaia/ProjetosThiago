@@ -361,10 +361,10 @@
                     <div class="modal-input-group"> 
                         <label class="modal-label" for="cp">Tipo de dor no peito:</label>
                         <select class="modal-input" id="cp">
-                            <option value="0">ASY</option>
-                            <option value="1">ATA</option>
-                            <option value="2">NAP</option>
-                            <option value="3">TA</option>
+                            <option value="0">TA - ANGINA TIPICA</option>
+                            <option value="1">ATA - ANGINA ATIPICA</option>
+                            <option value="2">NAP - DOR NÃO ANGINOSA</option>
+                            <option value="3">ASY - ASSINTOMÁTICO</option>
                         </select>
                     </div>
                     <div class="modal-input-group">
@@ -375,18 +375,21 @@
                         <label class="modal-label" for="chol">Colesterol:</label>
                         <input type="number" class="modal-input" id="chol">
                     </div>
+                
                     <div class="modal-input-group">
-                        <label class="modal-label" for="fbs">Glicose em jejum:</label>
-                        <input type="number" class="modal-input" id="fbs">
+                        <label class="modal-label" for="fbs">Glicemia em jejum > 120 mg/dl:</label>
+                        <select id="fbs">
+                            <option value="1">SIM</option>
+                            <option value="0">NÃO</option>
+                        </select>
                     </div>
-               
 
                     <div class="modal-input-group">
                         <label class="modal-label" for="sex">ECG em repouso:</label>
                         <select id="restecg">
-                            <option value="0">LVH</option>
-                            <option value="1">Normal</option>
-                            <option value="2">ST</option>
+                            <option value="0">NORMAL</option>
+                            <option value="1">ARNORMALIDADE DA ONDA ST-T</option>
+                            <option value="2">HIPERTROFIA VENTRICULAR (FREQUENCIA CARDIACA MÁXIMA ALCANÇADA))</option>
                         </select>
                     </div>
                     <div class="modal-input-group">
@@ -405,9 +408,16 @@
                         <label class="modal-label" for="slp">Inclinação do segmento ST:</label>
                         <input type="number" class="modal-input" id="slp">
                     </div>
+                 
                     <div class="modal-input-group">
-                        <label class="modal-label" for="caa">Número de vasos principais:</label>
-                        <input type="number" class="modal-input" id="caa">
+                        <label class="modal-label" for="caa">Número de vasos principais::</label>
+                        <select id="caa">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
                     </div>
                     <div class="modal-input-group">
                         <label class="modal-label" for="thall">Tipo de talassemia:</label>
@@ -959,6 +969,7 @@ function abriraescala() {
             })
             .catch(error => console.error('Erro:', error));
             };
+
     function limparModal() {
         // Seleciona o modal
         var modal = document.getElementById('modal-myModal');
@@ -1071,7 +1082,44 @@ function abriraescala() {
 
     document.getElementById('analisar_exame').onclick = function() {
    
+        let condition = document.getElementById("condition").value;
+        let data;
 
+        if (condition === "cancer") {
+            data = dados_cancer();
+        } else if (condition === "infarto") {
+            data = dados_infarto();
+        }
+
+        data.condition=condition;
+
+
+   fetch('/analisar_exame', {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json'
+           },
+           body: JSON.stringify(data)  // Convertendo o objeto em uma string JSON
+       })
+       .then(response => response.json())
+       .then(response => {
+          
+            let previsao ;
+            if (condition === "cancer") {
+                previsao = response.previsao === 0 ? 'Benigno' : 'Maligno';
+            } else if (condition === "infarto") {
+                previsao = response.previsao === 0 ? 'Sem previsões de infarto' : 'Com chances de infarto';
+            }
+
+            document.getElementById('resultado').style.display = 'block'; // Torna o bloco visível
+            document.getElementById('previsao').innerText = `Previsão: ${previsao}`;
+            document.getElementById('confianca').innerText = `Confiança: ${response.confianca}%`;
+           
+       })
+       .catch(error => console.error('Erro:', error));
+};
+
+function dados_cancer(){
     var radius_mean = parseFloat(document.getElementById('radius_mean').value) || 0;
     var texture_mean = parseFloat(document.getElementById('texture_mean').value) || 0;
     var perimeter_mean = parseFloat(document.getElementById('perimeter_mean').value) || 0;
@@ -1138,26 +1186,41 @@ function abriraescala() {
         fractal_dimension_worst: fractal_dimension_worst
 
    };
+   return data
+}
 
-   fetch('/analisar_exame', {
-           method: 'POST',
-           headers: {
-               'Content-Type': 'application/json'
-           },
-           body: JSON.stringify(data)  // Convertendo o objeto em uma string JSON
-       })
-       .then(response => response.json())
-       .then(response => {
-          
-            let previsao = response.previsao === 0 ? 'Benigno' : 'Maligno';
+function dados_infarto(){
+    let age = document.getElementById('age').value;
+    let sex = document.getElementById('sex').value;
+    let cp = document.getElementById('cp').value;
+    let trtbps = document.getElementById('trtbps').value;
+    let chol = document.getElementById('chol').value;
+    let fbs = document.getElementById('fbs').value;
+    let restecg = document.getElementById('restecg').value;
+    let thalachh = document.getElementById('thalachh').value;
+    let exng = document.getElementById('exng').value;
+    let oldpeak = document.getElementById('oldpeak').value;
+    let slp = document.getElementById('slp').value;
+    let caa = document.getElementById('caa').value;
+    let thall = document.getElementById('thall').value;
 
-            document.getElementById('resultado').style.display = 'block'; // Torna o bloco visível
-            document.getElementById('previsao').innerText = `Previsão: ${previsao}`;
-            document.getElementById('confianca').innerText = `Confiança: ${response.confianca}%`;
-           
-       })
-       .catch(error => console.error('Erro:', error));
-};
+    const data = {
+        age: age,
+        sex: sex,
+        cp: cp,
+        trtbps: trtbps,
+        chol: chol,
+        fbs: fbs,
+        restecg: restecg,
+        thalachh: thalachh,
+        exng: exng,
+        oldpeak: oldpeak,
+        slp: slp,
+        caa: caa,
+        thall: thall
+    };
+    return data;
+}
 </script>
 <script>
     // Função para mostrar/esconder campos dependendo da seleção
