@@ -10,6 +10,25 @@
     <div class="section">
         <h2>Dados Pessoais e Documentos</h2>
 
+        <!-- Botão de localizar -->
+        <button type="button" onclick="abrirModalPesquisa()" style="margin-bottom: 10px;">Localizar</button>
+        <br>
+         <!-- Modal para busca por nome -->
+         <div id="modalPesquisa" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
+            <div style="background: white; margin: 5% auto; padding: 30px; width: 600px; text-align: center; border-radius: 8px;">
+                <h3>Buscar Pessoa por Nome</h3>
+                <input type="text" id="nomeBusca" placeholder="Digite o nome" style="width: 100%; margin-bottom: 20px; padding: 10px;">
+                <button onclick="buscarPessoaPorNome()" style="padding: 10px 20px;">Pesquisar</button>
+                <button onclick="fecharModalPesquisa()" style="padding: 10px 20px; margin-left: 10px;">Fechar</button>
+        
+                <div id="resultadoPesquisa" style="margin-top: 20px;">
+                    <!-- Resultados da busca serão exibidos aqui -->
+                </div>
+            </div>
+        </div>
+
+
+
         <label for="CPF">CPF:</label><br>
         <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" maxlength="14" oninput="formatarCPF(this)" onblur="buscarPessoaPorCPF(this.value)"><br>
         
@@ -180,11 +199,11 @@
                     if(data.flgencontrou){
 
                         
-                        // Exibe o modal informando que o CPF já está cadastrado
-                        document.getElementById('modal').style.display = 'flex';
-                        
+                        if (document.getElementById('abrirmodalpesquisa').style.display !== 'flex') {
+                            document.getElementById('modal').style.display = 'flex';
+                        }
                             // Configura o botão "Sim"
-                            document.getElementById('btn-sim').onclick = () => {
+                        document.getElementById('btn-sim').onclick = () => {
                             preencherDadosCallback(); // Preenche os dados
                             document.getElementById('modal').style.display = 'none'; // Fecha o modal
                         };
@@ -196,7 +215,7 @@
                         };
 
                         // Função para preencher dados
-                        const preencherDadosCallback = () => {
+                        let preencherDadosCallback = () => {
                         
                             document.getElementById('Nome').value = data.nome;
                             document.getElementById('RG').value = data.rg;
@@ -248,6 +267,87 @@ function limparCPF() {
     document.getElementById('CPF').value = ''; // Limpa o campo CPF
 }
 
+function abrirModalPesquisa() {
+        document.getElementById("modalPesquisa").style.display = "block";
+}
 
+function fecharModalPesquisa() {
+        document.getElementById("modalPesquisa").style.display = "none";
+        document.getElementById("resultadoPesquisa").innerHTML = "";  // Limpa os resultados
+    }
+
+function buscarPessoaPorNome() {
+        const nome = document.getElementById("nomeBusca").value;
+        if (nome) {
+           
+            fetch(`/localizar_pessoa/${nome}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    // Limpar qualquer resultado de pesquisa anterior
+                    document.getElementById("resultadoPesquisa").innerHTML = "";
+
+// Criar a tabela de resultados
+let tabelaResultados = document.createElement("table");
+tabelaResultados.style.width = "100%";
+tabelaResultados.style.borderCollapse = "collapse";
+
+// Criar o cabeçalho da tabela
+let thead = document.createElement("thead");
+thead.innerHTML = `
+    <tr>
+        <th style="border: 1px solid #ccc; padding: 8px;">Nome</th>
+        <th style="border: 1px solid #ccc; padding: 8px;">CPF</th>
+        <th style="border: 1px solid #ccc; padding: 8px;">Data de Nascimento</th>
+    </tr>
+`;
+tabelaResultados.appendChild(thead);
+
+// Criar o corpo da tabela e preencher com os dados dos pacientes
+let tbody = document.createElement("tbody");
+data.forEach(paciente => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td style="border: 1px solid #ccc; padding: 8px;">${paciente.nome}</td>
+        <td style="border: 1px solid #ccc; padding: 8px;">${paciente.cpf}</td>
+        <td style="border: 1px solid #ccc; padding: 8px;">${paciente.data_nas}</td>
+        <td style="border: 1px solid #ccc; padding: 8px;">
+            <button onclick="selecionarPaciente('${paciente.cpf}')">Selecionar</button>
+        </td>
+    `;
+    tbody.appendChild(row);
+});
+
+tabelaResultados.appendChild(tbody);
+document.getElementById("resultadoPesquisa").appendChild(tabelaResultados);
+                } else {
+                    document.getElementById("resultadoPesquisa").innerHTML = "<p>Nenhum paciente encontrado.</p>";
+                }
+            })
+            .catch(error => console.error('Erro ao buscar escalas:', error));
+
+
+
+
+            document.getElementById("resultadoPesquisa").innerHTML = "<p>Resultado da busca por: " + nome + "</p>";
+        } else {
+            alert("Digite um nome para buscar.");
+        }
+    }
+
+function selecionarPaciente(cpf) {
+
+    // Define o valor do CPF no campo
+    document.getElementById('CPF').value = cpf;
+
+    // Chama a função de formatação passando o próprio elemento de CPF
+    formatarCPF(document.getElementById('CPF'));
+
+    // Chama a função de busca
+    buscarPessoaPorCPF(cpf);
+  
+    // Fecha o modal de pesquisa após a seleção
+    fecharModalPesquisa();
+}
 </script>
 {% endblock %}
