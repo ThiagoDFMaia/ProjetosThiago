@@ -8,10 +8,25 @@
 <form id="form-medico" action="/salvar_medico" method="POST">
     <h4>Dados Pessoais</h4>
 
-
+    
     <div class="form-group">
+        <button type="button" onclick="abrirModalPesquisa()" style="margin-bottom: 10px;">Localizar</button>
+        <br>
+         <!-- Modal para busca por nome -->
+        <div id="modalPesquisa" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
+            <div style="background: white; margin: 5% auto; padding: 30px; width: 600px; text-align: center; border-radius: 8px;">
+                    <h3>Buscar Pessoa por Nome</h3>
+                    <input type="text" id="nomeBusca" placeholder="Digite o nome" style="width: 100%; margin-bottom: 20px; padding: 10px;">
+                    <button onclick="buscarMedicoPorNome()" style="padding: 10px 20px;">Pesquisar</button>
+                    <button onclick="fecharModalPesquisa()" style="padding: 10px 20px; margin-left: 10px;">Fechar</button>
+            
+                    <div id="resultadoPesquisa" style="margin-top: 20px;">
+                        <!-- Resultados da busca serão exibidos aqui -->
+                    </div>
+            </div>
+        </div>
         <label for="cpf">CPF:</label>
-        <input type="text" id="cpf" name="cpf" class="form-control" maxlength="14" placeholder="CPF" required  oninput="formatarCPF(this)" onblur="buscarPessoaPorCPF(this.value)">
+        <input type="text" id="cpf" name="cpf" class="form-control" maxlength="14" placeholder="CPF" required  oninput="formatarCPF(this)" onblur="filtrarcpf(this.value)">
     </div>
 
     <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
@@ -153,6 +168,7 @@
                 document.getElementById("complemento").value = data.complemento;
                 cep = cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3');
                 cepField.value = cep;
+                alert(cepField.value+"/"+cep)
             }
             })
             .catch(error => console.error("Erro:", error));
@@ -161,62 +177,84 @@
 
     }
 
-    function buscarPessoaPorCPF(cpf) {
-    // Remove caracteres especiais do CPF
-    cpf = cpf.replace(/\D/g, '');
+    async function filtrarcpf(cpf){
+        data= await buscarPessoaPorCPF(cpf)
+        
+        if(data!=null){
+             
+            if(data.flgencontrou){
 
-    if (cpf.length === 11) {
-        fetch(`/pesquisar_medico/${cpf}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    if(data.flgencontrou){
-                    // Exibe o modal informando que o CPF já está cadastrado
-                        document.getElementById('modal').style.display = 'flex';
-                        
-                            // Configura o botão "Sim"
-                            document.getElementById('btn-sim').onclick = () => {
-                            preencherDadosCallback(); // Preenche os dados
-                            document.getElementById('modal').style.display = 'none'; // Fecha o modal
-                        };
+                  
+             
+                   
+                document.getElementById('modal').style.display = 'flex';
+               
+                    // Configura o botão "Sim"
+                document.getElementById('btn-sim').onclick = () => {
+                    preencherDadosCallback(data); // Preenche os dados
+                    document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                };
 
-                        // Configura o botão "Não"
-                        document.getElementById('btn-nao').onclick = () => {
-                            limparCPF(); // Limpa o campo CPF
-                            document.getElementById('modal').style.display = 'none'; // Fecha o modal
-                        };
+                // Configura o botão "Não"
+                document.getElementById('btn-nao').onclick = () => {
+                    limparCPF(); // Limpa o campo CPF
+                    document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                };
 
-                        // Função para preencher dados
-                        const preencherDadosCallback = () => {
-                            document.getElementById('nome').value = data.nome;
-                            document.getElementById('rg').value = data.rg;
-                            document.getElementById('data_nas').value = data.data_nas;
-                            document.getElementById('cep').value = data.cep;
-                            document.getElementById('uf').value = data.uf;
-                            document.getElementById('cidade').value = data.cidade;
-                            document.getElementById('endereco').value = data.endereco;
-                            document.getElementById('complemento').value = data.complemento;
-                            document.getElementById('numero').value = data.numero ;
-                            document.getElementById('telefone_01').value = data.telefone_01;
-                            document.getElementById('telefone_02').value = data.telefone_02;
-                            document.getElementById('telefone_03').value = data.telefone_03;
 
-                            document.getElementById('crm').value = data.crm;
-                            document.getElementById('crm').value = data.crm;
-                            
-                            document.getElementById('flgativo').value = data.flgativo ;
-                            
-
-                            document.getElementById('especialidade').value = data.codespecialidade;
-                            
-                        };
-
-                    }
-                } 
-            })
-            .catch(error => console.error('Erro ao buscar dados:', error));
+            }
+        }
     }
-}
+
+    function preencherDadosCallback(data) {
+        document.getElementById('nome').value = data.nome;
+        document.getElementById('rg').value = data.rg;
+        document.getElementById('data_nas').value = data.data_nas;
+        document.getElementById('cep').value = data.cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3');
+        document.getElementById('uf').value = data.uf;
+        document.getElementById('cidade').value = data.cidade;
+        document.getElementById('endereco').value = data.endereco;
+        document.getElementById('complemento').value = data.complemento;
+        document.getElementById('numero').value = data.numero ;
+        document.getElementById('telefone_01').value = data.telefone_01;
+        document.getElementById('telefone_02').value = data.telefone_02;
+        document.getElementById('telefone_03').value = data.telefone_03;
+
+        document.getElementById('crm').value = data.crm;
+    
+                            
+        document.getElementById('flgativo').value = data.flgativo ;
+                            
+
+        document.getElementById('especialidade').value = data.codespecialidade;
+
+
+    }
+
+    async function buscarPessoaPorCPF(cpf) {
+    // Remove caracteres especiais do CPF
+        cpf = cpf.replace(/\D/g, '');
+
+        if (cpf.length === 11) {
+
+            try {
+            let response = await fetch(`/pesquisar_medico/${cpf}`);
+            let data = await response.json();
+            
+                if (data) {
+            
+                return data; // Retorna `data` se o paciente for encontrado
+                } else {
+                    alert('Paciente não encontrado');
+                    return null; // Retorna `null` se o paciente não for encontrado
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+                return null; // Retorna `null` em caso de erro
+            }
+        
+        }
+    }   
 
 // Prevenção do envio automático do formulário
 document.getElementById('form-medico').addEventListener('submit', function(event) {
@@ -233,6 +271,89 @@ function limparCPF() {
     document.getElementById('cpf').value = ''; // Limpa o campo CPF
 }
 
+function abrirModalPesquisa() {
+        document.getElementById("modalPesquisa").style.display = "block";
+}
 
+function fecharModalPesquisa() {
+        document.getElementById("modalPesquisa").style.display = "none";
+        document.getElementById("resultadoPesquisa").innerHTML = "";  // Limpa os resultados
+}
+
+function buscarMedicoPorNome() {
+        let nome = document.getElementById("nomeBusca").value;
+        if (nome) {
+           
+            fetch(`/localizar_medico/${nome}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    // Limpar qualquer resultado de pesquisa anterior
+                    document.getElementById("resultadoPesquisa").innerHTML = "";
+
+                    // Criar a tabela de resultados
+                    let tabelaResultados = document.createElement("table");
+                    tabelaResultados.style.width = "100%";
+                    tabelaResultados.style.borderCollapse = "collapse";
+
+                    // Criar o cabeçalho da tabela
+                    let thead = document.createElement("thead");
+                    thead.innerHTML = `
+                        <tr>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Nome</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">CPF</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Data de Nascimento</th>
+                        </tr>
+                    `;
+                    tabelaResultados.appendChild(thead);
+
+                    // Criar o corpo da tabela e preencher com os dados dos pacientes
+                    let tbody = document.createElement("tbody");
+                    data.forEach(medico => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td style="border: 1px solid #ccc; padding: 8px;">${medico.nome}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">${medico.cpf}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">${medico.data_nas}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">
+                                <button onclick="selecionarMedico('${medico.cpf}')">Selecionar</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+
+                    tabelaResultados.appendChild(tbody);
+                    document.getElementById("resultadoPesquisa").appendChild(tabelaResultados);
+                } else {
+                    document.getElementById("resultadoPesquisa").innerHTML = "<p>Nenhum paciente encontrado.</p>";
+                }
+            })
+            .catch(error => console.error('Erro ao pesquisar !', error));
+
+
+
+
+            document.getElementById("resultadoPesquisa").innerHTML = "<p>Resultado da busca por: " + nome + "</p>";
+        } else {
+            alert("Digite um nome para buscar.");
+        }
+    }
+
+
+async function selecionarMedico(cpf) {
+    
+    // Define o valor do CPF no campo
+    document.getElementById('cpf').value = cpf;
+
+    // Chama a função de formatação passando o próprio elemento de CPF
+    formatarCPF(document.getElementById('cpf'));
+
+    // Chama a função de busca
+    data= await buscarPessoaPorCPF(cpf)
+    preencherDadosCallback(data)
+  
+    // Fecha o modal de pesquisa após a seleção
+    fecharModalPesquisa();
+}
 </script>
 {% endblock %}

@@ -30,7 +30,7 @@
 
 
         <label for="CPF">CPF:</label><br>
-        <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" maxlength="14" oninput="formatarCPF(this)" onblur="buscarPessoaPorCPF(this.value)"><br>
+        <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" maxlength="14" oninput="formatarCPF(this)" onblur="filtrarcpf(this.value)"><br>
         
 
         <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
@@ -177,6 +177,7 @@
                 document.getElementById("Complemento").value = data.complemento;
                 cep = cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3');
                 cepField.value = cep;
+               
             }
             })
             .catch(error => console.error("Erro:", error));
@@ -187,70 +188,87 @@
     //cepField.value = cep;
     }
 
-    function buscarPessoaPorCPF(cpf) {
+    async function filtrarcpf(cpf){
+        data= await buscarPessoaPorCPF(cpf)
+        
+        if(data!=null){
+             
+            if(data.flgencontrou){
+
+                  
+               
+                   
+                document.getElementById('modal').style.display = 'flex';
+               
+                    // Configura o botão "Sim"
+                document.getElementById('btn-sim').onclick = () => {
+                    preencherDadosCallback(data); // Preenche os dados
+                    document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                };
+
+                // Configura o botão "Não"
+                document.getElementById('btn-nao').onclick = () => {
+                    limparCPF(); // Limpa o campo CPF
+                    document.getElementById('modal').style.display = 'none'; // Fecha o modal
+                };
+
+
+            }
+        }
+    }
+
+    function preencherDadosCallback(data) {
+
+        document.getElementById('Nome').value = data.nome;
+        document.getElementById('RG').value = data.rg;
+        document.getElementById('Data_Nascimento').value = data.data_nas;
+        document.getElementById('CEP').value = data.cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3');
+        document.getElementById('UF').value = data.uf;
+        document.getElementById('Cidade').value = data.cidade;
+        document.getElementById('Endereco').value = data.endereco;
+        document.getElementById('Complemento').value = data.complemento;
+        document.getElementById('numero').value = data.numero;
+        document.getElementById('Telefone_01').value = data.telefone_01;
+        document.getElementById('Telefone_02').value = data.telefone_02;
+        document.getElementById('Telefone_03').value = data.telefone_03;
+
+
+        // Ajustar o campo "possui_convenio" para selecionar "Sim" ou "Não" com base no valor de flgconvenio
+        document.getElementById('possui_convenio').value = data.flgconvenio === 1 ? 'sim' : 'nao';
+
+        // Exibir a seção de convênio se flgconvenio for 1 (Sim)
+        toggleConvenio(data.flgconvenio === 1 ? 'sim' : 'nao');
+
+        // Ajustar o campo "convenio" para selecionar o convênio correspondente
+        if (data.flgconvenio === 1) {
+            document.getElementById('tipoconvenio').value = data.tipoconvenio;
+            document.getElementById('convenio').value = data.fk_convenio_id;
+
+        }
+
+
+    }
+
+    async function buscarPessoaPorCPF(cpf) {
     // Remove caracteres especiais do CPF
     cpf = cpf.replace(/\D/g, '');
 
     if (cpf.length === 11) {
-        fetch(`/pesquisar_paciente/${cpf}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    if(data.flgencontrou){
-
-                        
-                        if (document.getElementById('abrirmodalpesquisa').style.display !== 'flex') {
-                            document.getElementById('modal').style.display = 'flex';
-                        }
-                            // Configura o botão "Sim"
-                        document.getElementById('btn-sim').onclick = () => {
-                            preencherDadosCallback(); // Preenche os dados
-                            document.getElementById('modal').style.display = 'none'; // Fecha o modal
-                        };
-
-                        // Configura o botão "Não"
-                        document.getElementById('btn-nao').onclick = () => {
-                            limparCPF(); // Limpa o campo CPF
-                            document.getElementById('modal').style.display = 'none'; // Fecha o modal
-                        };
-
-                        // Função para preencher dados
-                        let preencherDadosCallback = () => {
-                        
-                            document.getElementById('Nome').value = data.nome;
-                            document.getElementById('RG').value = data.rg;
-                            document.getElementById('Data_Nascimento').value = data.data_nas;
-                            document.getElementById('CEP').value = data.cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3');;
-                            document.getElementById('UF').value = data.uf;
-                            document.getElementById('Cidade').value = data.cidade;
-                            document.getElementById('Endereco').value = data.endereco;
-                            document.getElementById('Complemento').value = data.complemento;
-                            document.getElementById('numero').value = data.numero;
-                            document.getElementById('Telefone_01').value = data.telefone_01;
-                            document.getElementById('Telefone_02').value = data.telefone_02;
-                            document.getElementById('Telefone_03').value = data.telefone_03;
-
-                            
-                        // Ajustar o campo "possui_convenio" para selecionar "Sim" ou "Não" com base no valor de flgconvenio
-                            document.getElementById('possui_convenio').value = data.flgconvenio === 1 ? 'sim' : 'nao';
-
-                            // Exibir a seção de convênio se flgconvenio for 1 (Sim)
-                            toggleConvenio(data.flgconvenio === 1 ? 'sim' : 'nao');
-
-                            // Ajustar o campo "convenio" para selecionar o convênio correspondente
-                            if (data.flgconvenio === 1) {
-                                document.getElementById('tipoconvenio').value = data.tipoconvenio;
-                                document.getElementById('convenio').value = data.fk_convenio_id;
-                            
-                            }
-
-                            
-                        };
-
-                    }
-                } 
-            })
-            .catch(error => console.error('Erro ao buscar dados:', error));
+        try {
+        let response = await fetch(`/pesquisar_paciente/${cpf}`);
+        let data = await response.json();
+        
+        if (data) {
+           
+            return data; // Retorna `data` se o paciente for encontrado
+        } else {
+            alert('Paciente não encontrado');
+            return null; // Retorna `null` se o paciente não for encontrado
+        }
+    } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+        return null; // Retorna `null` em caso de erro
+    }
     }
 }
 
@@ -276,8 +294,10 @@ function fecharModalPesquisa() {
         document.getElementById("resultadoPesquisa").innerHTML = "";  // Limpa os resultados
     }
 
+
+
 function buscarPessoaPorNome() {
-        const nome = document.getElementById("nomeBusca").value;
+        let nome = document.getElementById("nomeBusca").value;
         if (nome) {
            
             fetch(`/localizar_pessoa/${nome}`)
@@ -287,44 +307,44 @@ function buscarPessoaPorNome() {
                     // Limpar qualquer resultado de pesquisa anterior
                     document.getElementById("resultadoPesquisa").innerHTML = "";
 
-// Criar a tabela de resultados
-let tabelaResultados = document.createElement("table");
-tabelaResultados.style.width = "100%";
-tabelaResultados.style.borderCollapse = "collapse";
+                    // Criar a tabela de resultados
+                    let tabelaResultados = document.createElement("table");
+                    tabelaResultados.style.width = "100%";
+                    tabelaResultados.style.borderCollapse = "collapse";
 
-// Criar o cabeçalho da tabela
-let thead = document.createElement("thead");
-thead.innerHTML = `
-    <tr>
-        <th style="border: 1px solid #ccc; padding: 8px;">Nome</th>
-        <th style="border: 1px solid #ccc; padding: 8px;">CPF</th>
-        <th style="border: 1px solid #ccc; padding: 8px;">Data de Nascimento</th>
-    </tr>
-`;
-tabelaResultados.appendChild(thead);
+                    // Criar o cabeçalho da tabela
+                    let thead = document.createElement("thead");
+                    thead.innerHTML = `
+                        <tr>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Nome</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">CPF</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Data de Nascimento</th>
+                        </tr>
+                    `;
+                    tabelaResultados.appendChild(thead);
 
-// Criar o corpo da tabela e preencher com os dados dos pacientes
-let tbody = document.createElement("tbody");
-data.forEach(paciente => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-        <td style="border: 1px solid #ccc; padding: 8px;">${paciente.nome}</td>
-        <td style="border: 1px solid #ccc; padding: 8px;">${paciente.cpf}</td>
-        <td style="border: 1px solid #ccc; padding: 8px;">${paciente.data_nas}</td>
-        <td style="border: 1px solid #ccc; padding: 8px;">
-            <button onclick="selecionarPaciente('${paciente.cpf}')">Selecionar</button>
-        </td>
-    `;
-    tbody.appendChild(row);
-});
+                    // Criar o corpo da tabela e preencher com os dados dos pacientes
+                    let tbody = document.createElement("tbody");
+                    data.forEach(paciente => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td style="border: 1px solid #ccc; padding: 8px;">${paciente.nome}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">${paciente.cpf}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">${paciente.data_nas}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">
+                                <button onclick="selecionarPaciente('${paciente.cpf}')">Selecionar</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
 
-tabelaResultados.appendChild(tbody);
-document.getElementById("resultadoPesquisa").appendChild(tabelaResultados);
+                    tabelaResultados.appendChild(tbody);
+                    document.getElementById("resultadoPesquisa").appendChild(tabelaResultados);
                 } else {
                     document.getElementById("resultadoPesquisa").innerHTML = "<p>Nenhum paciente encontrado.</p>";
                 }
             })
-            .catch(error => console.error('Erro ao buscar escalas:', error));
+            .catch(error => console.error('Erro ao pesquisar !', error));
 
 
 
@@ -335,8 +355,8 @@ document.getElementById("resultadoPesquisa").appendChild(tabelaResultados);
         }
     }
 
-function selecionarPaciente(cpf) {
-
+async function selecionarPaciente(cpf) {
+    
     // Define o valor do CPF no campo
     document.getElementById('CPF').value = cpf;
 
@@ -344,10 +364,17 @@ function selecionarPaciente(cpf) {
     formatarCPF(document.getElementById('CPF'));
 
     // Chama a função de busca
-    buscarPessoaPorCPF(cpf);
+    data= await buscarPessoaPorCPF(cpf)
+    preencherDadosCallback(data)
   
     // Fecha o modal de pesquisa após a seleção
     fecharModalPesquisa();
 }
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+    }
+});
 </script>
 {% endblock %}

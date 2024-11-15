@@ -716,9 +716,10 @@ def buscar_pessoa(cpf):
 @app.route('/localizar_pessoa/<nome>', methods=['GET'])
 def localizar_pessoa(nome):
     session_db = Session()
-    
+  
     try:
         pessoas = session_db.query(Pessoa).filter(Pessoa.nome.ilike(f"%{nome}%")).all()
+        # pessoas = session_db.query(Pessoa).filter(Pessoa.nome.ilike(f"%{nome}%")).all()
         if pessoas:
             # Retorna os dados das pessoas como uma lista de dicionários
             return jsonify([
@@ -737,6 +738,36 @@ def localizar_pessoa(nome):
     finally:
         session_db.close()
 
+
+@app.route('/localizar_medico/<nome>', methods=['GET'])
+def localizar_medico(nome):
+    session_db = Session()
+  
+    try:
+        medicos = (session_db.query(Pessoa.nome, Pessoa.cpf,Pessoa.data_nas)
+        .join(Medico, Pessoa.id == Medico.fk_pessoa_id) 
+        .filter(Pessoa.nome.ilike(f"%{nome}%"))
+        ).all()
+
+
+        # pessoas = session_db.query(Pessoa).filter(Pessoa.nome.ilike(f"%{nome}%")).all()
+        if medicos:
+            # Retorna os dados das pessoas como uma lista de dicionários
+            return jsonify([
+                {
+                    'nome': medico.nome,
+                    'cpf': medico.cpf,
+                    'data_nas': medico.data_nas.strftime('%Y-%m-%d')
+                   
+                } for medico in medicos
+            ])
+        else:
+            return jsonify([])  # Retorna lista vazia se nenhuma pessoa for encontrada
+    except Exception as e:
+        app.logger.info(f"Erro ao localizar por nome: {e}")
+        return jsonify({"error": "Erro no servidor"}), 500
+    finally:
+        session_db.close()
 
 @app.route('/buscar_escalas/<codmedico>',methods=['GET'])
 def buscar_escalas(codmedico):
