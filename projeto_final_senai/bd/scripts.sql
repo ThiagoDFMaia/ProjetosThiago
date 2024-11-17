@@ -1,6 +1,6 @@
 
-drop database clinica;
--- MySQL Workbench Forward Engineering
+drop database lifeMatters;
+
 -- MySQL Workbench Forward Engineering
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
@@ -11,19 +11,19 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- Schema mydb
 -- -----------------------------------------------------
 -- -----------------------------------------------------
--- Schema clinica
+-- Schema lifeMatters
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema clinica
+-- Schema lifeMatters
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `clinica` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
-USE `clinica` ;
+CREATE SCHEMA IF NOT EXISTS `lifeMatters` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `lifeMatters` ;
 
 -- -----------------------------------------------------
--- Table `clinica`.`pessoa`
+-- Table `lifeMatters`.`pessoa`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`pessoa` (
+CREATE TABLE IF NOT EXISTS `lifeMatters`.`pessoa` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(100) NOT NULL,
   `endereco` VARCHAR(100) NOT NULL,
@@ -41,15 +41,15 @@ CREATE TABLE IF NOT EXISTS `clinica`.`pessoa` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `cpf_UNIQUE` (`cpf` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 11
+AUTO_INCREMENT = 15
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `clinica`.`convenio`
+-- Table `lifeMatters`.`convenio`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`convenio` (
+CREATE TABLE IF NOT EXISTS `lifeMatters`.`convenio` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `cnpj` VARCHAR(15) NOT NULL,
   `descricao` VARCHAR(50) NOT NULL,
@@ -62,9 +62,9 @@ COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `clinica`.`paciente`
+-- Table `lifeMatters`.`paciente`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`paciente` (
+CREATE TABLE IF NOT EXISTS `lifeMatters`.`paciente` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `tipoconvenio` ENUM('individual', 'coletivo', 'publico') NULL DEFAULT NULL,
   `fk_pessoa_id` INT NOT NULL,
@@ -76,11 +76,11 @@ CREATE TABLE IF NOT EXISTS `clinica`.`paciente` (
   INDEX `fk_paciente_3` (`fk_convenio_id` ASC) VISIBLE,
   CONSTRAINT `fk_paciente_2`
     FOREIGN KEY (`fk_pessoa_id`)
-    REFERENCES `clinica`.`pessoa` (`id`)
+    REFERENCES `lifeMatters`.`pessoa` (`id`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_paciente_3`
     FOREIGN KEY (`fk_convenio_id`)
-    REFERENCES `clinica`.`convenio` (`id`))
+    REFERENCES `lifeMatters`.`convenio` (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 11
 DEFAULT CHARACTER SET = utf8mb4
@@ -88,9 +88,9 @@ COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `clinica`.`especialidade`
+-- Table `lifeMatters`.`especialidade`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`especialidade` (
+CREATE TABLE IF NOT EXISTS `lifeMatters`.`especialidade` (
   `codespecialidade` INT NOT NULL AUTO_INCREMENT,
   `descricao` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`codespecialidade`))
@@ -101,9 +101,9 @@ COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `clinica`.`medico`
+-- Table `lifeMatters`.`medico`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`medico` (
+CREATE TABLE IF NOT EXISTS `lifeMatters`.`medico` (
   `codmedico` INT NOT NULL AUTO_INCREMENT,
   `crm` VARCHAR(15) NOT NULL,
   `fk_pessoa_id` INT NOT NULL,
@@ -115,21 +115,21 @@ CREATE TABLE IF NOT EXISTS `clinica`.`medico` (
   INDEX `fk_medico_especialidade1_idx` (`codespecialidade` ASC) VISIBLE,
   CONSTRAINT `fk_medico_2`
     FOREIGN KEY (`fk_pessoa_id`)
-    REFERENCES `clinica`.`pessoa` (`id`)
+    REFERENCES `lifeMatters`.`pessoa` (`id`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_medico_especialidade1`
     FOREIGN KEY (`codespecialidade`)
-    REFERENCES `clinica`.`especialidade` (`codespecialidade`))
+    REFERENCES `lifeMatters`.`especialidade` (`codespecialidade`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 6
+AUTO_INCREMENT = 8
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `clinica`.`escala`
+-- Table `lifeMatters`.`escala`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`escala` (
+CREATE TABLE IF NOT EXISTS `lifeMatters`.`escala` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `data` DATE NOT NULL,
   `quantvagasmanha` SMALLINT NOT NULL,
@@ -141,21 +141,21 @@ CREATE TABLE IF NOT EXISTS `clinica`.`escala` (
   INDEX `fk_escala_medico1_idx` (`codmedico` ASC) VISIBLE,
   CONSTRAINT `fk_escala_medico1`
     FOREIGN KEY (`codmedico`)
-    REFERENCES `clinica`.`medico` (`codmedico`))
+    REFERENCES `lifeMatters`.`medico` (`codmedico`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 11
+AUTO_INCREMENT = 49
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `clinica`.`agendamento`
+-- Table `lifeMatters`.`agendamento`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`agendamento` (
+CREATE TABLE IF NOT EXISTS `lifeMatters`.`agendamento` (
   `codigo` INT NOT NULL AUTO_INCREMENT,
   `dataagenda` DATE NOT NULL,
   `datacadastro` DATE NOT NULL,
-  `flgsituacao` CHAR(2) NOT NULL COMMENT '01- agendado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n02- cancelado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n03- presenca\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n04- falta\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n05- atendido',
+  `flgsituacao` CHAR(2) NOT NULL COMMENT '01- agendado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n02- cancelado\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n03- presenca\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n04- falta\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n05- atendido',
   `fk_paciente_id` INT NULL DEFAULT NULL,
   `escala_id` INT NOT NULL,
   `horaagendamento` TIME NOT NULL,
@@ -165,21 +165,21 @@ CREATE TABLE IF NOT EXISTS `clinica`.`agendamento` (
   INDEX `fk_agendamento_escala1_idx` (`escala_id` ASC) VISIBLE,
   CONSTRAINT `fk_agendamento_3`
     FOREIGN KEY (`fk_paciente_id`)
-    REFERENCES `clinica`.`paciente` (`id`)
+    REFERENCES `lifeMatters`.`paciente` (`id`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_agendamento_escala1`
     FOREIGN KEY (`escala_id`)
-    REFERENCES `clinica`.`escala` (`id`))
+    REFERENCES `lifeMatters`.`escala` (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 24
+AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `clinica`.`usuario`
+-- Table `lifeMatters`.`usuario`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`usuario` (
+CREATE TABLE IF NOT EXISTS `lifeMatters`.`usuario` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `login` VARCHAR(10) NOT NULL,
   `senha` VARCHAR(8) NOT NULL,
@@ -187,21 +187,22 @@ CREATE TABLE IF NOT EXISTS `clinica`.`usuario` (
   `fk_pessoa_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `fk_pessoa_id_UNIQUE` (`fk_pessoa_id` ASC) VISIBLE,
-  INDEX `fk_usuario_2` (`fk_pessoa_id` ASC) VISIBLE,
   UNIQUE INDEX `login_UNIQUE` (`login` ASC) VISIBLE,
+  INDEX `fk_usuario_2` (`fk_pessoa_id` ASC) VISIBLE,
   CONSTRAINT `fk_usuario_2`
     FOREIGN KEY (`fk_pessoa_id`)
-    REFERENCES `clinica`.`pessoa` (`id`)
+    REFERENCES `lifeMatters`.`pessoa` (`id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
+AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `clinica`.`permissao`
+-- Table `lifeMatters`.`permissao`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`permissao` (
+CREATE TABLE IF NOT EXISTS `lifeMatters`.`permissao` (
   `fk_usuario_id` INT NULL DEFAULT NULL,
   `id` INT NOT NULL,
   `descricao` VARCHAR(100) NULL DEFAULT NULL,
@@ -209,7 +210,7 @@ CREATE TABLE IF NOT EXISTS `clinica`.`permissao` (
   INDEX `fk_permissao_1` (`fk_usuario_id` ASC) VISIBLE,
   CONSTRAINT `fk_permissao_1`
     FOREIGN KEY (`fk_usuario_id`)
-    REFERENCES `clinica`.`usuario` (`id`)
+    REFERENCES `lifeMatters`.`usuario` (`id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
@@ -217,9 +218,9 @@ COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `clinica`.`prontuario`
+-- Table `lifeMatters`.`prontuario`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `clinica`.`prontuario` (
+CREATE TABLE IF NOT EXISTS `lifeMatters`.`prontuario` (
   `numprontuario` INT NOT NULL AUTO_INCREMENT,
   `fk_paciente_id` INT NOT NULL,
   `anamnese` TEXT NOT NULL,
@@ -235,15 +236,15 @@ CREATE TABLE IF NOT EXISTS `clinica`.`prontuario` (
   INDEX `fk_codigo_agendamento` (`fk_codigo_agendamento` ASC) VISIBLE,
   CONSTRAINT `fk_codigo_agendamento`
     FOREIGN KEY (`fk_codigo_agendamento`)
-    REFERENCES `clinica`.`agendamento` (`codigo`),
+    REFERENCES `lifeMatters`.`agendamento` (`codigo`),
   CONSTRAINT `prontuario_ibfk_1`
     FOREIGN KEY (`fk_paciente_id`)
-    REFERENCES `clinica`.`paciente` (`id`),
+    REFERENCES `lifeMatters`.`paciente` (`id`),
   CONSTRAINT `prontuario_ibfk_2`
     FOREIGN KEY (`fk_codmedico`)
-    REFERENCES `clinica`.`medico` (`codmedico`))
+    REFERENCES `lifeMatters`.`medico` (`codmedico`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 20
+AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -251,6 +252,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
 
 
 

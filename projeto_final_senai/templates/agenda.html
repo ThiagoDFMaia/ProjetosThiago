@@ -89,6 +89,22 @@
         <div class="col-md-4 paciente">
         <h3>Cadastro de Pacientes</h3>
         <form id="cadastroPaciente">
+            <button type="button" onclick="abrirModalPesquisa()" style="margin-bottom: 10px;">Localizar</button>
+            <br>
+             <!-- Modal para busca por nome -->
+             <div id="modalPesquisa" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
+                <div style="background: white; margin: 5% auto; padding: 30px; width: 600px; text-align: center; border-radius: 8px;">
+                    <h3>Buscar Pessoa por Nome</h3>
+                    <input type="text" id="nomeBusca" placeholder="Digite o nome" style="width: 100%; margin-bottom: 20px; padding: 10px;">
+                    <button type="button" onclick="buscarPessoaPorNome()" style="padding: 10px 20px;">Pesquisar</button>
+                    <button type="button" onclick="fecharModalPesquisa()" style="padding: 10px 20px; margin-left: 10px;">Fechar</button>
+            
+                    <div id="resultadoPesquisa" style="margin-top: 20px; max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+                        
+                        <!-- Resultados da busca serão exibidos aqui -->
+                    </div>
+                </div>
+            </div>
             <div class="form-group">
                 <label for="cpf">CPF:</label>
                 <input type="text" id="cpf" name="cpf" class="form-control" placeholder="Digite o CPF" maxlength="14" oninput="formatarCPF(this)" required>
@@ -224,6 +240,10 @@
                     <option value="infarto">Infarto</option>
                 </select>
                 <div id="cancer-fields" >
+                    <div class="button-group">
+                        <button id="fill-test-1" onclick="fillTest1()">Teste 1</button>
+                        <button id="fill-test-2" onclick="fillTest2()">Teste 2</button>
+                    </div>
                     <div class="modal-input-group">
                         <label class="modal-label" for="radius_mean">Radius Mean:</label>
                         <input type="number" class="modal-input" id="radius_mean" value="0.000000" step="0.000001" min="-100">
@@ -347,6 +367,10 @@
                 </div>
                 <div id="infarto-fields" class="hidden">
                     <h3>Campos para Infarto</h3>
+                    <div class="modal-buttons">
+                        <button id="fill-test-3" onclick="fillTest3()">Teste 3</button>
+                        <button id="fill-test-4" onclick="fillTest4()">Teste 4</button>
+                    </div>
                     <div class="modal-input-group">
                         <label class="modal-label" for="age">Idade:</label>
                         <input type="number" class="modal-input" id="age">
@@ -1108,7 +1132,7 @@ function abriraescala() {
             if (condition === "cancer") {
                 previsao = response.previsao === 0 ? 'Benigno' : 'Maligno';
             } else if (condition === "infarto") {
-                previsao = response.previsao === 0 ? 'Sem previsões de infarto' : 'Com chances de infarto';
+                previsao = response.previsao === 0 ? 'Menos chances de infarto' : 'Com chances de infarto';
             }
 
             document.getElementById('resultado').style.display = 'block'; // Torna o bloco visível
@@ -1238,6 +1262,130 @@ function dados_infarto(){
             document.getElementById("infarto-fields").classList.remove("hidden");
         }
     }
+
+    function fillTest1() {
+        const testData1 = {
+            radius_mean: 12.34,
+            texture_mean: 15.67,
+            perimeter_mean: 89.01,
+            area_mean: 654.32,
+            smoothness_mean: 0.123456,
+            compactness_mean: 0.234567,
+            concavity_mean: 0.345678,
+            concave_points_mean: 0.456789,
+            symmetry_mean: 0.567890,
+            fractal_dimension_mean: 0.678901,
+            radius_se: 0.789012,
+            texture_se: 1.890123,
+            perimeter_se: 2.901234,
+            area_se: 300.1234,
+            smoothness_se: 0.001234,
+            compactness_se: 0.002345,
+            concavity_se: 0.003456,
+            concave_points_se: 0.004567,
+            symmetry_se: 0.005678,
+            fractal_dimension_se: 0.006789,
+            radius_worst: 15.67,
+            texture_worst: 20.89,
+            perimeter_worst: 120.34,
+            area_worst: 850.21,
+            smoothness_worst: 0.012345,
+            compactness_worst: 0.023456,
+            concavity_worst: 0.034567,
+            concave_points_worst: 0.045678,
+            symmetry_worst: 0.056789,
+            fractal_dimension_worst: 0.067890
+        };
+        fillFields(testData1);
+    }
+
+    function fillTest2() {
+        const testData2 = {
+        radius_mean: 12.34,
+        texture_mean: 16.50,
+        perimeter_mean: 75.23,
+        area_mean: 500.45,
+        smoothness_mean: 0.0654,
+        compactness_mean: 0.0502,
+        concavity_mean: 0.0201,
+        concave_points_mean: 0.0100,
+        symmetry_mean: 0.1205,
+        fractal_dimension_mean: 0.0453,
+        radius_se: 0.4000,
+        texture_se: 0.9000,
+        perimeter_se: 1.2000,
+        area_se: 150.5678,
+        smoothness_se: 0.000800,
+        compactness_se: 0.001500,
+        concavity_se: 0.002000,
+        concave_points_se: 0.003000,
+        symmetry_se: 0.004500,
+        fractal_dimension_se: 0.005000,
+        radius_worst: 13.50,
+        texture_worst: 18.20,
+        perimeter_worst: 85.30,
+        area_worst: 600.0,
+        smoothness_worst: 0.0800,
+        compactness_worst: 0.1200,
+        concavity_worst: 0.1400,
+        concave_points_worst: 0.0500,
+        symmetry_worst: 0.2000,
+        fractal_dimension_worst: 0.0600
+    };
+        fillFields(testData2);
+    }
+
+    function fillTest3() {
+    const testData3 = {
+        age: 45,
+        sex: "1",
+        cp: "2",
+        trtbps: 120,
+        chol: 250,
+        fbs: "0",
+        restecg: "1",
+        thalachh: 150,
+        exng: 1,
+        oldpeak: 1.5,
+        slp: 2,
+        caa: "2",
+        thall: 3
+    };
+    fillFields(testData3);
+}
+
+function fillTest4() {
+    const testData4 = {
+        age: 60,
+        sex: "0",
+        cp: "0",
+        trtbps: 140,
+        chol: 300,
+        fbs: "1",
+        restecg: "2",
+        thalachh: 130,
+        exng: 0,
+        oldpeak: 2.0,
+        slp: 1,
+        caa: "1",
+        thall: 2
+    };
+    fillFields(testData4);
+}
+
+function fillFields(data) {
+    for (let fieldId in data) {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            // Verifica se o campo é um select ou input
+            if (field.tagName === "SELECT") {
+                field.value = data[fieldId];
+            } else if (field.tagName === "INPUT") {
+                field.value = data[fieldId];
+            }
+        }
+    }
+}
 </script>
 
 </body>
@@ -1251,7 +1399,88 @@ function dados_infarto(){
         convenioSection.style.display = value === 'sim' ? 'block' : 'none';
     }
 
+    function abrirModalPesquisa() {
+        document.getElementById("modalPesquisa").style.display = "block";
+    }
 
+    function fecharModalPesquisa() {
+        document.getElementById("modalPesquisa").style.display = "none";
+        document.getElementById("resultadoPesquisa").innerHTML = "";  // Limpa os resultados
+    }
+    function buscarPessoaPorNome() {
+        let nome = document.getElementById("nomeBusca").value;
+        if (nome) {
+           
+            fetch(`/localizar_pessoa/${nome}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    // Limpar qualquer resultado de pesquisa anterior
+                    document.getElementById("resultadoPesquisa").innerHTML = "";
+
+                    // Criar a tabela de resultados
+                    let tabelaResultados = document.createElement("table");
+                    tabelaResultados.style.width = "100%";
+                    tabelaResultados.style.borderCollapse = "collapse";
+
+                    // Criar o cabeçalho da tabela
+                    let thead = document.createElement("thead");
+                    thead.innerHTML = `
+                        <tr>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Nome</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">CPF</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Data de Nascimento</th>
+                        </tr>
+                    `;
+                    tabelaResultados.appendChild(thead);
+
+                    // Criar o corpo da tabela e preencher com os dados dos pacientes
+                    let tbody = document.createElement("tbody");
+                    data.forEach(paciente => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td style="border: 1px solid #ccc; padding: 8px;">${paciente.nome}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">${paciente.cpf}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">${paciente.data_nas}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">
+                                <button type="button" onclick="selecionarPaciente('${paciente.cpf}')">Selecionar</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+
+                    tabelaResultados.appendChild(tbody);
+                    document.getElementById("resultadoPesquisa").appendChild(tabelaResultados);
+                } else {
+                    document.getElementById("resultadoPesquisa").innerHTML = "<p>Nenhum paciente encontrado.</p>";
+                }
+            })
+            .catch(error => console.error('Erro ao pesquisar !', error));
+
+
+
+
+            document.getElementById("resultadoPesquisa").innerHTML = "<p>Resultado da busca por: " + nome + "</p>";
+        } else {
+            alert("Digite um nome para buscar.");
+        }
+    }
+
+    async function selecionarPaciente(cpf) {
+    
+    // Define o valor do CPF no campo
+    document.getElementById('cpf').value = cpf;
+
+    // Chama a função de formatação passando o próprio elemento de CPF
+    formatarCPF(document.getElementById('cpf'));
+
+    // Chama a função de busca
+    document.getElementById('btnPesquisarpaciente').click();
+
+  
+    // Fecha o modal de pesquisa após a seleção
+    fecharModalPesquisa();
+}
     
 </script>
 {% endblock %}

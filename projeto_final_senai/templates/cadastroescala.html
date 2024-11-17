@@ -39,12 +39,28 @@
 </head>
 <body>
 <form  id="form-medico">
-    
+ 
     <div class="form-group">
         <label for="codmedico">Código Do Médico:</label>
         <input type="text" id="codmedico" name="codmedico" class="form-control" placeholder="codmedico" disabled>
     </div>
-    <div class="form-group">   
+    <div class="form-group">
+        <button type="button" onclick="abrirModalPesquisa()" style="margin-bottom: 10px;">Localizar</button>
+        <br>
+         <!-- Modal para busca por nome -->
+        <div id="modalPesquisa" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
+            <div style="background: white; margin: 5% auto; padding: 30px; width: 600px; text-align: center; border-radius: 8px;">
+                <h3>Buscar Pessoa por Nome</h3>
+                <input type="text" id="nomeBusca" placeholder="Digite o nome" style="width: 100%; margin-bottom: 20px; padding: 10px;">
+                <!-- Adicione o type="button" no botão de pesquisa -->
+                <button type="button" onclick="buscarMedicoPorNome()" style="padding: 10px 20px;">Pesquisar</button>
+                <button type="button" onclick="fecharModalPesquisa()" style="padding: 10px 20px; margin-left: 10px;">Fechar</button>
+            
+                <div id="resultadoPesquisa" style="margin-top: 20px; max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+                    <!-- Resultados da busca serão exibidos aqui -->
+                </div>
+            </div>
+        </div>  
         <label for="CPF">CPF:</label><br>
         <input type="text" id="CPF" name="CPF" required placeholder="000.000.000-00" maxlength="14" oninput="formatarCPF(this)" onblur="buscarPessoaPorCPF(this.value)"><br>
     </div>
@@ -98,7 +114,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <button type="submit" id="salvar_escala" class="btn btn-primary">Salvar Escala</button>
+                <button type="button" id="salvar_escala" class="btn btn-primary">Salvar Escala</button>
             </form>
             
        
@@ -170,6 +186,15 @@
             .then(response => response.json())
             .then(data => {
                 // Limpa a lista de datas de escalas antes de adicionar novas
+                if (!data) {
+                    datasEscalas = []; 
+                    $('#calendario').fullCalendar('removeEvents');
+                    abriraescala(); // Chama apenas abriraescala se não houver datas
+                    $('.container').show(); 
+                    return;
+                }
+
+                
                 datasEscalas = []; 
               
                 data.datas.forEach(escala => {
@@ -204,6 +229,7 @@
     }
 
     function abriraescala() {
+        $('#calendario').fullCalendar('destroy');
         $('#calendario').fullCalendar({
             locale: 'pt-br',
             header: {
@@ -275,9 +301,92 @@
                         .then(response => {
                             if (response.flggravar){
                                 alert('Escala Salva com sucesso!')
+                                buscarEscalasPorMedico(codmedico)
                         }
                 })
     };
+
+    function abrirModalPesquisa() {
+        document.getElementById("modalPesquisa").style.display = "block";
+    }
+
+    function fecharModalPesquisa() {
+        document.getElementById("modalPesquisa").style.display = "none";
+        document.getElementById("resultadoPesquisa").innerHTML = "";  // Limpa os resultados
+    }
+    function buscarMedicoPorNome() {
+        let nome = document.getElementById("nomeBusca").value;
+        if (nome) {
+           
+            fetch(`/localizar_medico/${nome}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    // Limpar qualquer resultado de pesquisa anterior
+                    document.getElementById("resultadoPesquisa").innerHTML = "";
+
+                    // Criar a tabela de resultados
+                    let tabelaResultados = document.createElement("table");
+                    tabelaResultados.style.width = "100%";
+                    tabelaResultados.style.borderCollapse = "collapse";
+
+                    // Criar o cabeçalho da tabela
+                    let thead = document.createElement("thead");
+                    thead.innerHTML = `
+                        <tr>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Nome</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">CPF</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Data de Nascimento</th>
+                        </tr>
+                    `;
+                    tabelaResultados.appendChild(thead);
+
+                    // Criar o corpo da tabela e preencher com os dados dos pacientes
+                    let tbody = document.createElement("tbody");
+                    data.forEach(medico => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td style="border: 1px solid #ccc; padding: 8px;">${medico.nome}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">${medico.cpf}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">${medico.data_nas}</td>
+                            <td style="border: 1px solid #ccc; padding: 8px;">
+                                <button onclick="selecionarMedico('${medico.cpf}')">Selecionar</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+
+                    tabelaResultados.appendChild(tbody);
+                    document.getElementById("resultadoPesquisa").appendChild(tabelaResultados);
+                } else {
+                    document.getElementById("resultadoPesquisa").innerHTML = "<p>Nenhum paciente encontrado.</p>";
+                }
+            })
+            .catch(error => console.error('Erro ao pesquisar !', error));
+
+
+
+
+            document.getElementById("resultadoPesquisa").innerHTML = "<p>Resultado da busca por: " + nome + "</p>";
+        } else {
+            alert("Digite um nome para buscar.");
+        }
+    }
+    async function selecionarMedico(cpf) {
+    
+    // Define o valor do CPF no campo
+    document.getElementById('CPF').value = cpf;
+
+    // Chama a função de formatação passando o próprio elemento de CPF
+    formatarCPF(document.getElementById('CPF'));
+
+    // Chama a função de busca
+    buscarPessoaPorCPF(cpf)
+    
+  
+    // Fecha o modal de pesquisa após a seleção
+    fecharModalPesquisa();
+}
 
 </script>
 

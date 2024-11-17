@@ -4,8 +4,10 @@ from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
+
+from sklearn.preprocessing import StandardScaler
 
 import numpy as np
 from biblioteca import *
@@ -35,7 +37,10 @@ async def carrega_modelo_cancer():
         df = df.drop(columns = 'diagnosis')
         df=df.drop(columns='Unnamed: 32')
         x_test, x_train, y_test, y_train = train_test_split(df, classe, test_size=0.3, random_state=42)
-        modelo=LogisticRegression(max_iter=3200)
+        modelo=MLPClassifier(hidden_layer_sizes=(25,20,15), activation='logistic',alpha=0.1 ,max_iter=15500)
+
+
+       
         modelo.fit(x_train, y_train)
         acuracia_treino=modelo.score(x_train, y_train)
         print(f"Acurácia de treino modelo de cancer: {(acuracia_treino*100):.2f}%")
@@ -43,8 +48,10 @@ async def carrega_modelo_cancer():
 
 
         acuracia_teste = accuracy_score(y_test, y_pred)
-        print(f"Acurácia de teste do modelo de: {(acuracia_teste*100):.2f}%")
+        print(f"Acurácia de teste do modelo de cancer: {(acuracia_teste*100):.2f}%")
 
+       
+       
     except FileNotFoundError:
         print("Erro: O arquivo de dataset de cancer não foi encontrado.")
         return None
@@ -66,7 +73,10 @@ async def carrega_modelo_infarto():
         classe = df['output']
         df.drop('output',axis=1,inplace=True)
         X_train,X_test,Y_train,Y_test=train_test_split(df,classe,test_size=0.3,random_state=42)
-        modelo=LogisticRegression(max_iter=3200)
+        modelo=MLPClassifier(activation='logistic',  hidden_layer_sizes=(10, 10), max_iter=2000, random_state=42)
+
+      
+
         modelo.fit(X_train, Y_train)
         acuracia_treino=modelo.score(X_train, Y_train)
         print(f"Acurácia de treino modelo de infarto: {(acuracia_treino*100):.2f}%")
@@ -75,7 +85,7 @@ async def carrega_modelo_infarto():
         y_pred =  modelo.predict(X_test)
         acuracia_teste = accuracy_score(Y_test, y_pred)
         print(f"Acurácia de teste do modelo de infarto: {(acuracia_teste*100):.2f}%")
-
+     
     except FileNotFoundError:
         print("Erro: O arquivo de dataset de infarto não foi encontrado.")
         return None

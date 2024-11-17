@@ -18,10 +18,10 @@
             <div style="background: white; margin: 5% auto; padding: 30px; width: 600px; text-align: center; border-radius: 8px;">
                 <h3>Buscar Pessoa por Nome</h3>
                 <input type="text" id="nomeBusca" placeholder="Digite o nome" style="width: 100%; margin-bottom: 20px; padding: 10px;">
-                <button onclick="buscarPessoaPorNome()" style="padding: 10px 20px;">Pesquisar</button>
-                <button onclick="fecharModalPesquisa()" style="padding: 10px 20px; margin-left: 10px;">Fechar</button>
+                <button type="button" onclick="buscarPessoaPorNome()" style="padding: 10px 20px;">Pesquisar</button>
+                <button type="button" onclick="fecharModalPesquisa()" style="padding: 10px 20px; margin-left: 10px;">Fechar</button>
         
-                <div id="resultadoPesquisa" style="margin-top: 20px;">
+                <div id="resultadoPesquisa" style="margin-top: 20px; max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
                     <!-- Resultados da busca serão exibidos aqui -->
                 </div>
             </div>
@@ -292,7 +292,7 @@ function abrirModalPesquisa() {
 function fecharModalPesquisa() {
         document.getElementById("modalPesquisa").style.display = "none";
         document.getElementById("resultadoPesquisa").innerHTML = "";  // Limpa os resultados
-    }
+}
 
 
 
@@ -353,7 +353,7 @@ function buscarPessoaPorNome() {
         } else {
             alert("Digite um nome para buscar.");
         }
-    }
+}
 
 async function selecionarPaciente(cpf) {
     

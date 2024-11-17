@@ -19,7 +19,7 @@ app.secret_key = "df6e83eb7983f75b2561c875cbebc40ab9900624b22c6040f5831ecd6faaea
 user = 'root'
 password = urllib.parse.quote_plus('123456')
 host = 'localhost'
-database = 'clinica'
+database = 'lifematters'
 # ==========================================
 #           connection string
 connection_string = f'mysql+pymysql://{user}:{password}@{host}/{database}'
@@ -790,7 +790,7 @@ def buscar_escalas(codmedico):
             })
         else:
             # Se nenhuma escala for encontrada, retorna 404
-            return jsonify(None), 404
+            return jsonify(None)
     except Exception as e:
         app.logger.error(f"Erro ao buscar escalas: {e}")
     finally:

@@ -15,14 +15,15 @@
          <!-- Modal para busca por nome -->
         <div id="modalPesquisa" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;">
             <div style="background: white; margin: 5% auto; padding: 30px; width: 600px; text-align: center; border-radius: 8px;">
-                    <h3>Buscar Pessoa por Nome</h3>
-                    <input type="text" id="nomeBusca" placeholder="Digite o nome" style="width: 100%; margin-bottom: 20px; padding: 10px;">
-                    <button onclick="buscarMedicoPorNome()" style="padding: 10px 20px;">Pesquisar</button>
-                    <button onclick="fecharModalPesquisa()" style="padding: 10px 20px; margin-left: 10px;">Fechar</button>
+                <h3>Buscar Pessoa por Nome</h3>
+                <input type="text" id="nomeBusca" placeholder="Digite o nome" style="width: 100%; margin-bottom: 20px; padding: 10px;">
+                <!-- Adicione o type="button" no botão de pesquisa -->
+                <button type="button" onclick="buscarMedicoPorNome()" style="padding: 10px 20px;">Pesquisar</button>
+                <button type="button" onclick="fecharModalPesquisa()" style="padding: 10px 20px; margin-left: 10px;">Fechar</button>
             
-                    <div id="resultadoPesquisa" style="margin-top: 20px;">
-                        <!-- Resultados da busca serão exibidos aqui -->
-                    </div>
+                <div id="resultadoPesquisa" style="margin-top: 20px; max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+                    <!-- Resultados da busca serão exibidos aqui -->
+                </div>
             </div>
         </div>
         <label for="cpf">CPF:</label>
@@ -168,7 +169,7 @@
                 document.getElementById("complemento").value = data.complemento;
                 cep = cep.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3');
                 cepField.value = cep;
-                alert(cepField.value+"/"+cep)
+                
             }
             })
             .catch(error => console.error("Erro:", error));
@@ -262,8 +263,16 @@ document.getElementById('form-medico').addEventListener('submit', function(event
 });
 
 // Envio controlado pelo botão de salvar
-document.getElementById('btn-salvar').onclick = function() {
-    document.getElementById('form-medico').submit(); // Agora o envio é controlado
+document.getElementById('btn-salvar').onclick = function(event) {
+    const form = document.getElementById('form-medico');
+    
+    if (form.checkValidity()) {
+        form.submit(); // Envia o formulário se todos os campos forem válidos
+        alert("Médico gravado com sucesso!")
+        location.reload(); // Recarrega a página
+    } else {
+        form.reportValidity(); // Mostra mensagens de erro para os campos inválidos
+    }
 };
 
 
