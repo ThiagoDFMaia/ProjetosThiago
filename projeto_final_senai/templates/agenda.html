@@ -1132,7 +1132,7 @@ function abriraescala() {
             if (condition === "cancer") {
                 previsao = response.previsao === 0 ? 'Benigno' : 'Maligno';
             } else if (condition === "infarto") {
-                previsao = response.previsao === 0 ? 'Menos chances de infarto' : 'Com chances de infarto';
+                previsao = response.previsao === 0 ? 'Pouca chances de infarto' : 'Alta chance de infarto';
             }
 
             document.getElementById('resultado').style.display = 'block'; // Torna o bloco visível
@@ -1186,20 +1186,30 @@ function dados_cancer(){
         concave_points_mean: concave_points_mean,
         symmetry_mean: symmetry_mean,
         fractal_dimension_mean: fractal_dimension_mean,
-       
-
-        smoothness_se: smoothness_se,
-        compactness_se: compactness_se,
-        concavity_se: concavity_se,
-        concave_points_se: concave_points_se,
         radius_se: radius_se,
         texture_se: texture_se,
         perimeter_se: perimeter_se,
         area_se: area_se,
+
+        smoothness_se: smoothness_se,
+
+        compactness_se: compactness_se,
+        concavity_se: concavity_se,
+        concave_points_se: concave_points_se,
+
+
         symmetry_se: symmetry_se,
+
+       
+     
+        
+        
+        
         fractal_dimension_se: fractal_dimension_se,
         radius_worst: radius_worst,
         texture_worst: texture_worst,
+
+
         perimeter_worst: perimeter_worst,
         area_worst: area_worst,
         smoothness_worst: smoothness_worst,
@@ -1265,72 +1275,72 @@ function dados_infarto(){
 
     function fillTest1() {
         const testData1 = {
-            radius_mean: 12.34,
-            texture_mean: 15.67,
-            perimeter_mean: 89.01,
-            area_mean: 654.32,
-            smoothness_mean: 0.123456,
-            compactness_mean: 0.234567,
-            concavity_mean: 0.345678,
-            concave_points_mean: 0.456789,
-            symmetry_mean: 0.567890,
-            fractal_dimension_mean: 0.678901,
-            radius_se: 0.789012,
-            texture_se: 1.890123,
-            perimeter_se: 2.901234,
-            area_se: 300.1234,
-            smoothness_se: 0.001234,
-            compactness_se: 0.002345,
-            concavity_se: 0.003456,
-            concave_points_se: 0.004567,
-            symmetry_se: 0.005678,
-            fractal_dimension_se: 0.006789,
-            radius_worst: 15.67,
-            texture_worst: 20.89,
-            perimeter_worst: 120.34,
-            area_worst: 850.21,
-            smoothness_worst: 0.012345,
-            compactness_worst: 0.023456,
-            concavity_worst: 0.034567,
-            concave_points_worst: 0.045678,
-            symmetry_worst: 0.056789,
-            fractal_dimension_worst: 0.067890
-        };
+        radius_mean: 0.41390906,
+        texture_mean: -0.02528766,
+        perimeter_mean: 0.42783237,
+        area_mean: 0.31459828,
+        smoothness_mean: 0.81086415,
+        compactness_mean: 0.27614779,
+        concavity_mean: 0.66866664,
+        concave_points_mean: 0.748354,
+        symmetry_mean: 0.34871639,
+        fractal_dimension_mean: -0.78093952,
+        radius_se: 0.27954845,
+        texture_se: -0.74583075,
+        perimeter_se: 0.13941842,
+        area_se: 0.23562308,
+        smoothness_se: -0.28281126,
+        compactness_se: -0.61701721,
+        concavity_se: -0.0955818,
+        concave_points_se: -0.09389011,
+        symmetry_se: -0.79119814,
+        fractal_dimension_se: -0.5098218,
+        radius_worst: 0.61772262,
+        texture_worst: -0.01196498,
+        perimeter_worst: 0.51406275,
+        area_worst: 0.49172673,
+        smoothness_worst: 0.9337516,
+        compactness_worst: -0.1535428,
+        concavity_worst: 0.41866559,
+        concave_points_worst: 0.50154822,
+        symmetry_worst: -0.17339144,
+        fractal_dimension_worst: -0.24473803
+    };
         fillFields(testData1);
     }
 
     function fillTest2() {
         const testData2 = {
-        radius_mean: 12.34,
-        texture_mean: 16.50,
-        perimeter_mean: 75.23,
-        area_mean: 500.45,
-        smoothness_mean: 0.0654,
-        compactness_mean: 0.0502,
-        concavity_mean: 0.0201,
-        concave_points_mean: 0.0100,
-        symmetry_mean: 0.1205,
-        fractal_dimension_mean: 0.0453,
-        radius_se: 0.4000,
-        texture_se: 0.9000,
-        perimeter_se: 1.2000,
-        area_se: 150.5678,
-        smoothness_se: 0.000800,
-        compactness_se: 0.001500,
-        concavity_se: 0.002000,
-        concave_points_se: 0.003000,
-        symmetry_se: 0.004500,
-        fractal_dimension_se: 0.005000,
-        radius_worst: 13.50,
-        texture_worst: 18.20,
-        perimeter_worst: 85.30,
-        area_worst: 600.0,
-        smoothness_worst: 0.0800,
-        compactness_worst: 0.1200,
-        concavity_worst: 0.1400,
-        concave_points_worst: 0.0500,
-        symmetry_worst: 0.2000,
-        fractal_dimension_worst: 0.0600
+        radius_mean: -0.46184225,
+        texture_mean: -0.42691525,
+        perimeter_mean: -0.40441195,
+        area_mean: -0.52464416,
+        smoothness_mean: 0.55219841,
+        compactness_mean: 0.44137206,
+        concavity_mean: -0.15594844,
+        concave_points_mean: -0.53502664,
+        symmetry_mean: -0.0717843,
+        fractal_dimension_mean: 1.1999348,
+        radius_se: -0.9396616,
+        texture_se: 0.34302158,
+        perimeter_se: -0.35799791,
+        area_se: -0.66746628,
+        smoothness_se: 1.09650261,
+        compactness_se: 0.40605733,
+        concavity_se: 0.57653564,
+        concave_points_se: 0.02925818,
+        symmetry_se: 0.10584046,
+        fractal_dimension_se: 0.83527303,
+        radius_worst: -0.68166911,
+        texture_worst: -0.49347115,
+        perimeter_worst: -0.50068267,
+        area_worst: -0.63918958,
+        smoothness_worst: 0.50367685,
+        compactness_worst: -0.01950248,
+        concavity_worst: -0.17236879,
+        concave_points_worst: -0.61164517,
+        symmetry_worst: -0.63703262,
+        fractal_dimension_worst: 0.45208067
     };
         fillFields(testData2);
     }
